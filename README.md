@@ -9,13 +9,13 @@
 
 
 ⚽ Deskripsi Aplikasi
-Aplikasi "[nama aplikasi]" merupakan portal informasi olahraga yang berfokus pada dunia sepak bola profesional. Website ini dirancang untuk menjadi pusat informasi interaktif bagi penggemar sepak bola, dengan menyajikan data dan profil lengkap mengenai pemain, klub, dan statistik pertandingan dalam satu platform yang menarik dan mudah diakses.
+Aplikasi "Beyond90" merupakan portal informasi olahraga yang berfokus pada dunia sepak bola profesional. Website ini dirancang untuk menjadi pusat informasi interaktif bagi penggemar sepak bola, dengan menyajikan data dan profil lengkap mengenai pemain, klub, dan statistik pertandingan dalam satu platform yang menarik dan mudah diakses.
 
-Melalui [nama aplikasi], pengguna dapat menjelajahi biodata pemain, melihat perjalanan karier mereka dari klub ke klub, hingga membandingkan performa pemain melalui statistik seperti jumlah gol, assist, dan kartu. Selain itu, pengguna juga dapat mengetahui pencapaian pemain dalam bentuk trofi, penghargaan individu, dan kontribusi mereka di berbagai kompetisi.
+Melalui Beyond90, pengguna dapat menjelajahi biodata pemain, melihat perjalanan karier mereka dari klub ke klub, hingga membandingkan performa pemain melalui statistik seperti jumlah gol, assist, dan kartu. Selain itu, pengguna juga dapat mengetahui pencapaian pemain dalam bentuk trofi, penghargaan individu, dan kontribusi mereka di berbagai kompetisi.
 
 Aplikasi ini tidak hanya menyajikan informasi data mentah, tetapi juga dirancang dengan tampilan visual yang rapi dan responsif serta fitur interaktif seperti pencarian pemain, filter berdasarkan klub atau negara, dan kolom komentar bagi pengguna untuk berdiskusi.
 
-Bagi penggemar sepak bola, [nama aplikasi] memberikan pengalaman informatif dan menyenangkan untuk:
+Bagi penggemar sepak bola, Beyond90 memberikan pengalaman informatif dan menyenangkan untuk:
      - Mengenal lebih dekat idola mereka melalui profil pemain.
      - Melihat perbandingan performa antar pemain atau klub.
      - Menemukan klub dengan ranking dan statistik terbaik.
