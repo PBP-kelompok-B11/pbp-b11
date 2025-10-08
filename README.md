@@ -1,9 +1,7 @@
 <details>
 <Summary><b>📃Daftar Anggota Kelompok</b></Summary>
-=======
-📃Daftar Anggota Kelompok
->>>>>>> f5720cfc12f847a4cafa951a7a85a9cf1b122ba0
 
+📃Daftar Anggota Kelompok
 1. A. Sheriqa Dewina Ihsan (2406360722)
 2. Muhammad Rafi Sugianto (2406357135)
 3. Elizabeth Meilanny Sitanggang (2406433522)
@@ -11,23 +9,17 @@
 5. Angelo Johenry Apituley (2406428825)
 6. Nisriina Wakhdah Haris (2406360445)
 
-<<<<<<< HEAD
 </details>
 
 <details>
 <Summary><b>⚽ Deskripsi Aplikasi</b></Summary>
 
-=======
-
-⚽ Deskripsi Aplikasi
->>>>>>> f5720cfc12f847a4cafa951a7a85a9cf1b122ba0
 Aplikasi "Beyond90" merupakan portal informasi olahraga yang berfokus pada dunia sepak bola profesional. Website ini dirancang untuk menjadi pusat informasi interaktif bagi penggemar sepak bola, dengan menyajikan data dan profil lengkap mengenai pemain, klub, dan statistik pertandingan dalam satu platform yang menarik dan mudah diakses.
 
 Melalui Beyond90, pengguna dapat menjelajahi biodata pemain, melihat perjalanan karier mereka dari klub ke klub, hingga membandingkan performa pemain melalui statistik seperti jumlah gol, assist, dan kartu. Selain itu, pengguna juga dapat mengetahui pencapaian pemain dalam bentuk trofi, penghargaan individu, dan kontribusi mereka di berbagai kompetisi.
 
 Aplikasi ini tidak hanya menyajikan informasi data mentah, tetapi juga dirancang dengan tampilan visual yang rapi dan responsif serta fitur interaktif seperti pencarian pemain, filter berdasarkan klub atau negara, dan kolom komentar bagi pengguna untuk berdiskusi.
 
-<<<<<<< HEAD
 Bagi penggemar sepak bola, Beyond90 memberikan pengalaman informatif dan menyenangkan untuk: - Mengenal lebih dekat idola mereka melalui profil pemain. - Melihat perbandingan performa antar pemain atau klub. - Menemukan klub dengan ranking dan statistik terbaik. - Berinteraksi dengan sesama penggemar melalui komentar dan diskusi.
 
 Kebermanfaatan aplikasi ini juga dapat diperluas untuk pelajar, jurnalis olahraga, dan analis data, yang dapat memanfaatkan dataset pemain dan klub sebagai referensi dalam penulisan artikel, riset performa, atau pembuatan konten sepak bola.
