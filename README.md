@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <details>
 <Summary><b>📃Daftar Anggota Kelompok</b></Summary>
 =======
