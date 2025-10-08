@@ -1,7 +1,6 @@
 <details>
 <Summary><b>📃Daftar Anggota Kelompok</b></Summary>
-
-📃Daftar Anggota Kelompok
+    
 1. A. Sheriqa Dewina Ihsan (2406360722)
 2. Muhammad Rafi Sugianto (2406357135)
 3. Elizabeth Meilanny Sitanggang (2406433522)
