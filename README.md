@@ -107,4 +107,4 @@ Admin
 
 🖇️Tautan deployment PWS dan link design
 PWS = 
-Link Design =
+Link Design = https://www.figma.com/design/d709YeDApa3C8PSWKfmY4T/Proyek-Tengah-Semester?node-id=0-1&t=z7TCvKmekZw4qCvt-1
