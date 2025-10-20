@@ -30,7 +30,7 @@ Kebermanfaatan aplikasi ini juga dapat diperluas untuk pelajar, jurnalis olahrag
 
 1. Manajemen Data Pemain (App: players) (Muhammad Rafi Sugianto)
     - Models:
-        1. Player (nama, negara, usia, tinggi, berat, posisi)
+        1. Player (nama, negara, usia, tinggi, berat, posisi, foto)
         2. CareerHistory (player → Player, klub → Club, tahun_mulai, tahun_selesai)
         3. SeasonStats (player → Player, musim, pertandingan, gol, assist, kartu)
         4. Achievement (player → Player, deskripsi, tahun)
@@ -47,7 +47,7 @@ Kebermanfaatan aplikasi ini juga dapat diperluas untuk pelajar, jurnalis olahrag
 
 2. Manajemen Data Klub (App: clubs) (Elizabeth Meilanny Sitanggang)
     - Models:
-        1. Club (nama, negara, stadion, tahun_berdiri)
+        1. Club (nama, negara, stadion, tahun_berdiri, foto)
         2. ClubRanking (club → Club, musim, peringkat)
     - Views (CRUD):
         1. club_list →  Daftar club
