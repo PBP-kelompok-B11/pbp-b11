@@ -19,7 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('main.urls')),
-    path('/profile', include('nina_profile.urls')),
-    path('/media-gallery', include('nina_media_gallery')),
+    path('', include('search.urls')),
+    path('auth/', include('authentication.urls')),
 ]
