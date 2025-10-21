@@ -9,7 +9,7 @@ def register_view(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
-
+#tes commit
         if password != confirm_password:
             messages.error(request, "Password tidak cocok.")
             return redirect('register')
