@@ -35,7 +35,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect('search_form')  # arahkan ke fitur search kamu
+            return redirect('search_form')  
         else:
             messages.error(request, "Username atau password salah.")
             return redirect('login')
