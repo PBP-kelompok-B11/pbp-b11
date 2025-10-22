@@ -12,10 +12,10 @@ class ProfileWidgetForm(forms.ModelForm):
 
     class Meta:
         model = ProfileWidget
-        fields = ['title', 'widget_type', 'konfigurasi', 'content']
+        fields = ['title', 'widget_types', 'konfigurasi', 'content']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Judul widget'}),
             'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Deskripsi tambahan (opsional)'}),
             'konfigurasi': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': '{"season": "2022/23", "metric": "goals"}'}),
-            'widget_type': forms.Select(attrs={'class': 'form-select'}),
+            'widget_types': forms.Select(attrs={'class': 'form-select'}),
         }

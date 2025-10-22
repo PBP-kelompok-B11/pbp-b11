@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-z%xc3%tvv@ylnf5rfw=!s426oop%&4euso*i0nfi%8@-*tb^-)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'main',
     'nina_profile',
     'nina_media_gallery',
+    'rafi_player',
+    
 ]
 
 MIDDLEWARE = [
