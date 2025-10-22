@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils import timezone
-from players.models import Player
+from rafi_player.models import Player
 from clubs.models import Club
 from search.models import SearchQuery
 

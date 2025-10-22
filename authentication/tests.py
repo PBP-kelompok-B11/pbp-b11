@@ -71,4 +71,3 @@ class AuthenticationTests(TestCase):
         response = self.client.get(self.logout_url)
         self.assertRedirects(response, self.login_url)
         self.assertFalse('_auth_user_id' in self.client.session)
-
