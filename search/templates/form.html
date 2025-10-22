@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<input type="text" id="search-input" placeholder="Cari pemain atau klub...">
+<div id="results"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $('#search-input').on('keyup', function() {
+    const query = $(this).val();
+    if (query.length > 1) {
+      $.ajax({
+        url: '/search/players/',  // atau '/search/clubs/' tergantung jenisnya
+        data: { q: query },
+        success: function(response) {
+          const resultsDiv = $('#results');
+          resultsDiv.empty();
+          response.results.forEach(r => {
+            resultsDiv.append(`<p><strong>${r.nama}</strong> (${r.negara})</p>`);
+          });
+        }
+      });
+    }
+  });
+</script>
+
+<html>
