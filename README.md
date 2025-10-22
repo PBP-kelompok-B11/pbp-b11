@@ -136,7 +136,9 @@ Kebermanfaatan aplikasi ini juga dapat diperluas untuk pelajar, jurnalis olahrag
 <details>
 <Summary><b>📚Sumber initial dataset kategori utama produk</b></Summary>
 
-Sumber Dataset: https://www.kaggle.com/datasets/vivovinco/20222023-football-player-stats <br>
+Sumber Dataset: <br>
+1. Dataset untuk Player: https://www.kaggle.com/datasets/vivovinco/20222023-football-player-stats <br>
+2. Dataset untuk Club: https://www.kaggle.com/datasets/vivovinco/20222023-football-team-stats <br>
 Deskripsi Singkat: Dataset ini berisi statistik lengkap pemain sepak bola dari berbagai liga dunia pada musim 2022–2023, mencakup nama pemain, klub, posisi, jumlah pertandingan, gol, assist, dan metrik performa lainnya.
 
 </details>
