@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Beyond90</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="overflow-x-hidden">
+
+  <!-- MAIN WRAPPER -->
+  <div class="relative w-[1920px] h-[1080px] bg-indigo-900 overflow-hidden">
+
+    <!-- NAVBAR -->
+    <div class="absolute top-0 left-0 w-full h-32 overflow-hidden">
+      <!-- Tombol Login -->
+      <div class="absolute right-[100px] top-[38px] w-60 h-12">
+        <div class="absolute inset-0 bg-lime-400 rounded-[36px]"></div>
+        <div class="absolute left-[12px] top-[5px] text-center text-indigo-900 text-2xl font-['Geologica'] leading-10">
+          Login
+        </div>
+      </div>
+
+      <!-- Logo -->
+      <div class="absolute left-[99px] top-[43px] w-44 h-11 rounded-[40px] border-[3px] border-lime-400"></div>
+      <div class="absolute left-[99px] top-[43px] w-24 h-11 bg-lime-400 rounded-tl-[40px] rounded-bl-[40px] border-[3px] border-lime-400"></div>
+      <div class="absolute left-[125px] top-[55px] text-blue-700 text-3xl font-[Konkhmer_Sleokchher] leading-normal">PBP</div>
+      <div class="absolute left-[195px] top-[53px] text-lime-400 text-3xl font-[Konkhmer_Sleokchher] leading-normal">11</div>
+
+      <!-- Navbar Links -->
+      <div class="absolute left-[586px] top-[43px] text-white text-xl font-[Geologica]">Player</div>
+      <div class="absolute left-[772px] top-[43px] text-white text-xl font-[Geologica]">Club</div>
+      <div class="absolute left-[958px] top-[43px] text-white text-xl font-[Geologica]">Competition</div>
+      <div class="absolute left-[1145px] top-[43px] text-white text-xl font-[Geologica]">Home</div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="absolute bottom-0 left-0 w-full h-32 bg-lime-400"></div>
+
+    <!-- BACKGROUND DECOR -->
+    <div class="absolute top-[125px] left-0 w-full h-[949px] overflow-hidden">
+      <div class="absolute left-[335px] top-[175px] text-right text-white text-[300px] font-[League_Gothic]">BEYOND</div>
+      <div class="absolute left-[833px] top-[379px] w-64 h-56 bg-white"></div>
+      <div class="absolute left-[643px] top-[142px] w-64 h-80 rotate-[24deg] outline outline-[20px] outline-offset-[-10px] outline-lime-400"></div>
+      <div class="absolute left-[1339px] top-[492px] w-56 h-36 rotate-180">
+        <div class="absolute left-[10px] top-[-9px] w-56 h-36 rotate-[4deg] outline outline-[15px] outline-offset-[-7px] outline-lime-400"></div>
+      </div>
+    </div>
+
+    <!-- DARK OVERLAY -->
+    <div class="absolute inset-0 bg-black/40"></div>
+
+    <!-- LOGIN BOX -->
+    <div class="absolute left-[408px] top-[120px] w-[1075px] h-[800px] bg-indigo-900 rounded-[20px] flex flex-col items-center justify-center overflow-hidden shadow-lg">
+      <h1 class="text-[120px] font-[League_Gothic] text-white mb-16">LOGIN</h1>
+
+      <form id="loginForm" method="POST" class="w-[80%] max-w-[700px]">
+        {% csrf_token %}
+
+        <!-- Username -->
+        <div class="mb-8">
+          <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Username</label>
+          <input type="text" name="username" required
+                 class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6 focus:outline-none focus:ring-2 focus:ring-lime-300">
+        </div>
+
+        <!-- Password -->
+        <div class="mb-8">
+          <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Password</label>
+          <input type="password" name="password" required
+                 class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6 focus:outline-none focus:ring-2 focus:ring-lime-300">
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit"
+                class="w-full bg-lime-400 text-indigo-900 text-2xl font-[Geologica] py-3 rounded-[36px] hover:scale-105 transition-transform">
+          Login
+        </button>
+
+        <!-- Register Link -->
+        <p class="mt-8 text-center text-lime-400 text-lg font-[Geologica]">
+          Belum punya akun?
+          <a href="{% url 'register' %}"
+             class="underline hover:text-lime-300 transition-colors duration-200">
+            Register di sini
+          </a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- AJAX LOGIN SCRIPT -->
+  <script>
+  document.querySelector("#loginForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+
+      try {
+          const response = await fetch("{% url 'login' %}", {
+              method: "POST",
+              headers: {
+                  "X-Requested-With": "XMLHttpRequest",
+                  "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+              },
+              body: formData
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+              Swal.fire({
+                  icon: 'success',
+                  title: 'Login Berhasil 🎉',
+                  text: data.message,
+                  confirmButtonColor: '#84cc16',
+                  background: '#1e1b4b',
+                  color: '#fff',
+              }).then(() => {
+                  window.location.href = data.redirect_url;
+              });
+          } else {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Login Gagal 😢',
+                  text: data.message,
+                  confirmButtonColor: '#84cc16',
+                  background: '#1e1b4b',
+                  color: '#fff',
+              });
+          }
+      } catch (error) {
+          Swal.fire({
+              icon: 'error',
+              title: 'Oops!',
+              text: 'Terjadi kesalahan. Coba lagi nanti.',
+              confirmButtonColor: '#84cc16',
+              background: '#1e1b4b',
+              color: '#fff',
+          });
+      }
+  });
+  </script>
+
+</body>
+</html>
