@@ -1,0 +1,29 @@
+...
+{% for media in media_list %}
+<div>
+<h2><a href="{% url 'nina_media_gallery:gallery_list' media.id %}">
+
+<p><b>{{ media.get_category_display }} | <i>{{ media.created_at|date:"d M Y H:i" }}</i> 
+  | Views: {{ media.viewers }}</p>
+
+{% if media.thumbnail %}
+<img src="{{ media.thumbnail }}" alt="thumbnail" width="150" height="100">
+<br />
+{% endif %}
+
+<p>{{ media.deskripsi|truncatewords:25 }}...</p>
+
+<p>
+    <a href="{% url 'nina_media_gallery:gallery_list' media.id %}"><button>Read More</button></a>
+    {% if user.is_authenticated and news.user == user %}
+    <a href="{% url 'nina_media_gallery:gallery_update' media.pk %}">
+        <button>Edit</button>
+    </a>
+    <a href="{% url 'nina_media_gallery: gallery_delete' media.pk %}">
+        <button>Delete</button>
+    </a>
+    {% endif %}
+</p>
+</div>
+<hr>
+{% endfor %}
