@@ -1,0 +1,29 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Daftar Klub</h2>
+  <a href="{% url 'club_create' %}" class="btn btn-primary mb-3"
+    >Tambah Klub Baru</a
+  >
+  <ul class="list-group">
+    {% for club in clubs %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <a href="{% url 'club_detail' club.pk %}"
+        >{{ club.nama }} ({{ club.negara }})</a
+      >
+      <div>
+        <a href="{% url 'club_update' club.pk %}" class="btn btn-sm btn-info"
+          >Edit</a
+        >
+        <a
+          href="{% url 'club_delete' club.pk %}"
+          class="btn btn-sm btn-danger"
+          >Hapus</a
+        >
+      </div>
+    </li>
+    {% empty %}
+    <li class="list-group-item">Belum ada klub terdaftar.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

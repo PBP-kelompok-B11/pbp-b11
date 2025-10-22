@@ -11,9 +11,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from dotenv import load_dotenv
+from pathlib import Path
 # Load environment variables from .env file
 load_dotenv()
-from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-z%xc3%tvv@ylnf5rfw=!s426oop%&4euso*i0nfi%8@-*tb^-)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "a-sheriqa-beyond-90.pbp.cs.ui.ac.id"]
 
@@ -43,6 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'search',
     'authentication',
+    'main',
+    'nina_profile',
+    'nina_media_gallery',
+    'rafi_player',
+    
 ]
 
 MIDDLEWARE = [
@@ -60,7 +65,7 @@ ROOT_URLCONF = 'beyond90.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -138,7 +143,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'static'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
