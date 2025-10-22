@@ -60,5 +60,6 @@ def logout_view(request):
     messages.success(request, "Kamu berhasil logout.")
     return redirect('login')
 
+#hey
 def home_view(request):
     return render(request, 'home.html')
