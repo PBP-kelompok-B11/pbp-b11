@@ -1,18 +1,22 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
+
+{% load static %}
+
 {% block content %}
-<h1>Add Media</h1>
+
+<h1>Upload Media</h1>
 
 <form method="POST">
-  {% csrf_token %}
-  <table>
-    {{ form.as_table }}
-    <tr>
-      <td></td>
-      <td>
-        <input type="submit" value="Add Media" />
-      </td>
-    </tr>
-  </table>
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Upload Media"/>
+            </td>
+        </tr>
+    </table>
 </form>
 
 {% endblock %}
