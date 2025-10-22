@@ -22,4 +22,5 @@ urlpatterns = [
     path('', include('main.urls')),
     path('profile/', include('nina_profile.urls')),
     path('media-gallery/', include('nina_media_gallery.urls')),
+    path('player/', include('rafi_player.urls')),
 ]
