@@ -33,4 +33,28 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    $(".deleteWidgetBtn").click(function(){
+        let id = $(this).data("id");
+        Swal.fire({
+            title: "Are you sure you want to delete it?",
+            text: "Deleted widgets cannot be restored!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Delete",
+            cancelButtonText: "Cancel"
+        }).then((result) =>{
+            if(result.isConfirmed){
+                $.post(`profile/widget/delete/${id}/`,
+                { "csrfmiddlewaretoken": "{{ csrf_token }}"}, function(res){
+                    if(res.status === "success"){
+                        $(`#widget-row-${id}`).remove();
+                        Swal.fire("Deleted!", "Widget has been removed", "Success")
+                    }
+                });
+            }
+        });
+    });
+</script>
 {% endblock %}
