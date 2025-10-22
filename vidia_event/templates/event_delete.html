@@ -1,0 +1,26 @@
+<!-- templates/events/confirm_delete.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Konfirmasi Hapus</title>
+  <style>
+    body { font-family: Arial; background: #fff5f5; padding: 20px; }
+    .card { background: white; padding: 20px; border-radius: 10px; width: 400px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    button { background: #dc3545; color: white; padding: 8px 12px; border: none; border-radius: 6px; }
+    button:hover { background: #b02a37; }
+    a { margin-left: 10px; text-decoration: none; color: #555; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Konfirmasi Hapus</h2>
+    <p>Apakah kamu yakin ingin menghapus <b>{{ object }}</b>?</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit">Ya, Hapus</button>
+      <a href="{% url 'event_list' %}">Batal</a>
+    </form>
+  </div>
+</body>
+</html>

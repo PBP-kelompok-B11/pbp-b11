@@ -1,0 +1,32 @@
+<!-- templates/events_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Daftar Event Sepak Bola</title>
+  <style>
+    body { font-family: Arial; background: #f2f5f9; margin: 0; padding: 20px; }
+    h1 { color: #222; }
+    a.button { background: #007bff; color: white; padding: 8px 12px; text-decoration: none; border-radius: 6px; }
+    a.button:hover { background: #0056b3; }
+    .card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .event-title { font-size: 18px; font-weight: bold; color: #333; }
+    .event-date { color: #666; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>🏆 Daftar Event Sepak Bola</h1>
+  <a href="{% url 'event_create' %}" class="button">+ Tambah Event</a>
+  <br><br>
+
+  {% for event in events %}
+  <div class="card">
+    <div class="event-title">{{ event.nama_event }}</div>
+    <div class="event-date">{{ event.tanggal_mulai }} — {{ event.tanggal_selesai }}</div>
+    <a href="{% url 'event_detail' event.id %}" class="button">Detail</a>
+  </div>
+  {% empty %}
+  <p>Tidak ada event.</p>
+  {% endfor %}
+</body>
+</html>
