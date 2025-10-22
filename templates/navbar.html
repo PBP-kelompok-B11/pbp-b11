@@ -20,10 +20,7 @@
         <a href="{% url 'clubs:club_list' %}" class="text-white text-xl font-normal hover:text-[#C3FF00] transition">
           Club
         </a>
-        <a href="{% url 'vidia_event:event_list' %}" class="text-white text-xl font-normal hover:text-[#C3FF00] transition">
-          Competition
-        </a>
-        <a href="{% url 'home' %}" class="text-white text-xl font-normal hover:text-[#C3FF00] transition">
+        <a href="{% url 'authentication:home_view' %}" class="text-white text-xl font-normal hover:text-[#C3FF00] transition">
           Home
         </a>
       </div>
@@ -32,11 +29,11 @@
       <div class="hidden md:flex items-center">
         {% if user.is_authenticated %}
           <span class="text-white mr-6">{{ user.username }}</span>
-          <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-600 text-white font-medium px-5 py-2 rounded-full">
+          <a href="{% url 'authentication:logout_view' %}" class="bg-red-500 hover:bg-red-600 text-white font-medium px-5 py-2 rounded-full">
             Logout
           </a>
         {% else %}
-          <a href="{% url 'login' %}" class="bg-[#C3FF00] text-[#1A1B99] hover:bg-[#adff00] font-medium px-8 py-2 rounded-full text-lg transition">
+          <a href="{% url 'authentication:login_view' %}" class="bg-[#C3FF00] text-[#1A1B99] hover:bg-[#adff00] font-medium px-8 py-2 rounded-full text-lg transition">
             Login
           </a>
         {% endif %}
@@ -61,20 +58,17 @@
       <a href="{% url 'clubs:club_list' %}" class="block text-white hover:text-[#C3FF00]">
         Club
       </a>
-      <a href="{% url 'vidia_event:event_list' %}" class="block text-white hover:text-[#C3FF00]">
-        Competition
-      </a>
-      <a href="{% url 'home' %}" class="block text-white hover:text-[#C3FF00]">
+      <a href="{% url 'authentication:home_view' %}" class="block text-white hover:text-[#C3FF00]">
         Home
       </a>
 
       {% if user.is_authenticated %}
       <p class="text-white">{{ user.username }}</p>
-      <a href="{% url 'logout' %}" class="block bg-red-500 text-white py-2 rounded-full mt-3">
+      <a href="{% url 'authentication:logout_view' %}" class="block bg-red-500 text-white py-2 rounded-full mt-3">
         Logout
       </a>
       {% else %}
-      <a href="{% url 'login' %}" class="block bg-[#C3FF00] text-[#1A1B99] py-2 rounded-full font-medium mt-3">
+      <a href="{% url 'authentication:login_view' %}" class="block bg-[#C3FF00] text-[#1A1B99] py-2 rounded-full font-medium mt-3">
         Login
       </a>
       {% endif %}

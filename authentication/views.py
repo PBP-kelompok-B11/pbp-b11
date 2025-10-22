@@ -101,7 +101,7 @@ def login_view(request):
             messages.error(request, "Username atau password salah.")
             return redirect('login')
 
-    return render(request, 'authentication/login.html')
+    return render(request, 'login.html')
 
 
 @login_required
