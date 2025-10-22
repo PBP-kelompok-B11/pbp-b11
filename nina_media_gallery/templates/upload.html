@@ -1,22 +1,108 @@
 {% extends 'base.html' %}
-
 {% load static %}
 
 {% block content %}
+<div class="min-h-screen bg-indigo-900 flex justify-center items-start py-12">
 
-<h1>Upload Media</h1>
+    <!-- Container Form -->
+    <div class="bg-indigo-900 w-3/4 md:w-1/2 p-10 rounded-lg shadow-lg">
 
-<form method="POST">
-    {% csrf_token %}
-    <table>
-        {{ form.as_table }}
-        <tr>
-            <td></td>
-            <td>
-                <input type="submit" value="Upload Media"/>
-            </td>
-        </tr>
-    </table>
-</form>
+        <!-- Back Button -->
+        <a href="{% url 'nina_media_gallery:gallery_list' %}" class="flex items-center text-lime-400 mb-6 hover:text-white transition">
+            <span class="text-2xl mr-2">&larr;</span> Back
+        </a>
 
+        <!-- Judul -->
+        <h1 class="text-white text-5xl font-bold mb-8 tracking-wide">UPLOAD MEDIA</h1>
+
+        <!-- Form -->
+        <form id="uploadForm" method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Deskripsi -->
+            <div>
+                <label class="text-white block mb-2 font-medium">Deskripsi</label>
+                {{ form.deksripsi|as_widget(attrs={
+                    'class': 'w-full px-4 py-3 rounded-full bg-indigo-800 text-white focus:outline-none focus:ring-2 focus:ring-lime-400'
+                }) }}
+            </div>
+
+            <!-- Category -->
+            <div>
+                <label class="text-white block mb-2 font-medium">Category</label>
+                {{ form.category|as_widget(attrs={
+                    'class': 'w-full px-4 py-3 rounded-full bg-indigo-800 text-white focus:outline-none focus:ring-2 focus:ring-lime-400'
+                }) }}
+            </div>
+
+            <!-- Thumbnail -->
+            <div>
+                <label class="text-white block mb-2 font-medium">Thumbnail</label>
+                {{ form.thumbnail|as_widget(attrs={
+                    'class': 'w-full px-4 py-3 rounded-full bg-indigo-800 text-white focus:outline-none focus:ring-2 focus:ring-lime-400'
+                }) }}
+            </div>
+
+            <!-- Tombol Submit -->
+            <div class="text-center">
+                <button type="submit"
+                    class="px-8 py-3 bg-lime-400 text-indigo-900 font-semibold rounded-full hover:bg-lime-300 transition">
+                    Upload Media
+                </button>
+            </div>
+        </form>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="hidden fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transition-opacity duration-300">
+            Upload berhasil!
+        </div>
+
+    </div>
+</div>
+
+<!-- AJAX Script -->
+<script>
+document.getElementById("uploadForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let formData = new FormData(this);
+
+    fetch("{% url 'nina_media_gallery:gallery_upload' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            showToast("✅ Upload berhasil!");
+
+            // Redirect ke gallery setelah toast tampil
+            setTimeout(() => {
+                window.location.href = "{% url 'nina_media_gallery:gallery_list' %}";
+            }, 2000);
+        } else {
+            showToast("❌ " + (data.message || "Upload gagal."));
+        }
+    })
+    .catch(error => {
+        showToast("❌ Terjadi kesalahan.");
+    });
+});
+
+// Fungsi untuk menampilkan toast
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.remove("hidden");
+    toast.classList.add("opacity-100");
+
+    setTimeout(() => {
+        toast.classList.add("hidden");
+        toast.classList.remove("opacity-100");
+    }, 1500);
+}
+</script>
 {% endblock %}

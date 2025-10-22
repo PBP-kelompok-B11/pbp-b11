@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from nina_media_gallery.forms import MediaForm
 from nina_media_gallery.models import Media
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 
 # Create your views here.
 
@@ -15,14 +15,18 @@ def gallery_list(request):
     return render(request, "list.html", context)
 
 def gallery_upload(request):
-    form = MediaForm(request.POST or None)
+    if request.method == "POST":
+        form = MediaForm(request.POST, request.FILES)
 
-    if form.is_valid() and request.method == "POST":
-        form.save()
-        return redirect('nina_media_gallery: show_all')
-    
-    context = {'form': form}
-    return render(request, 'upload.html', context)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"status": "success", "message": "Media berhasil diupload!"})
+        else:
+            return JsonResponse({"status": "error", "message": "Form tidak valid!"})
+
+    # Jika GET → load halaman upload.html biasa
+    form = MediaForm()
+    return render(request, 'upload.html', {'form': form})
 
 def gallery_details(request, id):
     media = get_object_or_404(Media, pk=id)

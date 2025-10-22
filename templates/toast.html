@@ -1,0 +1,25 @@
+<!-- templates/components/toast.html -->
+<div id="toast"
+     class="hidden fixed top-5 right-5 bg-lime-400 text-indigo-900 font-medium px-6 py-3 rounded-lg shadow-lg transition transform duration-300">
+    <span id="toastMessage"></span>
+</div>
+
+<script>
+function showToast(message, duration = 3000) {
+    const toast = document.getElementById("toast");
+    const toastMessage = document.getElementById("toastMessage");
+
+    // Tampilkan pesan
+    toastMessage.textContent = message;
+    toast.classList.remove("hidden", "opacity-0", "translate-y-5");
+    toast.classList.add("opacity-100");
+
+    // Sembunyikan setelah beberapa detik
+    setTimeout(() => {
+        toast.classList.add("opacity-0", "translate-y-5");
+        setTimeout(() => {
+            toast.classList.add("hidden");
+        }, 300);
+    }, duration);
+}
+</script>

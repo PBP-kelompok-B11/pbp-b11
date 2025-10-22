@@ -1,29 +1,47 @@
-...
-{% for media in media_list %}
-<div>
-<h2><a href="{% url 'nina_media_gallery:gallery_list' media.id %}">
+{% extends 'base.html' %}
+{% load static %}
 
-<p><b>{{ media.get_category_display }} | <i>{{ media.created_at|date:"d M Y H:i" }}</i> 
-  | Views: {{ media.viewers }}</p>
+{% block content %}
+<div class="w-full min-h-screen bg-indigo-900 px-10 py-10">
 
-{% if media.thumbnail %}
-<img src="{{ media.thumbnail }}" alt="thumbnail" width="150" height="100">
-<br />
-{% endif %}
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-white text-3xl font-bold tracking-wide">Gallery</h1>
+        <a href="{% url 'home' %}">
+            <button class="px-5 py-2 bg-lime-400 text-indigo-900 rounded-full font-semibold shadow-md hover:shadow-lg">
+                Back
+            </button>
+        </a>
+    </div>
 
-<p>{{ media.deskripsi|truncatewords:25 }}...</p>
+    <!-- Grid List -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {% for media in media_list %}
+        <div class="relative group rounded-2xl w-full h-80 overflow-hidden shadow-lg bg-gray-700">
 
-<p>
-    <a href="{% url 'nina_media_gallery:gallery_list' media.id %}"><button>Read More</button></a>
-    {% if user.is_authenticated and news.user == user %}
-    <a href="{% url 'nina_media_gallery:gallery_update' media.pk %}">
-        <button>Edit</button>
-    </a>
-    <a href="{% url 'nina_media_gallery: gallery_delete' media.pk %}">
-        <button>Delete</button>
-    </a>
-    {% endif %}
-</p>
+            <!-- Thumbnail -->
+            {% if media.thumbnail %}
+            <img src="{{ media.thumbnail }}" alt="thumbnail"
+                class="w-full h-full object-cover rounded-2xl transition-transform duration-300 group-hover:scale-105">
+            {% else %}
+            <div class="w-full h-full bg-gray-800 flex items-center justify-center text-white">
+                No Image Available
+            </div>
+            {% endif %}
+
+            <!-- Overlay saat hover -->
+            <div class="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition duration-300"></div>
+
+            <!-- Tombol Read More saat hover -->
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                <a href="{% url 'nina_media_gallery:gallery_detail' media.id %}">
+                    <button class="px-5 py-2 bg-lime-400 text-indigo-900 font-semibold rounded-full shadow-md hover:scale-105 transition">
+                        Read More
+                    </button>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
-<hr>
-{% endfor %}
+{% endblock %}
