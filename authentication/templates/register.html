@@ -4,64 +4,76 @@
 {% block title %}Register | Beyond90{% endblock %}
 
 {% block content %}
-<!-- Main Container yang mencakup konten dan footer -->
+<!-- Main Container -->
 <div class="flex flex-col min-h-[calc(100vh-8rem)]">
+
   <!-- Content Section -->
   <div class="flex-grow flex flex-col items-center justify-start px-6 md:px-0 pt-28 relative pb-10">
-    <div class="absolute inset-0 bg-[#261893] -z-10"></div>
+    <!-- Overlay Background -->
+    <div class="absolute inset-0 bg-[#261893] -z-10 pointer-events-none"></div>
 
     <!-- Title -->
-    <!-- Responsive Heading -->
-    <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-[Geologica] mb-10 text-center leading-snug text-white">
+    <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-[Geologica] mb-6 text-center leading-snug text-white">
       Kick Off Your Football Journey with Beyond90!
     </h1>
-    <h3 class="text-col text-1xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-[Geologica] mb-10 text-center leading-snug text-white">
+    <h3 class="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-[Geologica] mb-10 text-center leading-snug">
       Stay ahead with real-time updates<br>from the world of football
     </h3>
 
-
-
     <!-- Register Form -->
-    <form id="register-form"
-          class="bg-indigo-900/80 backdrop-blur-sm border border-lime-400 rounded-3xl shadow-2xl w-full max-w-lg p-8 md:p-12">
+    <form id="registerForm" method="POST" action="{% url 'authentication:register_view' %}" class="w-[80%] max-w-[700px]">
       {% csrf_token %}
+
       <div class="mb-6">
-        <label class="block text-lime-400 text-xl font-[Geologica] mb-2">Username</label>
+        <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Username</label>
         <input type="text" name="username" required
-                class="w-full h-12 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-lg px-5 focus:outline-none focus:ring-2 focus:ring-lime-300">
+               class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6">
       </div>
 
       <div class="mb-6">
-        <label class="block text-lime-400 text-xl font-[Geologica] mb-2">Email</label>
+        <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Email</label>
         <input type="email" name="email" required
-                class="w-full h-12 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-lg px-5 focus:outline-none focus:ring-2 focus:ring-lime-300">
+               class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6">
       </div>
 
       <div class="mb-6">
-        <label class="block text-lime-400 text-xl font-[Geologica] mb-2">Password</label>
-        <input type="password" name="password" required
-                class="w-full h-12 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-lg px-5 focus:outline-none focus:ring-2 focus:ring-lime-300">
+        <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Alamat</label>
+        <input type="text" name="alamat" required
+               class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6">
       </div>
 
-      <div class="mb-10">
-        <label class="block text-lime-400 text-xl font-[Geologica] mb-2">Konfirmasi Password</label>
+      <div class="mb-6">
+        <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Umur</label>
+        <input type="number" name="umur" required min="1"
+               class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6">
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Nomor Handphone</label>
+        <input type="text" name="nomor_handphone" required
+               class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6">
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Password</label>
+        <input type="password" name="password" required
+               class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6">
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Konfirmasi Password</label>
         <input type="password" name="confirm_password" required
-                class="w-full h-12 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-lg px-5 focus:outline-none focus:ring-2 focus:ring-lime-300">
+               class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6">
       </div>
 
       <button type="submit"
               class="w-full bg-lime-400 text-indigo-900 text-2xl font-[Geologica] py-3 rounded-[36px] hover:scale-105 transition-transform">
-        Daftar
+        Register
       </button>
-
-      <p class="mt-6 text-center text-lime-400 text-lg font-[Geologica]">
-        Sudah punya akun?
-        <a href="{% url 'authentication:login_view' %}" class="underline hover:text-lime-300">Login di sini</a>
-      </p>
     </form>
   </div>
 
-  <!-- Footer yang sekarang berada dalam main container -->
+  <!-- Footer -->
   <footer class="w-full bg-lime-400 py-4 text-center mt-auto">
     <p class="text-indigo-900 font-[Geologica] text-sm md:text-xl">© 2025 Beyond90 — PBP-11</p>
   </footer>
@@ -69,7 +81,7 @@
 
 <!-- AJAX Script -->
 <script>
-document.getElementById("register-form").addEventListener("submit", async function(e) {
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
   e.preventDefault();
   const form = e.target;
   const formData = new FormData(form);
