@@ -61,7 +61,7 @@ def register_view(request):
         messages.success(request, "Akun berhasil dibuat! Silakan login.")
         return redirect('login')
 
-    return render(request, 'authentication/register.html')
+    return render(request, 'register.html')
 
 def login_view(request):
     # Kalau udah login, langsung ke home

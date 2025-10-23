@@ -7,11 +7,11 @@ from .forms import PlayerForm
 
 def player_list(request):
     players = Player.objects.all()
-    return render(request, 'rafi_player/player_list.html', {'players': players})
+    return render(request, 'player_list.html', {'players': players})
 
 def player_detail(request, pk):
     player = get_object_or_404(Player, pk=pk)
-    return render(request, 'rafi_player/player_detail.html', {'player': player})
+    return render(request, 'player_detail.html', {'player': player})
 
 def player_create(request):
     if request.method == 'POST':
@@ -21,7 +21,7 @@ def player_create(request):
             return redirect('rafi_player:player_list')
     else:
         form = PlayerForm()
-    return render(request, 'rafi_player/player_form.html', {'form': form})
+    return render(request, 'player_form.html', {'form': form})
 
 def player_update(request, pk):
     player = get_object_or_404(Player, pk=pk)
@@ -32,7 +32,7 @@ def player_update(request, pk):
             return redirect('rafi_player:player_detail', pk=pk)
     else:
         form = PlayerForm(instance=player)
-    return render(request, 'rafi_player/player_form.html', {'form': form})
+    return render(request, 'player_form.html', {'form': form})
 
 def player_delete(request, pk):
     player = get_object_or_404(Player, pk=pk)
