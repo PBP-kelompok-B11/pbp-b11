@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+  <div class="bg-white/5 p-6 rounded-2xl">
+    <div class="flex justify-between items-start">
+      <div>
+        <h1 class="text-3xl font-bold text-white">{{ club.nama }}</h1>
+        <p class="text-sm text-white/70">{{ club.negara }} • {{ club.stadion }}</p>
+        <p class="text-sm text-white/70">Founded: {{ club.tahun_berdiri }}</p>
+      </div>
+      <div class="space-x-2">
+        <a href="{% url 'club_update' club.pk %}" class="px-4 py-2 rounded bg-blue-500">Edit</a>
+        <a href="{% url 'club_delete' club.pk %}" class="px-4 py-2 rounded bg-red-600">Hapus</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white/5 p-6 rounded-2xl">
+    <div class="flex justify-between items-center">
+      <h2 class="text-xl font-semibold">Peringkat Klub</h2>
+      <a href="{% url 'club_ranking_create' club.pk %}" class="btn-lime">Tambah Peringkat</a>
+    </div>
+
+    {% if rankings %}
+      <table class="table-auto w-full mt-4 text-white">
+        <thead>
+          <tr class="text-left text-sm text-white/70">
+            <th>Musim</th>
+            <th>Peringkat</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rankings %}
+            <tr class="border-t border-white/5">
+              <td class="py-2">{{ r.musim }}</td>
+              <td class="py-2">{{ r.peringkat }}</td>
+              <td class="py-2 space-x-2">
+                <a href="{% url 'club_ranking_update' r.pk %}" class="px-2 py-1 rounded bg-blue-500">Edit</a>
+                <a href="{% url 'club_ranking_delete' r.pk %}" class="px-2 py-1 rounded bg-red-600">Hapus</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="mt-4">Belum ada data peringkat untuk klub ini.</p>
+    {% endif %}
+  </div>
+
+  <div>
+    <a href="{% url 'club_list' %}" class="px-4 py-2 rounded bg-white/10">Kembali ke daftar klub</a>
+  </div>
+</div>
+{% endblock %}

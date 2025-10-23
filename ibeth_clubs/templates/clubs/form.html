@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {% extends 'base.html' %}
 {% block content %}
 <div class="max-w-2xl mx-auto bg-white/5 p-8 rounded-3xl">
@@ -20,17 +19,6 @@
       <button type="submit" class="btn-lime">Submit</button>
       <a href="{% url 'club_list' %}" class="px-4 py-2 rounded bg-white/10">Batal</a>
     </div>
-=======
-{% extends 'base.html' %} {% block content %}
-<div class="container mt-4">
-  <h2 class="mb-4">
-    {% if form.instance.pk %}Edit Klub{% else %}Tambah Klub Baru{% endif %}
-  </h2>
-  <form method="post">
-    {% csrf_token %} {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Simpan</button>
-    <a href="{% url 'clubs:club_list' %}" class="btn btn-secondary">Batal</a>
->>>>>>> ad32ec64ac5e08c3c9ced140258fc6ce2b501355
   </form>
 </div>
 {% endblock %}

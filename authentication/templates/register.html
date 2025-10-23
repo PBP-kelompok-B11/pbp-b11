@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% load static %}
 <!DOCTYPE html>
 <html lang="id">
@@ -67,10 +68,79 @@
         <label class="block text-lime-400 text-xl font-[Geologica] mb-2">Konfirmasi Password</label>
         <input type="password" name="confirm_password" required
                class="w-full h-12 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-lg px-5 focus:outline-none focus:ring-2 focus:ring-lime-300">
+=======
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register | Beyond90{% endblock %}
+
+{% block content %}
+<!-- Main Container -->
+<div class="flex flex-col min-h-[calc(100vh-8rem)]">
+
+  <!-- Content Section -->
+  <div class="flex-grow flex flex-col items-center justify-start px-6 md:px-0 pt-28 relative pb-10">
+    <!-- Overlay Background -->
+    <div class="absolute inset-0 bg-[#261893] -z-10 pointer-events-none"></div>
+
+    <!-- Title -->
+    <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-[Geologica] mb-6 text-center leading-snug text-white">
+      Kick Off Your Football Journey with Beyond90!
+    </h1>
+    <h3 class="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-[Geologica] mb-10 text-center leading-snug">
+      Stay ahead with real-time updates<br>from the world of football
+    </h3>
+
+    <!-- Register Form -->
+    <form id="registerForm" method="POST" action="{% url 'authentication:register_view' %}" class="w-[80%] max-w-[700px]">
+      {% csrf_token %}
+
+      <div class="mb-6">
+        <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Username</label>
+        <input type="text" name="username" required
+               class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6">
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Email</label>
+        <input type="email" name="email" required
+               class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6">
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Alamat</label>
+        <input type="text" name="alamat" required
+               class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6">
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Umur</label>
+        <input type="number" name="umur" required min="1"
+               class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6">
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Nomor Handphone</label>
+        <input type="text" name="nomor_handphone" required
+               class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6">
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Password</label>
+        <input type="password" name="password" required
+          class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6">
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Konfirmasi Password</label>
+        <input type="password" name="confirm_password" required
+               class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6">
+>>>>>>> ad32ec64ac5e08c3c9ced140258fc6ce2b501355
       </div>
 
       <button type="submit"
               class="w-full bg-lime-400 text-indigo-900 text-2xl font-[Geologica] py-3 rounded-[36px] hover:scale-105 transition-transform">
+<<<<<<< HEAD
         Daftar
       </button>
 
@@ -78,10 +148,15 @@
         Sudah punya akun?
         <a href="{% url 'login' %}" class="underline hover:text-lime-300">Login di sini</a>
       </p>
+=======
+        Register
+      </button>
+>>>>>>> ad32ec64ac5e08c3c9ced140258fc6ce2b501355
     </form>
   </div>
 
   <!-- Footer -->
+<<<<<<< HEAD
   <footer class="bg-lime-400 py-4 mt-10 text-center">
     <p class="text-indigo-900 font-[Geologica] text-sm md:text-base">© 2025 Beyond90 — PBP-11</p>
   </footer>
@@ -122,3 +197,45 @@
   </script>
 </body>
 </html>
+=======
+  <footer class="w-full bg-lime-400 py-4 text-center mt-auto">
+    <p class="text-indigo-900 font-[Geologica] text-sm md:text-xl">© 2025 Beyond90 — PBP-11</p>
+  </footer>
+</div>
+
+<!-- AJAX Script -->
+<script>
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+
+  const response = await fetch("{% url 'authentication:register_view' %}", {
+    method: "POST",
+    headers: { "X-Requested-With": "XMLHttpRequest" },
+    body: formData
+  });
+
+  const data = await response.json();
+
+  if (data.success) {
+    Swal.fire({
+      icon: "success",
+      title: "Berhasil!",
+      text: data.message,
+      confirmButtonColor: "#84cc16"
+    }).then(() => {
+      window.location.href = data.redirect_url;
+    });
+  } else {
+    Swal.fire({
+      icon: "error",
+      title: "Gagal!",
+      text: data.message || "Terjadi kesalahan. Coba lagi ya!",
+      confirmButtonColor: "#ef4444"
+    });
+  }
+});
+</script>
+{% endblock %}
+>>>>>>> ad32ec64ac5e08c3c9ced140258fc6ce2b501355
