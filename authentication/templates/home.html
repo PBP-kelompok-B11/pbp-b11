@@ -17,13 +17,21 @@
             </div>
         </div>
 
+        <!-- Navbar -->
+        <nav class="hidden md:flex space-x-10 text-lg font-[Geologica]">
+            <a href="#" class="hover:text-lime-400 transition">Player</a>
+            <a href="#" class="hover:text-lime-400 transition">Club</a>
+            <a href="#" class="hover:text-lime-400 transition">Competition</a>
+            <a href="/" class="hover:text-lime-400 transition">Home</a>
+        </nav>
+
         <!-- Login / Logout -->
         {% if user.is_authenticated %}
-        <a href="{% url 'authentication:logout_view' %}" class="bg-lime-400 text-indigo-900 text-lg md:text-xl font-[Geologica] px-6 py-2 rounded-full hover:scale-105 transition">
+        <a href="{% url 'logout' %}" class="bg-lime-400 text-indigo-900 text-lg md:text-xl font-[Geologica] px-6 py-2 rounded-full hover:scale-105 transition">
             Logout
         </a>
         {% else %}
-        <a href="{% url 'authentication:login_view' %}" class="bg-lime-400 text-indigo-900 text-lg md:text-xl font-[Geologica] px-6 py-2 rounded-full hover:scale-105 transition">
+        <a href="{% url 'login' %}" class="bg-lime-400 text-indigo-900 text-lg md:text-xl font-[Geologica] px-6 py-2 rounded-full hover:scale-105 transition">
             Login
         </a>
         {% endif %}
@@ -39,7 +47,7 @@
             <p class="text-lg md:text-xl leading-relaxed">
                 Where football goes beyond the 90 minutes. Explore players, clubs, events, and interactive stats — all in one place.
             </p>
-            <a href="{% url 'nina_media_gallery:gallery_list' %}" class="inline-block bg-lime-400 text-indigo-900 text-xl font-[Geologica] px-8 py-3 rounded-full hover:scale-105 transition">
+            <a href="#" class="inline-block bg-lime-400 text-indigo-900 text-xl font-[Geologica] px-8 py-3 rounded-full hover:scale-105 transition">
                 Go to Gallery
             </a>
         </div>

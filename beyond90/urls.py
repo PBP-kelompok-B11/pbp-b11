@@ -22,6 +22,11 @@ urlpatterns = [
     path('profile/', include('nina_profile.urls')),
     path('media-gallery/', include('nina_media_gallery.urls')),
     path('player/', include('rafi_player.urls')),
+<<<<<<< HEAD
     path('clubs/', include('clubs.urls')),
     path('', include('authentication.urls')),
+=======
+    path('search/', include('search.urls')),
+    path('auth/', include('authentication.urls')),
+>>>>>>> 1c7272ea8cab2e844791339b07e06b23dab5d5fe
 ]
