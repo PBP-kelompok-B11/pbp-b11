@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils import timezone
 from rafi_player.models import Player
-from clubs.models import Club
+from ibeth_clubs.models import Club
 from search.models import SearchQuery
 
 class SearchViewsTestCase(TestCase):

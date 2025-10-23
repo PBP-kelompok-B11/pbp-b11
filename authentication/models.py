@@ -1,3 +1,5 @@
+# authentication/models.py
+from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -9,3 +11,4 @@ class UserProfile(models.Model):
 
     def str(self):
         return self.user.username
+
