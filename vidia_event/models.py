@@ -1,6 +1,6 @@
 # events/models.py
 from django.db import models
-from players.models import Player
+from rafi_player.models import Player
 from clubs.models import Club
 class Event(models.Model):
     LIGA = 'liga'

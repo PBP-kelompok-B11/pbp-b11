@@ -73,7 +73,7 @@ def participation_add(request, event_pk):
         participation.save()
         return redirect('event_detail', pk=event_pk)
     return render(request, 'participation_form.html', {
-        'form': form,
+        'participation_form': form,
         'event': event,
         'title': 'Tambah Partisipan',
     })
@@ -87,7 +87,7 @@ def participation_update(request, pk):
         form.save()
         return redirect('event_detail', pk=participation.event.pk)
     return render(request, 'participation_form.html', {
-        'form': form,
+        'participation_form': form,
         'event': participation.event,
         'title': 'Edit Partisipan',
     })

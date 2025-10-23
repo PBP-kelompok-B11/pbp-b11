@@ -1,32 +1,90 @@
-<!-- templates/events_list.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Daftar Event Sepak Bola</title>
-  <style>
-    body { font-family: Arial; background: #f2f5f9; margin: 0; padding: 20px; }
-    h1 { color: #222; }
-    a.button { background: #007bff; color: white; padding: 8px 12px; text-decoration: none; border-radius: 6px; }
-    a.button:hover { background: #0056b3; }
-    .card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    .event-title { font-size: 18px; font-weight: bold; color: #333; }
-    .event-date { color: #666; font-size: 14px; }
-  </style>
-</head>
-<body>
-  <h1>🏆 Daftar Event Sepak Bola</h1>
-  <a href="{% url 'event_create' %}" class="button">+ Tambah Event</a>
-  <br><br>
 
-  {% for event in events %}
-  <div class="card">
-    <div class="event-title">{{ event.nama_event }}</div>
-    <div class="event-date">{{ event.tanggal_mulai }} — {{ event.tanggal_selesai }}</div>
-    <a href="{% url 'event_detail' event.id %}" class="button">Detail</a>
-  </div>
-  {% empty %}
-  <p>Tidak ada event.</p>
-  {% endfor %}
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="w-[1920px] h-[1080px] relative bg-indigo-900 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] overflow-hidden">
+    <div class="w-[1920px] h-32 left-0 top-0 absolute overflow-hidden">
+        <div data-property-1="Component 38" class="w-60 h-12 left-[1587px] top-[38px] absolute overflow-hidden">
+            <div class="w-60 h-12 left-0 top-0 absolute bg-lime-400 rounded-[36px]"></div>
+            <div class="w-52 left-[12px] top-[5px] absolute text-center justify-center text-indigo-900 text-2xl font-normal font-['Geologica'] leading-10">Login</div>
+        </div>
+        <div class="w-44 h-11 left-[99px] top-[43px] absolute rounded-[40px] border-[3px] border-lime-400"></div>
+        <div class="w-24 h-11 left-[99px] top-[43px] absolute bg-lime-400 rounded-tl-[40px] rounded-bl-[40px] border-[3px] border-lime-400"></div>
+        <div class="w-14 h-5 left-[195.55px] top-[53.20px] absolute origin-top-left rotate-[0.51deg] text-center justify-start text-lime-400 text-3xl font-normal font-['Konkhmer_Sleokchher'] leading-normal">  11</div>
+        <div class="left-[125.35px] top-[55.22px] absolute text-center justify-start text-blue-700 text-3xl font-normal font-['Konkhmer_Sleokchher'] leading-normal">PBP</div>
+        <div data-property-1="Component 28" class="w-48 h-10 left-[586px] top-[43px] absolute overflow-hidden">
+            <div class="w-48 h-10 left-0 top-0 absolute bg-white/0 rounded-[36px]"></div>
+            <div class="w-52 left-[-12px] top-[-1px] absolute text-center justify-center text-white text-xl font-normal font-['Geologica'] leading-10">Player</div>
+        </div>
+        <div data-property-1="Component 28" class="w-48 h-10 left-[772px] top-[43px] absolute overflow-hidden">
+            <div class="w-48 h-10 left-0 top-0 absolute bg-white/0 rounded-[36px]"></div>
+            <div class="w-52 left-[-12px] top-[-1px] absolute text-center justify-center text-white text-xl font-normal font-['Geologica'] leading-10">Club</div>
+        </div>
+        <div data-property-1="Component 28" class="w-48 h-10 left-[958px] top-[43px] absolute overflow-hidden">
+            <div class="w-48 h-10 left-0 top-0 absolute bg-white/0 rounded-[36px]"></div>
+            <div class="w-52 left-[-12px] top-[-1px] absolute text-center justify-center text-white text-xl font-normal font-['Geologica'] leading-10">Competition</div>
+        </div>
+        <div data-property-1="Component 28" class="w-48 h-10 left-[1145px] top-[43px] absolute overflow-hidden">
+            <div class="w-48 h-10 left-0 top-0 absolute bg-white/0 rounded-[36px]"></div>
+            <div class="w-52 left-[-12px] top-[-1px] absolute text-center justify-center text-white text-xl font-normal font-['Geologica'] leading-10">Home</div>
+        </div>
+    </div>
+    <div class="w-[1920px] h-32 left-0 top-[955px] absolute bg-lime-400"></div>
+    <div class="w-[1920px] h-[955px] left-0 top-[125px] absolute bg-indigo-900 overflow-hidden">
+        <div class="w-[574px] h-36 left-[77px] top-[175px] absolute text-right justify-center text-white text-9xl font-normal font-['League_Gothic']">COMPETITION</div>
+        <div class="w-[1016px] h-[721px] left-[801px] top-[84px] absolute overflow-hidden">
+            <div class="w-[1017px] h-[625px] left-[-1px] top-[-1px] absolute bg-white rounded-[38px]"></div>
+            <div class="w-[978px] h-[595px] left-[17px] top-[14px] absolute bg-indigo-900 rounded-3xl"></div>
+            <div data-property-1="Frame 5098" class="w-[956px] h-28 left-[28px] top-[25px] absolute overflow-hidden">
+                <div class="w-[956px] h-28 left-0 top-0 absolute bg-lime-400 rounded-2xl"></div>
+                <div class="w-60 h-20 left-[707px] top-[13px] absolute bg-indigo-900 rounded-2xl"></div>
+                <div class="w-[563px] left-[39px] top-[22px] absolute justify-center text-indigo-900 text-5xl font-normal font-['Geologica'] leading-[62.50px]">Lorem vs Ipsum</div>
+                <div class="w-24 left-[775px] top-[22px] absolute justify-center text-white text-5xl font-semibold font-['Geologica'] leading-[62.50px]">0 - 1</div>
+            </div>
+            <div data-property-1="Frame 5098" class="w-[956px] h-28 left-[28px] top-[142px] absolute overflow-hidden">
+                <div class="w-[956px] h-28 left-0 top-0 absolute bg-lime-400 rounded-2xl"></div>
+                <div class="w-60 h-20 left-[707px] top-[13px] absolute bg-indigo-900 rounded-2xl"></div>
+                <div class="w-[563px] left-[39px] top-[22px] absolute justify-center text-indigo-900 text-5xl font-normal font-['Geologica'] leading-[62.50px]">Lorem vs Ipsum</div>
+                <div class="w-24 left-[775px] top-[22px] absolute justify-center text-white text-5xl font-semibold font-['Geologica'] leading-[62.50px]">0 - 1</div>
+            </div>
+            <div data-property-1="Frame 5098" class="w-[956px] h-28 left-[28px] top-[142px] absolute overflow-hidden">
+                <div class="w-[956px] h-28 left-0 top-0 absolute bg-lime-400 rounded-2xl"></div>
+                <div class="w-60 h-20 left-[707px] top-[13px] absolute bg-indigo-900 rounded-2xl"></div>
+                <div class="w-[563px] left-[39px] top-[22px] absolute justify-center text-indigo-900 text-5xl font-normal font-['Geologica'] leading-[62.50px]">Lorem vs Ipsum</div>
+                <div class="w-24 left-[775px] top-[22px] absolute justify-center text-white text-5xl font-semibold font-['Geologica'] leading-[62.50px]">0 - 1</div>
+            </div>
+            <div data-property-1="Frame 5098" class="w-[956px] h-28 left-[28px] top-[259px] absolute overflow-hidden">
+                <div class="w-[956px] h-28 left-0 top-0 absolute bg-lime-400 rounded-2xl"></div>
+                <div class="w-60 h-20 left-[707px] top-[13px] absolute bg-indigo-900 rounded-2xl"></div>
+                <div class="w-[563px] left-[39px] top-[22px] absolute justify-center text-indigo-900 text-5xl font-normal font-['Geologica'] leading-[62.50px]">Lorem vs Ipsum</div>
+                <div class="w-24 left-[775px] top-[22px] absolute justify-center text-white text-5xl font-semibold font-['Geologica'] leading-[62.50px]">0 - 1</div>
+            </div>
+            <div data-property-1="Frame 5098" class="w-[956px] h-28 left-[28px] top-[375px] absolute overflow-hidden">
+                <div class="w-[956px] h-28 left-0 top-0 absolute bg-lime-400 rounded-2xl"></div>
+                <div class="w-60 h-20 left-[707px] top-[13px] absolute bg-indigo-900 rounded-2xl"></div>
+                <div class="w-[563px] left-[39px] top-[22px] absolute justify-center text-indigo-900 text-5xl font-normal font-['Geologica'] leading-[62.50px]">Lorem vs Ipsum</div>
+                <div class="w-24 left-[775px] top-[22px] absolute justify-center text-white text-5xl font-semibold font-['Geologica'] leading-[62.50px]">0 - 1</div>
+            </div>
+            <div data-property-1="Frame 5098" class="w-[956px] h-28 left-[28px] top-[490px] absolute overflow-hidden">
+                <div class="w-[956px] h-28 left-0 top-0 absolute bg-lime-400 rounded-2xl"></div>
+                <div class="w-60 h-20 left-[707px] top-[13px] absolute bg-indigo-900 rounded-2xl"></div>
+                <div class="w-[563px] left-[39px] top-[22px] absolute justify-center text-indigo-900 text-5xl font-normal font-['Geologica'] leading-[62.50px]">Lorem vs Ipsum</div>
+                <div class="w-24 left-[775px] top-[22px] absolute justify-center text-white text-5xl font-semibold font-['Geologica'] leading-[62.50px]">0 - 1</div>
+            </div>
+        </div>
+        <div class="w-96 left-[100px] top-[342px] absolute justify-center text-white text-xl font-normal font-['Geologica'] leading-normal">Discover more than 100 competition around the globe!</div>
+        <a href="{% url 'event_create' %}">
+            <div data-property-1="Component 38" class="w-60 h-12 left-[100px] top-[417px] absolute overflow-hidden">
+                <div class="w-60 h-12 left-0 top-0 absolute bg-lime-400 rounded-[36px]"></div>
+                <div class="w-52 left-[12px] top-[5px] absolute text-center justify-center text-indigo-900 text-2xl font-normal font-['Geologica'] leading-10">
+                    Add Competition
+                </div>
+            </div>
+        </a>
+        <div class="w-96 h-[532.47px] left-[-38px] top-[392.20px] absolute origin-top-left rotate-[-9.33deg] outline outline-[20px] outline-offset-[-10px] outline-lime-400"></div>
+    </div>
+    <div class="w-[915px] h-36 left-[-240px] top-[1126px] absolute text-right justify-center text-indigo-900 text-[300px] font-normal font-['League_Gothic']">PLAYER</div>
+    <div class="w-[1920px] h-32 left-0 top-[955px] absolute bg-lime-400"></div>
+</div>
+{% endblock %}
