@@ -1,19 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-4">
-  <h2 class="mb-4">Konfirmasi Hapus Peringkat</h2>
-  <p>
-    Apakah Anda yakin ingin menghapus peringkat
-    <strong>{{ ranking.club.nama }}</strong> untuk musim
-    <strong>{{ ranking.musim }}</strong>?
-  </p>
-
-  <form method="post">
+<div class="max-w-lg mx-auto bg-white/5 p-6 rounded-2xl">
+  <h2 class="text-2xl font-semibold mb-4">Konfirmasi Hapus Peringkat</h2>
+  <p>Anda yakin ingin menghapus peringkat <strong>{{ ranking.club.nama }}</strong> untuk musim <strong>{{ ranking.musim }}</strong> ?</p>
+  <form method="post" class="mt-4">
     {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Hapus</button>
-    <a href="{% url 'club_detail' ranking.club.pk %}" class="btn btn-secondary"
-      >Batal</a
-    >
+    <button type="submit" class="px-4 py-2 rounded bg-red-600">Hapus</button>
+    <a href="{% url 'club_detail' ranking.club.pk %}" class="px-4 py-2 rounded bg-white/10">Batal</a>
   </form>
 </div>
 {% endblock %}

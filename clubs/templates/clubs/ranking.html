@@ -1,47 +1,34 @@
-{% extends 'base.html' %} {% block content %}
-<div class="container mt-4">
-  <h2 class="mb-4">Daftar Peringkat Klub</h2>
-  <table class="table table-striped">
-    <thead>
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white/5 p-6 rounded-2xl">
+  <h2 class="text-2xl font-bold mb-4">Daftar Peringkat Klub</h2>
+  <table class="w-full text-white">
+    <thead class="text-white/70">
       <tr>
-        <th>Klub</th>
-        <th>Musim</th>
-        <th>Peringkat</th>
-        <th>Aksi</th>
+        <th class="text-left">Klub</th>
+        <th class="text-left">Musim</th>
+        <th class="text-left">Peringkat</th>
+        <th class="text-left">Aksi</th>
       </tr>
     </thead>
     <tbody>
-      {% for ranking in rankings %}
-      <tr>
+      {% for r in rankings %}
+      <tr class="border-t border-white/5">
+        <td class="py-2"><a href="{% url 'club_detail' r.club.pk %}">{{ r.club.nama }}</a></td>
+        <td>{{ r.musim }}</td>
+        <td>{{ r.peringkat }}</td>
         <td>
-          <a href="{% url 'club_detail' ranking.club.pk %}"
-            >{{ ranking.club.nama }}</a
-          >
-        </td>
-        <td>{{ ranking.musim }}</td>
-        <td>{{ ranking.peringkat }}</td>
-        <td>
-          <a
-            href="{% url 'club_ranking_update' ranking.pk %}"
-            class="btn btn-sm btn-info"
-            >Edit</a
-          >
-          <a
-            href="{% url 'club_ranking_delete' ranking.pk %}"
-            class="btn btn-sm btn-danger"
-            >Hapus</a
-          >
+          <a href="{% url 'club_ranking_update' r.pk %}" class="px-2 py-1 rounded bg-blue-500">Edit</a>
+          <a href="{% url 'club_ranking_delete' r.pk %}" class="px-2 py-1 rounded bg-red-600">Hapus</a>
         </td>
       </tr>
       {% empty %}
-      <tr>
-        <td colspan="4">Belum ada data peringkat klub.</td>
-      </tr>
+      <tr><td colspan="4" class="py-4">Belum ada data peringkat klub.</td></tr>
       {% endfor %}
     </tbody>
   </table>
-  <a href="{% url 'club_list' %}" class="btn btn-secondary mt-3"
-    >Kembali ke Daftar Klub</a
-  >
+  <div class="mt-4">
+    <a href="{% url 'club_list' %}" class="px-4 py-2 rounded bg-white/10">Kembali</a>
+  </div>
 </div>
 {% endblock %}

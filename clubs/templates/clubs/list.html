@@ -1,29 +1,41 @@
-{% extends 'base.html' %} {% block content %}
-<div class="container mt-4">
-  <h2 class="mb-4">Daftar Klub</h2>
-  <a href="{% url 'club_create' %}" class="btn btn-primary mb-3"
-    >Tambah Klub Baru</a
-  >
-  <ul class="list-group">
-    {% for club in clubs %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'club_detail' club.pk %}"
-        >{{ club.nama }} ({{ club.negara }})</a
-      >
-      <div>
-        <a href="{% url 'club_update' club.pk %}" class="btn btn-sm btn-info"
-          >Edit</a
-        >
-        <a
-          href="{% url 'club_delete' club.pk %}"
-          class="btn btn-sm btn-danger"
-          >Hapus</a
-        >
+{% extends 'base.html' %}
+{% block content %}
+<div class="relative">
+  <div class="text-[200px] font-semibold text-white opacity-10 absolute -left-40 top-8">CLUB</div>
+
+  <div class="grid grid-cols-12 gap-6">
+    <!-- left column with CTA -->
+    <div class="col-span-4 space-y-6">
+      <div class="card-glass p-8">
+        <h2 class="text-2xl font-bold text-white mb-3">Discover more than 100 football club around the globe!</h2>
+        <a href="{% url 'club_create' %}" class="inline-block btn-lime mt-4">Add Club</a>
       </div>
-    </li>
-    {% empty %}
-    <li class="list-group-item">Belum ada klub terdaftar.</li>
-    {% endfor %}
-  </ul>
+    </div>
+
+    <!-- right column: club grid -->
+    <div class="col-span-8 bg-white rounded-3xl p-6 overflow-hidden">
+      <div class="bg-indigo-900 rounded-2xl p-6">
+        <div class="grid grid-cols-4 gap-6">
+          {% for club in clubs %}
+            <div class="relative rounded-2xl overflow-hidden">
+              <div class="bg-lime-400 rounded-2xl absolute inset-2"></div>
+              <div class="bg-indigo-900 rounded-2xl p-4 relative z-10">
+                <img src="https://placehold.co/291x291" alt="logo" class="w-full h-40 object-cover rounded-md mb-3">
+                <h3 class="text-lg font-semibold">{{ club.nama }}</h3>
+                <p class="text-sm text-white/80">{{ club.negara }}</p>
+                <div class="mt-3 flex gap-2">
+                  <a href="{% url 'club_detail' club.pk %}" class="px-3 py-1 rounded bg-white/10">Detail</a>
+                  <a href="{% url 'club_update' club.pk %}" class="px-3 py-1 rounded bg-white/10">Edit</a>
+                  <a href="{% url 'club_delete' club.pk %}" class="px-3 py-1 rounded bg-red-600">Hapus</a>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <div class="col-span-4 text-center p-6">Belum ada klub terdaftar.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

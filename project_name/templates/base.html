@@ -1,33 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sistem Data Sepak Bola</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container">
-        <a class="navbar-brand" href="/">Sistem Data Sepak Bola</a>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'club_list' %}">Klub</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'ranking_list' %}">Peringkat Klub</a>
-            </li>
-            <!-- Tambahkan link untuk aplikasi lain di sini -->
-          </ul>
-        </div>
-      </div>
-    </nav>
-    <div class="container">{% block content %} {% endblock %}</div>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Beyond90 - Football Portal</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Tailwind Play CDN for quick prototyping -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* small helper to emulate some of your figma layout feel */
+      .btn-lime {
+        @apply bg-lime-400 text-indigo-900 rounded-full px-4 py-2 font-semibold;
+      }
+      .card-glass {
+        @apply bg-white/5 backdrop-blur-md rounded-3xl p-6;
+      }
+    </style>
+  </head>
+  <body class="bg-indigo-900 text-white min-h-screen">
+    {% include "navbar.html" %}
+    <main class="container mx-auto py-8">
+      {% block content %}{% endblock %}
+    </main>
   </body>
 </html>
