@@ -16,7 +16,7 @@ def gallery_list(request):
         'media_list': media_list
     }
 
-    return render(request, "list.html", context)
+    return render(request, "gallery_list.html", context)
 
 def gallery_details(request, id):
     media = get_object_or_404(Media, pk=id)
@@ -27,7 +27,7 @@ def gallery_details(request, id):
     }
     return render(request, 'media_detail.html', context)
 
-@user_passes_test(is_admin)
+# @user_passes_test(is_admin)
 def gallery_upload(request):
     if request.method == "POST":
         form = MediaForm(request.POST, request.FILES)
@@ -41,7 +41,7 @@ def gallery_upload(request):
     form = MediaForm()
     return render(request, 'upload.html', {'form': form})
 
-(user_passes_test(is_admin))
+@user_passes_test(is_admin)
 def gallery_update(request, id):
     media = get_object_or_404(Media, pk=id)
     form = MediaForm(request.POST or None, instance=media)
@@ -59,4 +59,4 @@ def gallery_update(request, id):
 def gallery_delete(request, id):
     media = get_object_or_404(Media, pk=id)
     media.delete()
-    return HttpResponseRedirect()
+    return redirect('nina_media_gallery:gallery_list')

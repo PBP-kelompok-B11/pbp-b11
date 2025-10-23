@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .gallery-page {
+        background: linear-gradient(135deg, #1a0b5e 0%, #2d1b8f 50%, #1a0b5e 100%);
+        min-height: 100vh;
+        padding: 40px;
+        padding-top: 120px; /* Beri jarak dari navbar */
+        color: white;
+    }
+
+    /* Back Button */
+    .back-button, .add-button {
+        display: inline-block;
+        margin-bottom: 20px;
+        padding: 10px 20px;
+        background-color: #c4ff00;
+        color: #1a0b5e;
+        font-weight: bold;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .back-button:hover, .add-button:hover {
+        background-color: #a6e000;
+        color: white;
+    }
+
+    .top-bar{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    /* Gallery Container */
+    .gallery-container {
+        background: linear-gradient(135deg, #2d1b8f 0%, #1a0b7e 100%);
+        border: 3px solid white;
+        border-radius: 15px;
+        padding: 40px;
+        min-height: 100vh
+    }
+
+    /* Gallery Grid */
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 20px;
+    }
+
+    .gallery-item {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 3px solid #c4ff00;
+        border-radius: 10px;
+        padding: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 1;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .gallery-item:hover {
+        transform: scale(1.05);
+        border-color: white;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .gallery-item svg {
+        width: 60px;
+        height: 60px;
+        fill: #1a0b5e;
+    }
+
+    /* User Icon Style */
+    .user-icon {
+        width: 70px;
+        height: 70px;
+    }
+
+    .user-icon circle {
+        fill: #1a0b5e;
+    }
+
+    .user-icon path {
+        fill: #1a0b5e;
+    }
+</style>
+
+<div class="gallery-page">
+    <div class="top-bar">
+        <!-- Back Button -->
+        <a href="{% url 'authentication:home_view' %}" class="back-button">← Back</a>
+        <button class="add-button" onclick="openModal()">+ Add Media</a>
+    </div>
+    <!-- Gallery Container -->
+    <div class="gallery-container">
+        <div class="gallery-grid">
+            <!-- Gallery Item 1 -->
+            <div class="gallery-item">
+                <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M12 14c-6 0-8 4-8 4v2h16v-2s-2-4-8-4z"/>
+                </svg>
+            </div>
+            
+            <!-- Tambahkan lebih banyak gallery items di sini -->
+        </div>
+    </div>
+</div>
+
+ <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50 transition-opacity duration-300 ease-out">
+
+        <!-- Konten Modal -->
+        <div id="modalContent" class="bg-[#1E1BFF] w-11/12 md:w-1/2 p-10 rounded-xl shadow-2xl text-white transform scale-90 opacity-0 transition-all duration-300 ease-out">
+
+            <!-- Tombol Close -->
+            <button onclick="closeModal()" class="absolute top-4 right-6 text-white hover:text-gray-300 text-2xl">&times;</button>
+
+            <!-- Back -->
+            <a href="{% url 'nina_media_gallery:gallery_list' %}" 
+               class="flex items-center text-lime-400 mb-2 hover:text-white transition">
+                <span class="text-xl mr-2">&larr;</span> Back to Gallery
+            </a>
+
+            <!-- Judul -->
+            <h1 class="text-5xl font-bold mb-8 tracking-wide">Upload Media</h1>
+
+            <!-- Form Upload -->
+            <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="space-y-6">
+                    <!-- Deskripsi -->
+                    <div>
+                        <label class="block text-white mb-2 font-medium">Deskripsi</label>
+                        {{ form.deskripsi }}
+                    </div>
+
+                    <!-- Kategori -->
+                    <div>
+                        <label class="block text-white mb-2 font-medium">Kategori</label>
+                        {{ form.category }}
+                    </div>
+
+                    <!-- Thumbnail -->
+                    <div>
+                        <label class="block text-white mb-2 font-medium">Thumbnail</label>
+                        {{ form.thumbnail }}
+                    </div>
+                </div>
+
+                <div class="text-center mt-10">
+                    <button type="submit"
+                        class="px-10 py-3 bg-lime-400 text-indigo-900 font-semibold rounded-full hover:bg-lime-300 transition">
+                        Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50"></div>
+</div>
+
+<script>
+/* ---- Modal Open / Close ---- */
+function openModal() {
+    const modal = document.getElementById('modal');
+    const content = document.getElementById('modalContent');
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        content.classList.remove('scale-90', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+function closeModal() {
+    const modal = document.getElementById('modal');
+    const content = document.getElementById('modalContent');
+    content.classList.add('scale-90', 'opacity-0');
+    content.classList.remove('scale-100', 'opacity-100');
+    setTimeout(() => modal.classList.add('hidden'), 200);
+}
+
+/* ---- AJAX Upload ---- */
+document.getElementById("uploadForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    // Validasi kosong
+    const inputs = this.querySelectorAll("input, textarea, select");
+    let valid = true;
+    inputs.forEach(input => {
+        if (!input.value.trim()) {
+            valid = false;
+            input.classList.add("border-red-500");
+        } else {
+            input.classList.remove("border-red-500");
+        }
+    });
+
+    if (!valid) {
+        showToast("⚠️ Please fill in all fields!", "error");
+        return;
+    }
+
+    let formData = new FormData(this);
+
+    fetch("{% url 'nina_media_gallery:gallery_upload' %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            showToast("✅ Upload berhasil!", "success");
+            setTimeout(() => {
+                closeModal();
+                window.location.href = "{% url 'nina_media_gallery:gallery_list' %}";
+            }, 2000);
+        } else {
+            showToast("❌ " + (data.message || "Upload gagal!"), "error");
+        }
+    })
+    .catch(() => {
+        showToast("❌ Terjadi kesalahan server!", "error");
+    });
+});
+
+/* ---- Toast Notification ---- */
+function showToast(message, type = "success") {
+    const container = document.getElementById("toastContainer");
+    const toast = document.createElement("div");
+
+    toast.className = `
+        mb-3 px-6 py-3 rounded-lg shadow-lg text-white transition-opacity duration-500 opacity-0
+        ${type === "success" ? "bg-green-500" : "bg-red-500"}
+    `;
+    toast.textContent = message;
+
+    container.appendChild(toast);
+    setTimeout(() => toast.classList.add("opacity-100"), 50);
+    setTimeout(() => {
+        toast.classList.remove("opacity-100");
+        setTimeout(() => toast.remove(), 500);
+    }, 2500);
+}
+</script>
+{% endblock %}
