@@ -1,6 +1,5 @@
-<<<<<<< HEAD
+# authentication/models.py
 from django.contrib.auth.models import User
-=======
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -12,4 +11,4 @@ class UserProfile(models.Model):
 
     def str(self):
         return self.user.username
->>>>>>> ad32ec64ac5e08c3c9ced140258fc6ce2b501355
+
