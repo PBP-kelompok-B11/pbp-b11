@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from django.utils import timezone
@@ -8,6 +8,7 @@ from django.core import serializers
 from .models import SearchQuery
 from rafi_player.models import Player
 from ibeth_clubs.models import Club
+from vidia_event.models import Event
 
 
 # ===============================
@@ -199,7 +200,8 @@ def search_history(request):
         ]
         return JsonResponse({'history': data})
 
-    return render(request, 'search/history.html', {'history': history})
+    return render(request, 'search/history.html', {'histories': history})
+
 
 
 # ===============================
@@ -209,3 +211,109 @@ def search_history(request):
 def search_form(request):
     """Menampilkan halaman form pencarian."""
     return render(request, 'search/form.html')
+
+def search_redirect(request):
+    query = request.GET.get('q', '').strip().lower()
+
+    if not query:
+        return redirect('home')  # atau halaman default
+
+    # cek apakah keyword lebih cocok ke player atau club
+    if Player.objects.filter(name__icontains=query).exists():
+        return redirect(f'/player/?q={query}')
+    elif Club.objects.filter(name__icontains=query).exists():
+        return redirect(f'/club/?q={query}')
+    else:
+        # fallback kalau gak nemu apa pun
+        return redirect('home')
+    
+@login_required
+def clear_search_history(request):
+    if request.method == 'POST':
+        SearchQuery.objects.filter(user=request.user).delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False}, status=400)
+
+# ===============================
+# SEARCH EVENTS (AJAX)
+# ===============================
+
+def search_events(request):
+    """Mencari event berdasarkan nama, tipe, atau lokasi (AJAX support)."""
+    query = request.GET.get('q', '')
+    results = []
+
+    if query:
+        # Simpan query ke database
+        SearchQuery.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            kata_kunci=query,
+            jenis='event',
+            tanggal=timezone.now()
+        )
+
+        # Cari di model Event
+        results = Event.objects.filter(
+            Q(nama_event__icontains=query) |
+            Q(tipe__icontains=query) |
+            Q(lokasi__icontains=query)
+        ).distinct()
+
+    # Balikkan hasil ke AJAX
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        data = [
+            {
+                'nama_event': e.nama_event,
+                'tipe': e.tipe,
+                'lokasi': e.lokasi,
+                'tanggal_mulai': e.tanggal_mulai.strftime("%d %b %Y"),
+                'tanggal_selesai': e.tanggal_selesai.strftime("%d %b %Y"),
+            } for e in results
+        ]
+        return JsonResponse({'query': query, 'results': data, 'jenis': 'event'})
+
+    # fallback ke HTML biasa
+    return render(request, 'search/results.html', {
+        'query': query,
+        'results': results,
+        'jenis': 'event'
+    })
+
+
+# ===============================
+# FILTER EVENTS (AJAX)
+# ===============================
+
+def filter_events(request):
+    """Filter event berdasarkan tipe, lokasi, atau rentang tanggal."""
+    tipe_filter = request.GET.get('tipe', '')
+    lokasi_filter = request.GET.get('lokasi', '')
+    mulai_filter = request.GET.get('tanggal_mulai', '')
+    selesai_filter = request.GET.get('tanggal_selesai', '')
+
+    results = Event.objects.all()
+
+    if tipe_filter:
+        results = results.filter(tipe__iexact=tipe_filter)
+    if lokasi_filter:
+        results = results.filter(lokasi__icontains=lokasi_filter)
+    if mulai_filter:
+        results = results.filter(tanggal_mulai__gte=mulai_filter)
+    if selesai_filter:
+        results = results.filter(tanggal_selesai__lte=selesai_filter)
+
+    results = results.distinct()
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        data = [
+            {
+                'nama_event': e.nama_event,
+                'tipe': e.tipe,
+                'lokasi': e.lokasi,
+                'tanggal_mulai': e.tanggal_mulai.strftime("%d %b %Y"),
+                'tanggal_selesai': e.tanggal_selesai.strftime("%d %b %Y"),
+            } for e in results
+        ]
+        return JsonResponse({'results': data})
+
+    return render(request, 'search/filter_events.html', {'results': results})

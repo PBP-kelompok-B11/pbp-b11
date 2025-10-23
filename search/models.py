@@ -5,6 +5,7 @@ class SearchQuery(models.Model):
     JENIS_PILIHAN = [
         ('pemain', 'Pemain'),
         ('klub', 'Klub'),
+        ('event', 'Event')
     ]
 
     # User bisa kosong (karena fitur search bisa diakses tanpa login)
