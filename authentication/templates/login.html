@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% load static %}
 <!DOCTYPE html>
 <html lang="id">
@@ -36,6 +37,17 @@
       <div class="absolute left-[1145px] top-[43px] text-white text-xl font-[Geologica]">Home</div>
     </div>
 
+=======
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login| Beyond90{% endblock %}
+
+{% block content %}
+  <!-- MAIN WRAPPER -->
+  <div class="relative w-[1920px] h-[1080px] bg-indigo-900 overflow-hidden">
+
+>>>>>>> ad32ec64ac5e08c3c9ced140258fc6ce2b501355
     <!-- FOOTER -->
     <div class="absolute bottom-0 left-0 w-full h-32 bg-lime-400"></div>
 
@@ -82,7 +94,11 @@
         <!-- Register Link -->
         <p class="mt-8 text-center text-lime-400 text-lg font-[Geologica]">
           Belum punya akun?
+<<<<<<< HEAD
           <a href="{% url 'register' %}"
+=======
+          <a href="{% url 'authentication:register_view' %}"
+>>>>>>> ad32ec64ac5e08c3c9ced140258fc6ce2b501355
              class="underline hover:text-lime-300 transition-colors duration-200">
             Register di sini
           </a>
@@ -99,7 +115,11 @@
       const formData = new FormData(form);
 
       try {
+<<<<<<< HEAD
           const response = await fetch("{% url 'login' %}", {
+=======
+          const response = await fetch("{% url 'authentication:login_view' %}", {
+>>>>>>> ad32ec64ac5e08c3c9ced140258fc6ce2b501355
               method: "POST",
               headers: {
                   "X-Requested-With": "XMLHttpRequest",
@@ -143,6 +163,10 @@
       }
   });
   </script>
+<<<<<<< HEAD
 
 </body>
 </html>
+=======
+{% endblock %}
+>>>>>>> ad32ec64ac5e08c3c9ced140258fc6ce2b501355

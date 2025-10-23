@@ -4,4 +4,4 @@ from nina_media_gallery.models import Media
 class MediaForm(ModelForm):
     class Meta:
         model = Media
-        fields = ["deksripsi", "category", "thumbnail"]
+        fields = ["deskripsi", "category", "thumbnail"]

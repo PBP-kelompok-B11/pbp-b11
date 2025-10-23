@@ -19,10 +19,14 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('main.urls')),
     path('profile/', include('nina_profile.urls')),
     path('media-gallery/', include('nina_media_gallery.urls')),
     path('player/', include('rafi_player.urls')),
+<<<<<<< HEAD
     path('search/', include('search.urls')),
     path('auth/', include('authentication.urls')),
+=======
+    path('clubs/', include('clubs.urls')),
+    path('', include('authentication.urls')),
+>>>>>>> ad32ec64ac5e08c3c9ced140258fc6ce2b501355
 ]
