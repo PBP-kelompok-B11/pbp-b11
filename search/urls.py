@@ -15,5 +15,13 @@ urlpatterns = [
     path('clear-history/', views.clear_search_history, name='clear_search_history'),
     path('events/', views.search_events, name='search_events'),
     path('events/filter/', views.filter_events, name='filter_events'),
+    path('players/filter/', views.filter_players, name='filter_players'),
+    path('clubs/filter/', views.filter_clubs, name='filter_clubs'),
 
 ]
+
+#WHAT SHOULD I DO
+
+# 1. Nambahin id di path urls
+# 2. izin ke ibeth dan Ubah kode list.html yang ada di ibeth_club (include club_filter_component.html)
+# 3. izin ke rafi dan Ubah kode list.html yang ada di rafi_player (include player_filter_component.html)

@@ -12,21 +12,30 @@
     .card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
     .event-title { font-size: 18px; font-weight: bold; color: #333; }
     .event-date { color: #666; font-size: 14px; }
+    .topbar { display:flex; align-items:center; gap:10px; }
   </style>
 </head>
 <body>
-  <h1>🏆 Daftar Event Sepak Bola</h1>
+  <div class="topbar">
+    <h1>🏆 Daftar Event Sepak Bola</h1>
+    {% include 'search/event_filter_component.html' %}
+  </div>
+
   <a href="{% url 'event_create' %}" class="button">+ Tambah Event</a>
   <br><br>
 
-  {% for event in events %}
-  <div class="card">
-    <div class="event-title">{{ event.nama_event }}</div>
-    <div class="event-date">{{ event.tanggal_mulai }} — {{ event.tanggal_selesai }}</div>
-    <a href="{% url 'event_detail' event.id %}" class="button">Detail</a>
+  <!-- tempat AJAX hasil filter -->
+  <div id="eventContainer">
+    {% for event in events %}
+      <div class="card">
+        <div class="event-title">{{ event.nama_event }}</div>
+        <div class="event-date">{{ event.tanggal_mulai }} — {{ event.tanggal_selesai }}</div>
+        <div class="event-info">{{ event.lokasi }} • {{ event.tipe }}</div>
+        <a href="{% url 'event_detail' event.id %}" class="button">Detail</a>
+      </div>
+    {% empty %}
+      <p>Tidak ada event.</p>
+    {% endfor %}
   </div>
-  {% empty %}
-  <p>Tidak ada event.</p>
-  {% endfor %}
 </body>
 </html>
