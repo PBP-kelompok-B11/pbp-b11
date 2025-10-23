@@ -27,10 +27,18 @@ class EventParticipationForm(forms.ModelForm):
         model = EventParticipation
         fields = ['player', 'club', 'peran', 'hasil']
         widgets = {
-            'player': forms.Select(attrs={'class': 'form-select'}),
-            'club': forms.Select(attrs={'class': 'form-select'}),
-            'peran': forms.Select(attrs={'class': 'form-select'}),
-            'hasil': forms.Select(attrs={'class': 'form-select'}),
+            'player': forms.Select(attrs={
+                    'class': 'w-48 h-10 bg-lime-400 text-indigo-900 text-xl font-normal rounded-[36px] px-3'
+                        }),
+            'club': forms.Select(attrs={
+                    'class': 'w-48 h-10 bg-lime-400 text-indigo-900 text-xl font-normal rounded-[36px] px-3'
+                        }),
+            'peran': forms.Select(attrs={
+                    'class': 'w-48 h-10 bg-lime-400 text-indigo-900 text-xl font-normal rounded-[36px] px-3'
+                        }),
+            'hasil': forms.Select(attrs={
+                    'class': 'w-48 h-10 bg-lime-400 text-indigo-900 text-xl font-normal rounded-[36px] px-3'
+                        }),
         }
         labels = {
             'player': 'Pemain',
@@ -49,3 +57,4 @@ class EventParticipationForm(forms.ModelForm):
             raise forms.ValidationError("Minimal isi salah satu: pemain atau klub.")
 
         return cleaned_data
+    
