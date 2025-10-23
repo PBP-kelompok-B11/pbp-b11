@@ -16,14 +16,14 @@
 </head>
 <body>
   <h1>🏆 Daftar Event Sepak Bola</h1>
-  <a href="{% url 'event_create' %}" class="button">+ Tambah Event</a>
+  <a href="{% url 'vidia_event:event_create' %}" class="button">+ Tambah Event</a>
   <br><br>
 
   {% for event in events %}
   <div class="card">
     <div class="event-title">{{ event.nama_event }}</div>
     <div class="event-date">{{ event.tanggal_mulai }} — {{ event.tanggal_selesai }}</div>
-    <a href="{% url 'event_detail' event.id %}" class="button">Detail</a>
+    <a href="{% url 'vidia_event: event_detail' event.id %}" class="button">Detail</a>
   </div>
   {% empty %}
   <p>Tidak ada event.</p>

@@ -2,9 +2,10 @@
 from django.urls import path
 from . import views
 
+app_name = 'vidia_event'
 urlpatterns = [
     # EVENT CRUD
-    path('event/', views.event_list, name='event_list'),                                # daftar semua event
+    path('', views.event_list, name='event_list'),                                # daftar semua event
     path('event/<int:pk>/', views.event_detail, name='event_detail'),                   # detail event
     path('event/create/', views.event_create, name='event_create'),                     # tambah event
     path('event/<int:pk>/edit/', views.event_update, name='event_update'),              # edit event

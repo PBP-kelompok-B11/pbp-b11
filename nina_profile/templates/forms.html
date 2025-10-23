@@ -1,0 +1,50 @@
+<div class="modal fade" id="widgetModal" tabindex="-1" aria-labelledby="widgetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="widgetModalLabel">
+                    {% if widget %}Edit Widget {% else %} Add Widget {% endif %}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="widgetForm" method="post" action="{% if widget %}{% url 'widget_update' widget.id %}{% else %}{% url 'widget_create' %}{% endif %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+
+                    <div id="formErrors" class="text-danger small"></div>
+
+                    <div class="mt-3 text-end">
+                        <button type="submit" class="btn btn-primary">
+                            {% if widget %} Update {% else %} Simpan {% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#widgetForm').on('submit', function(e){
+        e.preventDefault();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(response){
+                if(response.status == 'success'){
+                    $('#widgetModal').modal('hide');
+                    location.reload();
+                }else if (response.status == 'error'){
+                    $('#formErrors').html(response.message || 'Something went wrong..')
+                }
+            },
+            error: function(xhr){
+                $('#formErrors').html('Failed to send the data')
+            }
+        });
+    });
+</script>

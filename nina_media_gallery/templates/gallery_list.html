@@ -7,7 +7,7 @@
         background: linear-gradient(135deg, #1a0b5e 0%, #2d1b8f 50%, #1a0b5e 100%);
         min-height: 100vh;
         padding: 40px;
-        padding-top: 120px; /* Beri jarak dari navbar */
+        padding-top: 120px;
         color: white;
     }
 
@@ -22,11 +22,13 @@
         border-radius: 8px;
         text-decoration: none;
         transition: background-color 0.3s ease;
+        font-size: 20px;
+        border: none;
+        cursor: pointer;
     }
 
     .back-button:hover, .add-button:hover {
         background-color: #a6e000;
-        color: white;
     }
 
     .top-bar{
@@ -43,13 +45,13 @@
         border: 3px solid white;
         border-radius: 15px;
         padding: 40px;
-        min-height: 100vh
+        min-height: 100vh;
     }
 
     /* Gallery Grid */
     .gallery-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 20px;
     }
 
@@ -75,7 +77,7 @@
     .gallery-item svg {
         width: 60px;
         height: 60px;
-        fill: #1a0b5e;
+        fill: #c4ff00;
     }
 
     /* User Icon Style */
@@ -85,20 +87,117 @@
     }
 
     .user-icon circle {
-        fill: #1a0b5e;
+        fill: #c4ff00;
     }
 
     .user-icon path {
-        fill: #1a0b5e;
+        fill: #c4ff00;
+    }
+
+    /* Form Styles */
+    .form-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #c4ff00;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 16px;
+        margin-bottom: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: white;
+        background: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 0 3px rgba(196, 255, 0, 0.1);
+    }
+
+    .form-input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .form-label {
+        display: block;
+        color: white;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 16px;
+    }
+
+    .error-border {
+        border-color: #ef4444 !important;
+    }
+
+    .error-message {
+        color: #ef4444;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #1a0b5e;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-left: 10px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Toast Notification */
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 16px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        z-index: 10000;
+        animation: slideIn 0.3s ease-out;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .toast.success {
+        background-color: #10b981;
+    }
+
+    .toast.error {
+        background-color: #ef4444;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .hidden {
+        display: none !important;
     }
 </style>
 
 <div class="gallery-page">
     <div class="top-bar">
-        <!-- Back Button -->
+        <!-- PERBAIKAN: Tutup tag button dengan benar -->
         <a href="{% url 'authentication:home_view' %}" class="back-button">← Back</a>
-        <button class="add-button" onclick="openModal()">+ Add Media</a>
+        <button class="add-button" onclick="openModal()">+ Add Media</button>
     </div>
+
     <!-- Gallery Container -->
     <div class="gallery-container">
         <div class="gallery-grid">
@@ -109,150 +208,325 @@
                     <path d="M12 14c-6 0-8 4-8 4v2h16v-2s-2-4-8-4z"/>
                 </svg>
             </div>
-            
-            <!-- Tambahkan lebih banyak gallery items di sini -->
         </div>
     </div>
 </div>
 
- <!-- Modal -->
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50 transition-opacity duration-300 ease-out">
+<!-- Modal -->
+<div id="modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50 transition-opacity duration-300 ease-out">
+    <!-- Konten Modal -->
+    <div id="modalContent" class="bg-[#1E1BFF] w-11/12 md:w-1/2 p-10 rounded-xl shadow-2xl text-white transform scale-90 opacity-0 transition-all duration-300 ease-out">
 
-        <!-- Konten Modal -->
-        <div id="modalContent" class="bg-[#1E1BFF] w-11/12 md:w-1/2 p-10 rounded-xl shadow-2xl text-white transform scale-90 opacity-0 transition-all duration-300 ease-out">
+        <!-- Tombol Close -->
+        <button onclick="closeModal()" class="absolute top-4 right-6 text-white hover:text-gray-300 text-2xl">&times;</button>
 
-            <!-- Tombol Close -->
-            <button onclick="closeModal()" class="absolute top-4 right-6 text-white hover:text-gray-300 text-2xl">&times;</button>
+        <!-- Judul -->
+        <h1 class="text-5xl font-bold mb-8 tracking-wide">Upload Media</h1>
 
-            <!-- Back -->
-            <a href="{% url 'nina_media_gallery:gallery_list' %}" 
-               class="flex items-center text-lime-400 mb-2 hover:text-white transition">
-                <span class="text-xl mr-2">&larr;</span> Back to Gallery
-            </a>
+        <!-- PERBAIKAN: Form Upload Manual (tidak menggunakan {{ form }}) -->
+        <form id="uploadForm" method="POST">
+            {% csrf_token %}
 
-            <!-- Judul -->
-            <h1 class="text-5xl font-bold mb-8 tracking-wide">Upload Media</h1>
-
-            <!-- Form Upload -->
-            <form id="uploadForm" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                <div class="space-y-6">
-                    <!-- Deskripsi -->
-                    <div>
-                        <label class="block text-white mb-2 font-medium">Deskripsi</label>
-                        {{ form.deskripsi }}
-                    </div>
-
-                    <!-- Kategori -->
-                    <div>
-                        <label class="block text-white mb-2 font-medium">Kategori</label>
-                        {{ form.category }}
-                    </div>
-
-                    <!-- Thumbnail -->
-                    <div>
-                        <label class="block text-white mb-2 font-medium">Thumbnail</label>
-                        {{ form.thumbnail }}
-                    </div>
+            <div class="space-y-6">
+                <!-- Deskripsi -->
+                <div>
+                    <label for="deskripsi" class="form-label">Deskripsi *</label>
+                    <textarea 
+                        id="deskripsi"
+                        name="deskripsi" 
+                        class="form-input" 
+                        rows="4" 
+                        placeholder="Masukkan deskripsi media..." 
+                        required
+                    ></textarea>
+                    <div id="deskripsi-error" class="error-message hidden"></div>
                 </div>
 
-                <div class="text-center mt-10">
-                    <button type="submit"
-                        class="px-10 py-3 bg-lime-400 text-indigo-900 font-semibold rounded-full hover:bg-lime-300 transition">
-                        Submit
-                    </button>
+                <!-- Kategori -->
+                <div>
+                    <label for="category" class="form-label">Kategori *</label>
+                    <select 
+                        id="category"
+                        name="category" 
+                        class="form-input" 
+                        required
+                    >
+                        <option value="">Pilih Kategori</option>
+                        <option value="foto">Photo</option>
+                        <option value="video">Video</option>
+                    </select>
+                    <div id="category-error" class="error-message hidden"></div>
                 </div>
-            </form>
-        </div>
+
+                <!-- Thumbnail URL -->
+                <div>
+                    <label for="thumbnail" class="form-label">Thumbnail URL</label>
+                    <input 
+                        type="url" 
+                        id="thumbnail"
+                        name="thumbnail" 
+                        class="form-input" 
+                        placeholder="https://example.com/image.jpg"
+                    >
+                    <div id="thumbnail-error" class="error-message hidden"></div>
+                    <p class="text-sm text-gray-300 mt-2">
+                        Opsional: Masukkan URL gambar yang valid (jpg, png, gif, webp)
+                    </p>
+                </div>
+            </div>
+
+            <div class="text-center mt-10">
+                <button 
+                    type="submit" 
+                    id="submitButton"
+                    class="px-10 py-3 bg-lime-400 text-indigo-900 font-semibold rounded-full hover:bg-lime-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Submit
+                </button>
+                <div id="formLoading" class="loading-spinner inline-block ml-3"></div>
+            </div>
+        </form>
     </div>
-
-    <!-- Toast Notification -->
-    <div id="toastContainer" class="fixed bottom-5 right-5 z-50"></div>
 </div>
+
+<!-- Toast Notification -->
+<div id="toastContainer" class="fixed bottom-5 right-5 z-50"></div>
 
 <script>
 /* ---- Modal Open / Close ---- */
 function openModal() {
+    console.log('Opening modal...');
     const modal = document.getElementById('modal');
     const content = document.getElementById('modalContent');
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        content.classList.remove('scale-90', 'opacity-0');
-        content.classList.add('scale-100', 'opacity-100');
-    }, 10);
+    
+    if (modal && content) {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            content.classList.remove('scale-90', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
 }
 
 function closeModal() {
     const modal = document.getElementById('modal');
     const content = document.getElementById('modalContent');
-    content.classList.add('scale-90', 'opacity-0');
-    content.classList.remove('scale-100', 'opacity-100');
-    setTimeout(() => modal.classList.add('hidden'), 200);
+    
+    if (modal && content) {
+        content.classList.add('scale-90', 'opacity-0');
+        content.classList.remove('scale-100', 'opacity-100');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            resetForm();
+        }, 200);
+    }
+}
+
+// Reset form ketika modal ditutup
+function resetForm() {
+    const form = document.getElementById('uploadForm');
+    const submitButton = document.getElementById('submitButton');
+    const loadingSpinner = document.getElementById('formLoading');
+    
+    if (form) form.reset();
+    if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit';
+    }
+    if (loadingSpinner) loadingSpinner.style.display = 'none';
+    
+    // Hapus error states
+    document.querySelectorAll('.error-border').forEach(el => {
+        el.classList.remove('error-border');
+    });
+    document.querySelectorAll('.error-message').forEach(el => {
+        el.classList.add('hidden');
+    });
+}
+
+/* ---- Form Validation ---- */
+function validateForm() {
+    let isValid = true;
+    
+    // Validasi Deskripsi
+    const deskripsi = document.getElementById('deskripsi');
+    const deskripsiError = document.getElementById('deskripsi-error');
+    if (!deskripsi.value.trim()) {
+        deskripsi.classList.add('error-border');
+        deskripsiError.textContent = 'Deskripsi harus diisi';
+        deskripsiError.classList.remove('hidden');
+        isValid = false;
+    } else {
+        deskripsi.classList.remove('error-border');
+        deskripsiError.classList.add('hidden');
+    }
+    
+    // Validasi Kategori
+    const category = document.getElementById('category');
+    const categoryError = document.getElementById('category-error');
+    if (!category.value) {
+        category.classList.add('error-border');
+        categoryError.textContent = 'Kategori harus dipilih';
+        categoryError.classList.remove('hidden');
+        isValid = false;
+    } else {
+        category.classList.remove('error-border');
+        categoryError.classList.add('hidden');
+    }
+    
+    // Validasi Thumbnail URL (opsional, tapi jika diisi harus valid)
+    const thumbnail = document.getElementById('thumbnail');
+    const thumbnailError = document.getElementById('thumbnail-error');
+    if (thumbnail.value.trim() && !isValidUrl(thumbnail.value)) {
+        thumbnail.classList.add('error-border');
+        thumbnailError.textContent = 'URL thumbnail tidak valid';
+        thumbnailError.classList.remove('hidden');
+        isValid = false;
+    } else {
+        thumbnail.classList.remove('error-border');
+        thumbnailError.classList.add('hidden');
+    }
+    
+    return isValid;
+}
+
+// Validasi URL sederhana
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        return false;
+    }
 }
 
 /* ---- AJAX Upload ---- */
-document.getElementById("uploadForm").addEventListener("submit", function(e) {
+document.getElementById("uploadForm").addEventListener("submit", async function(e) {
     e.preventDefault();
-
-    // Validasi kosong
-    const inputs = this.querySelectorAll("input, textarea, select");
-    let valid = true;
-    inputs.forEach(input => {
-        if (!input.value.trim()) {
-            valid = false;
-            input.classList.add("border-red-500");
-        } else {
-            input.classList.remove("border-red-500");
-        }
-    });
-
-    if (!valid) {
-        showToast("⚠️ Please fill in all fields!", "error");
+    
+    console.log('Form submitted...');
+    
+    // Validasi form
+    if (!validateForm()) {
+        showToast("⚠️ Harap perbaiki field yang bermasalah!", "error");
         return;
     }
-
-    let formData = new FormData(this);
-
-    fetch("{% url 'nina_media_gallery:gallery_upload' %}", {
-        method: "POST",
-        headers: { "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value },
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
+    
+    const submitButton = document.getElementById('submitButton');
+    const loadingSpinner = document.getElementById('formLoading');
+    
+    // Show loading state
+    submitButton.disabled = true;
+    submitButton.textContent = 'Uploading...';
+    loadingSpinner.style.display = 'inline-block';
+    
+    try {
+        // Prepare form data
+        const formData = {
+            'deskripsi': document.getElementById('deskripsi').value,
+            'category': document.getElementById('category').value,
+            'thumbnail': document.getElementById('thumbnail').value,
+            'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        };
+        
+        console.log('Sending data:', formData);
+        
+        const response = await fetch("{% url 'nina_media_gallery:gallery_upload' %}", {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": formData.csrfmiddlewaretoken,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Response data:', data);
+        
         if (data.status === "success") {
             showToast("✅ Upload berhasil!", "success");
             setTimeout(() => {
                 closeModal();
-                window.location.href = "{% url 'nina_media_gallery:gallery_list' %}";
-            }, 2000);
+                window.location.reload(); // Refresh halaman untuk menampilkan data baru
+            }, 1500);
         } else {
-            showToast("❌ " + (data.message || "Upload gagal!"), "error");
+            throw new Error(data.message || "Upload gagal!");
         }
-    })
-    .catch(() => {
-        showToast("❌ Terjadi kesalahan server!", "error");
-    });
+        
+    } catch (error) {
+        console.error('Upload error:', error);
+        showToast("❌ " + error.message, "error");
+        
+        // Reset loading state
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit';
+        loadingSpinner.style.display = 'none';
+    }
 });
 
 /* ---- Toast Notification ---- */
 function showToast(message, type = "success") {
     const container = document.getElementById("toastContainer");
+    if (!container) {
+        console.error('Toast container not found');
+        return;
+    }
+    
     const toast = document.createElement("div");
-
-    toast.className = `
-        mb-3 px-6 py-3 rounded-lg shadow-lg text-white transition-opacity duration-500 opacity-0
-        ${type === "success" ? "bg-green-500" : "bg-red-500"}
-    `;
+    toast.className = `toast ${type}`;
     toast.textContent = message;
-
+    
     container.appendChild(toast);
-    setTimeout(() => toast.classList.add("opacity-100"), 50);
+    
+    // Animate in
     setTimeout(() => {
-        toast.classList.remove("opacity-100");
-        setTimeout(() => toast.remove(), 500);
-    }, 2500);
+        toast.style.transform = 'translateX(0)';
+        toast.style.opacity = '1';
+    }, 10);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        toast.style.transform = 'translateX(100%)';
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 3000);
 }
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('modal');
+    const modalContent = document.getElementById('modalContent');
+    
+    if (modal && !modal.classList.contains('hidden') && 
+        e.target === modal) {
+        closeModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeModal();
+    }
+});
+
+// Debug: Check if elements exist
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded');
+    console.log('Add Media button:', document.querySelector('.add-button'));
+    console.log('Modal:', document.getElementById('modal'));
+    console.log('Form:', document.getElementById('uploadForm'));
+});
 </script>
 {% endblock %}
