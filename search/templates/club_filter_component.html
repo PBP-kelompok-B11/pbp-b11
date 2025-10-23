@@ -1,0 +1,89 @@
+<!-- search/club_filter_component.html -->
+<div id="clubFilterModal"
+     class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+  <div class="bg-[#003366] text-white rounded-2xl p-6 w-96 shadow-xl border-2 border-lime-400">
+    <h2 class="text-2xl font-bold text-lime-300 mb-4 text-center">⚙️ Filter Klub</h2>
+
+    <form id="clubFilterForm" class="space-y-4">
+      <!-- Negara -->
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-lime-200">Negara</label>
+        <input type="text" name="negara" placeholder="Contoh: Spanyol"
+               class="w-full rounded-lg border border-lime-300 bg-white text-gray-900 px-3 py-2 focus:ring-2 focus:ring-lime-400 focus:outline-none">
+      </div>
+
+      <!-- Liga -->
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-lime-200">Liga</label>
+        <input type="text" name="liga" placeholder="Contoh: La Liga"
+               class="w-full rounded-lg border border-lime-300 bg-white text-gray-900 px-3 py-2 focus:ring-2 focus:ring-lime-400 focus:outline-none">
+      </div>
+
+      <!-- Tahun Didirikan -->
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-lime-200">Tahun Didirikan ≥</label>
+        <input type="number" name="tahun_didirikan" min="1800"
+               class="w-full rounded-lg border border-lime-300 bg-white text-gray-900 px-3 py-2 focus:ring-2 focus:ring-lime-400 focus:outline-none">
+      </div>
+
+      <!-- Tombol -->
+      <div class="flex justify-between mt-6">
+        <button type="button" id="closeClubFilterBtn"
+                class="px-4 py-2 bg-gray-500 hover:bg-gray-600 rounded-lg">Tutup</button>
+        <button type="submit"
+                class="px-4 py-2 bg-lime-400 text-[#003366] font-semibold hover:bg-lime-300 rounded-lg">Terapkan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Tombol buka modal -->
+<div class="fixed bottom-6 right-6">
+  <button id="openClubFilterBtn"
+          class="bg-lime-400 text-[#003366] font-bold py-2 px-4 rounded-full shadow-lg hover:bg-lime-300 transition">
+    🔍 Filter Klub
+  </button>
+</div>
+
+<script>
+  const clubFilterModal = document.getElementById("clubFilterModal");
+  const openClubFilterBtn = document.getElementById("openClubFilterBtn");
+  const closeClubFilterBtn = document.getElementById("closeClubFilterBtn");
+  const clubFilterForm = document.getElementById("clubFilterForm");
+
+  openClubFilterBtn.addEventListener("click", () => {
+    clubFilterModal.classList.remove("hidden");
+    clubFilterModal.classList.add("flex");
+  });
+
+  closeClubFilterBtn.addEventListener("click", () => {
+    clubFilterModal.classList.add("hidden");
+    clubFilterModal.classList.remove("flex");
+  });
+
+  clubFilterForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(clubFilterForm);
+    const params = new URLSearchParams(formData);
+
+    const response = await fetch(`/search/filter_clubs/?${params}`, {
+      headers: { "X-Requested-With": "XMLHttpRequest" }
+    });
+    const data = await response.json();
+
+    // update hasil klub di halaman
+    const container = document.getElementById("club-list-container");
+    if (container) {
+      container.innerHTML = data.results.map(c => `
+        <div class="bg-white p-4 rounded-xl shadow-md mb-4">
+          <h3 class="text-lg font-semibold text-[#003366]">${c.nama}</h3>
+          <p class="text-gray-600">🏆 ${c.liga || '-'} | 📍 ${c.negara}</p>
+          <p class="text-sm text-gray-500">🏗️ Didirikan: ${c.tahun_didirikan || '—'}</p>
+        </div>
+      `).join("");
+    }
+
+    clubFilterModal.classList.add("hidden");
+    clubFilterModal.classList.remove("flex");
+  });
+</script>
