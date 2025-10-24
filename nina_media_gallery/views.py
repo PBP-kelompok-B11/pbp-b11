@@ -103,19 +103,23 @@ def gallery_upload(request):
         }
         return render(request, 'upload.html', context)
     
-@user_passes_test(is_admin)
 def gallery_update(request, id):
-    media = get_object_or_404(Media, pk=id)
-    form = MediaForm(request.POST or None, instance=media)
-    if form.is_valid() and request.method == "POST":
-        form.save()
-        return redirect('nina_media_gallery:gallery_list')
-    
-    context = {
-        'form': form
-    }
+    if request.method == 'POST':
+        media = Media.objects.get(pk=id)
+        media.deskripsi = request.POST.get('deskripsi')
+        media.category = request.POST.get('category')
+        media.thumbnail = request.POST.get('thumbnail')
+        media.save()
 
-    return render(request, 'form.html', context)
+        return JsonResponse({
+            "status": "success",
+            "media": {
+                "deskripsi": media.deskripsi,
+                "category_display": media.get_category_display(),
+                "thumbnail": media.thumbnail,
+            }
+        })
+    return JsonResponse({"status": "error", "message": "Invalid request"})
 
 def gallery_delete(request, id):
     media = get_object_or_404(Media, pk=id)

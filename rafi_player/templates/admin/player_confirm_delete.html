@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto max-w-lg mt-24 py-10 px-6 text-center">
+    <h2 class="text-2xl font-bold text-red-400 mb-4">
+        Hapus Player
+    </h2>
+
+    <p class="text-gray-300 mb-6">
+        Apakah kamu yakin ingin menghapus <span class="font-semibold text-white">{{ player.nama }}</span>?
+        Tindakan ini tidak bisa dibatalkan.
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="flex justify-center gap-4">
+            <button type="submit"
+                    class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg shadow">
+                Ya, Hapus
+            </button>
+            <a href="{% url 'rafi_player:admin_player_list' %}"
+               class="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-6 rounded-lg shadow">
+                Batal
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

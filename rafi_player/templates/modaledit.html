@@ -5,7 +5,7 @@
       <div class="flex items-center justify-between p-4 border-b">
         <div>
           <h3 class="text-xl font-semibold text-white">
-            Add New Player
+            Edit Player
           </h3>
           <p class="text-sm text-white mt-1">Share your football Player and stories with the community</p>
         </div>
@@ -19,6 +19,7 @@
       <!-- Modal body -->
       <div class="px-6 py-4 space-y-6 form-style">
         <form id="playerForm">
+          <input type="hidden" id="editPlayerId" name="player_id" value="">
           <!-- Nama -->
           <div class="mb-4">
             <label for="nama" class="block text-sm font-medium text-white">Nama Pemain</label>
@@ -91,7 +92,7 @@
   
           <!-- Tombol Submit -->
           <div class="flex justify-end">
-             <button type = submit class="add-btn">Submit</button>
+             <button type=submit class="add-btn">Submit</button>
           </div>
         </form>
   
@@ -105,51 +106,90 @@
   </div>
   
   <script>
-    function showModal() {
-        const modal = document.getElementById('crudModal');
-        const modalContent = document.getElementById('crudModalContent');
   
-        modal.classList.remove('hidden'); 
-        setTimeout(() => {
-          modalContent.classList.remove('opacity-0', 'scale-95');
-          modalContent.classList.add('opacity-100', 'scale-100');
-        }, 50); 
-    }
-    
-    function hideModal() {
-        const modal = document.getElementById('crudModal');
-        const modalContent = document.getElementById('crudModalContent');
+    // Show modal & fill data
+      function showModalEdit(player) {
   
-        modalContent.classList.remove('opacity-100', 'scale-100');
-        modalContent.classList.add('opacity-0', 'scale-95');
+          if (!player || typeof player !== 'object') {
+          console.error("Error: Parameter 'player' tidak valid atau tidak didefinisikan");
+          return;
+       }
   
-        setTimeout(() => {
-          modal.classList.add('hidden');
-        }, 150); 
-    }
+          console.log("showModalEdit dipanggil dengan data:", player);
+          document.getElementById('nama').value = player.nama;
+          document.getElementById('negara').value = player.negara;
+          document.getElementById('usia').value = player.usia;
+          document.getElementById('tinggi').value = player.tinggi;
+          document.getElementById('berat').value = player.berat;
+          document.getElementById('posisi').value = player.posisi;
+          document.getElementById('thumbnail').value = player.thumbnail || '';
+          document.getElementById('editPlayerId').value = player.id;
   
-     async function addPlayerEntry() {
-      await fetch("{% url 'rafi_player:add_player_ajax' %}", {
-        method: "POST",
-        body: new FormData(document.querySelector('#playerForm')),
-      })
-  
-      document.getElementById("playerForm").reset();
-      hideModal();
-        
-      // Show toast notification
-      showToast('Player added successfully!', '', 'success');
-  
-      // Dispatch custom event to notify main.html about new data
-      document.dispatchEvent(new CustomEvent('playerAdded'));
-  
-      return false;
-  
+          const modal = document.getElementById('crudModal');
+          const modalContent = document.getElementById('crudModalContent');
+          modal.classList.remove('hidden');
+          setTimeout(() => {
+              modalContent.classList.remove('opacity-0', 'scale-95');
+              modalContent.classList.add('opacity-100', 'scale-100');
+          }, 50);
       }
   
-      document.getElementById("playerForm").addEventListener("submit", function(e) {
+      // Hide modal
+      function hideModal() {
+          const modal = document.getElementById('crudModal');
+          const modalContent = document.getElementById('crudModalContent');
+          modalContent.classList.remove('opacity-100', 'scale-100');
+          modalContent.classList.add('opacity-0', 'scale-95');
+          setTimeout(() => modal.classList.add('hidden'), 150);
+      }
+  
+      // Submit via AJAX
+      document.getElementById("playerForm").addEventListener("submit", async function(e) {
       e.preventDefault();
-      addPlayerEntry();
-  })
+      if (e.target.dataset.submitting === 'true') return;
+      e.target.dataset.submitting = 'true';
+  
+      const form = e.target;
+      const formData = new FormData(form);
+      const playerId = document.getElementById('editPlayerId').value;
+  
+      console.log("Form submit dipanggil, playerId:", playerId);
+      console.log("FormData:", Object.fromEntries(formData));
+  
+      if (!playerId) {
+          console.error("Error: player_id tidak ditemukan");
+          showToast('Error: ID pemain tidak valid', '', 'error');
+          e.target.dataset.submitting = 'false';
+          return;
+      }
+  
+      const endpoint = playerId ? `/player/${playerId}/edit/` : "{% url 'rafi_player:add_player_ajax' %}";
+      console.log("Mengirim permintaan ke:", endpoint);
+  
+      try {
+          const response = await fetch(endpoint, {
+              method: "POST",
+              headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+              body: formData
+          });
+  
+          if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              throw new Error(errorData.message || `Gagal submit player: ${response.status}`);
+          }
+  
+          const data = await response.json();
+          hideModal();
+          form.reset();
+          showToast(data.message || (playerId ? 'Player updated successfully!' : 'Player added successfully!'), '', 'success');
+          document.dispatchEvent(new CustomEvent('playerUpdated', { detail: playerId }));
+      } catch (err) {
+          console.error("Error:", err);
+          showToast(err.message || 'Error saat submit player', '', 'error');
+      } finally {
+          e.target.dataset.submitting = 'false';
+      }
+  });
+  
     
   </script>

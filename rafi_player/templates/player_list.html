@@ -30,12 +30,14 @@
             </div>
             
             <!-- tombol tetap di atas -->
-            <button onclick="showModal()" class="add-btn">Add Player</button>
+            {% if user.is_authenticated %}
+                <button onclick="showPlayerModal()" class="add-btn">Add Player</button>
 
-            <div class="filter-buttons">
-            <button id="filter-all" class="add-btn">Show All</button>
-            <button id="filter-my" class="add-btn">Show My</button>
-            </div>
+                <div class="filter-buttons">
+                    <button id="filter-all" class="add-btn">Show All</button>
+                    <button id="filter-my" class="add-btn">Show My</button>
+                </div>
+            {% endif %}
 
             <!-- judul dan deskripsi -->
            
@@ -91,6 +93,11 @@
     console.log("JS Loaded");
     const PLAYER_API_ENDPOINT = "{% url 'rafi_player:show_json_player' %}";
     const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+    console.log("Current user ID:", CURRENT_USER_ID);
+    console.log("Tipe data CURRENT_USER_ID:", typeof CURRENT_USER_ID);
+
+    
 
     // DOM Elements
     const loadingSpinner = document.getElementById('loading');
@@ -238,6 +245,10 @@
         allPlayerData = playerData || [];
 
          console.log("Data dari server:", playerData); // <--- ini penting
+         console.log("Semua players:", allPlayerData);
+        allPlayerData.forEach(player => {
+            console.log(`Player ${player.nama} - user_id: ${player.user_id}`);
+        });
 
         
         filterAndDisplayPlayer();
@@ -262,11 +273,16 @@
 
     // Initialize page
     function initializePlayerPage() {
-    showAllPlayerButton.addEventListener('click', handleShowAllPlayerClick);
-    showMyPlayerButton.addEventListener('click', handleShowMyPlayerClick);
-    
-    fetchPlayerFromServer();
+    if (showAllPlayerButton) {
+        showAllPlayerButton.addEventListener('click', handleShowAllPlayerClick);
     }
+    if (showMyPlayerButton) {
+        showMyPlayerButton.addEventListener('click', handleShowMyPlayerClick);
+    }
+
+    fetchPlayerFromServer();
+}
+
 
     // Start application
     initializePlayerPage();
