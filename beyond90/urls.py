@@ -24,4 +24,5 @@ urlpatterns = [
     path('player/', include('rafi_player.urls')),
     path('clubs/', include('clubs.urls')),
     path('', include('authentication.urls')),
+    path('comments/', include('comments.urls')),
 ]
