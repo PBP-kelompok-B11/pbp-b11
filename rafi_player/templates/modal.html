@@ -1,10 +1,11 @@
+<!-- modal.html -->
 <!-- Modal -->
 <div id="crudModal" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50">
   <div id="crudModalContent" class="bg-blue-900 rounded-lg shadow-lg w-5/6 sm:w-3/5 md:w-1/2 lg:w-2/5 xl:w-1/3 max-h-screen overflow-y-auto">
     <!-- Modal header -->
     <div class="flex items-center justify-between p-4 border-b">
       <div>
-        <h3 class="text-xl font-semibold text-white">
+        <h3 id="modalTitle" class="text-xl font-semibold text-white">
           Add New Player
         </h3>
         <p class="text-sm text-white mt-1">Share your football Player and stories with the community</p>
@@ -19,51 +20,37 @@
     <!-- Modal body -->
     <div class="px-6 py-4 space-y-6 form-style">
       <form id="playerForm">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        <input type="hidden" id="editPlayerId" name="player_id" value="">
         <!-- Nama -->
         <div class="mb-4">
           <label for="nama" class="block text-sm font-medium text-white">Nama Pemain</label>
-          <input type="text" id="nama" name="nama"
-            class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900"
-            placeholder="Masukkan nama pemain" required>
+          <input type="text" id="nama" name="nama" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900" placeholder="Masukkan nama pemain" required>
         </div>
-
         <!-- Negara -->
         <div class="mb-4">
           <label for="negara" class="block text-sm font-medium text-white">Negara</label>
-          <input type="text" id="negara" name="negara"
-            class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900"
-            placeholder="Masukkan negara asal" required>
+          <input type="text" id="negara" name="negara" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900" placeholder="Masukkan negara asal" required>
         </div>
-
         <!-- Usia -->
         <div class="mb-4">
           <label for="usia" class="block text-sm font-medium text-white">Usia</label>
-          <input type="number" id="usia" name="usia"
-            class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900"
-            placeholder="Masukkan usia pemain" required>
+          <input type="number" id="usia" name="usia" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900" placeholder="Masukkan usia pemain" required>
         </div>
-
         <!-- Tinggi -->
         <div class="mb-4">
           <label for="tinggi" class="block text-sm font-medium text-white">Tinggi (cm)</label>
-          <input type="number" step="0.1" id="tinggi" name="tinggi"
-            class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900"
-            placeholder="Masukkan tinggi pemain" required>
+          <input type="number" step="0.1" id="tinggi" name="tinggi" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900" placeholder="Masukkan tinggi pemain" required>
         </div>
-
         <!-- Berat -->
         <div class="mb-4">
           <label for="berat" class="block text-sm font-medium text-white">Berat (kg)</label>
-          <input type="number" step="0.1" id="berat" name="berat"
-            class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900"
-            placeholder="Masukkan berat pemain" required>
+          <input type="number" step="0.1" id="berat" name="berat" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900" placeholder="Masukkan berat pemain" required>
         </div>
-
         <!-- Posisi -->
         <div class="mb-4">
           <label for="posisi" class="block text-sm font-medium text-white">Posisi</label>
-          <select id="posisi" name="posisi"
-            class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900" required>
+          <select id="posisi" name="posisi" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900" required>
             <option value="">Pilih posisi pemain</option>
             <option value="Penjaga Gawang">Penjaga Gawang</option>
             <option value="Bek">Bek</option>
@@ -71,85 +58,127 @@
             <option value="Striker">Striker</option>
           </select>
         </div>
-
         <!-- Thumbnail -->
         <div class="mb-4">
           <label for="thumbnail" class="block text-sm font-medium text-white">Foto</label>
-          <input type="url" step="0.1" id="thumbnail" name="thumbnail"
-            class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900"
-            placeholder="Masukkan URL foto pemain" required>
+          <input type="url" id="thumbnail" name="thumbnail" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900" placeholder="Masukkan URL foto pemain" required>
         </div>
-        <!-- <div class="mb-4">
-          <div class="flex items-center">
-            <input id="is_featured" name="is_featured" type="checkbox"
-              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded">
-            <label for="is_featured" class="ml-2 text-sm font-medium text-gray-900">
-              Featured Player
-            </label>
-          </div>
-        </div> -->
-
         <!-- Tombol Submit -->
         <div class="flex justify-end">
-           <button type = submit class="add-btn">Submit</button>
+          <button type="submit" class="add-btn">Submit</button>
         </div>
       </form>
-
     </div>
-    <!-- Modal footer -->
-    <!-- <div class="flex flex-col sm:flex-row gap-4 p-6 border-t border-gray-200 rounded-b">
-      <button type="button" id="cancelButton" class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors text-center" onclick="hideModal()">Cancel</button>
-      <button type="submit" id="submitPlayer" form="playerForm" class="order-1 sm:order-2 flex-1 bg-green-600 text-white px-6 py-3 rounded-md font-medium hover:bg-green-700 transition-colors">Publish Player</button>
-    </div> -->
   </div>
 </div>
 
 <script>
+  // Pantau semua pemanggilan fetch untuk debugging
+  const originalFetch = window.fetch;
+  window.fetch = async function (...args) {
+      console.log("Fetch dipanggil dengan args:", args);
+      return originalFetch.apply(this, args);
+  };
+
+  // Show modal for adding new player
   function showModal() {
       const modal = document.getElementById('crudModal');
       const modalContent = document.getElementById('crudModalContent');
-
-      modal.classList.remove('hidden'); 
+      const modalTitle = document.getElementById('modalTitle');
+      modalTitle.textContent = 'Add New Player';
+      document.getElementById('playerForm').reset();
+      document.getElementById('editPlayerId').value = '';
+      modal.classList.remove('hidden');
       setTimeout(() => {
-        modalContent.classList.remove('opacity-0', 'scale-95');
-        modalContent.classList.add('opacity-100', 'scale-100');
-      }, 50); 
+          modalContent.classList.remove('opacity-0', 'scale-95');
+          modalContent.classList.add('opacity-100', 'scale-100');
+      }, 50);
   }
-  
+
+  // Show modal for editing player
+  function showModalEdit(player) {
+      if (!player || typeof player !== 'object' || !player.id) {
+          console.error("Error: Parameter 'player' tidak valid atau tidak memiliki ID");
+          showToast('Error: Data pemain tidak valid', '', 'error');
+          return;
+      }
+
+      console.log("showModalEdit dipanggil dengan data:", player);
+      document.getElementById('modalTitle').textContent = 'Edit Player';
+      document.getElementById('nama').value = player.nama || '';
+      document.getElementById('negara').value = player.negara || '';
+      document.getElementById('usia').value = player.usia || '';
+      document.getElementById('tinggi').value = player.tinggi || '';
+      document.getElementById('berat').value = player.berat || '';
+      document.getElementById('posisi').value = player.posisi || '';
+      document.getElementById('thumbnail').value = player.thumbnail || '';
+      document.getElementById('editPlayerId').value = player.id;
+
+      const modal = document.getElementById('crudModal');
+      const modalContent = document.getElementById('crudModalContent');
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+          modalContent.classList.remove('opacity-0', 'scale-95');
+          modalContent.classList.add('opacity-100', 'scale-100');
+      }, 50);
+  }
+
+  // Hide modal
   function hideModal() {
       const modal = document.getElementById('crudModal');
       const modalContent = document.getElementById('crudModalContent');
-
       modalContent.classList.remove('opacity-100', 'scale-100');
       modalContent.classList.add('opacity-0', 'scale-95');
-
-      setTimeout(() => {
-        modal.classList.add('hidden');
-      }, 150); 
+      setTimeout(() => modal.classList.add('hidden'), 150);
   }
 
-   async function addPlayerEntry() {
-    await fetch("{% url 'rafi_player:add_player_ajax' %}", {
-      method: "POST",
-      body: new FormData(document.querySelector('#playerForm')),
-    })
+  // Submit form
+  const form = document.getElementById("playerForm");
+  form.removeEventListener("submit", submitHandler);
+  form.addEventListener("submit", submitHandler);
 
-    document.getElementById("playerForm").reset();
-    hideModal();
+  async function submitHandler(e) {
+      e.preventDefault();
+      if (e.target.dataset.submitting === 'true') return;
+      e.target.dataset.submitting = 'true';
+
+      const formData = new FormData(e.target);
+      const playerId = document.getElementById('editPlayerId').value;
+
+      console.log("Form submit dipanggil, playerId:", playerId);
+      console.log("FormData:", Object.fromEntries(formData));
+
+      const endpoint = playerId ? `/player/${playerId}/edit/` : "{% url 'rafi_player:add_player_ajax' %}";
+      console.log("Mengirim permintaan ke:", endpoint);
+
+      try {
+          const response = await fetch(endpoint, {
+              method: "POST",
+              headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+              body: formData
+          });
+
+          if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              throw new Error(errorData.message || `Gagal submit player: ${response.status}`);
+          }
+
+          const data = await response.json();
+          hideModal();
+          e.target.reset();
+          document.getElementById('editPlayerId').value = '';
+          showToast(data.message || (playerId ? 'Player updated successfully!' : 'Player added successfully!'), '', 'success');
+          document.dispatchEvent(new CustomEvent(playerId ? 'playerUpdated' : 'playerAdded', { detail: playerId }));
       
-    // Show toast notification
-    showToast('Player added successfully!', '', 'success');
-
-    // Dispatch custom event to notify main.html about new data
-    document.dispatchEvent(new CustomEvent('playerAdded'));
-
-    return false;
-
-    }
-
-    document.getElementById("playerForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-    addPlayerEntry();
-})
-  
+          if (playerId) {
+            await loadPlayerDetail(); // panggil ulang fetch player detail
+        }
+              
+        } catch (err) {
+          console.error("Error:", err);
+          showToast(err.message || 'Error saat submit player', '', 'error');
+      } finally {
+          e.target.dataset.submitting = 'false';
+      }
+  }
 </script>

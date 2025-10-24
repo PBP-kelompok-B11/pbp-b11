@@ -1,85 +1,109 @@
 {% extends 'base.html' %}
+
 {% load static %}
 {% block content %}
 <div class="w-[1920px] h-[949px] relative overflow-hidden">
     <!-- 🖼️ Foto Pemain -->
-      <div class="w-[484px] h-[587px] left-[98px] top-[138px] absolute">
+      <div class="w-[400px] h-[485px] left-[98px] top-[138px] absolute">
         <div class="absolute inset-0 bg-lime-400 rounded-[46px]"></div>
         <div class="absolute inset-[14px] bg-indigo-900 rounded-[35px]"></div>
         <img id="player-image" 
-             class="absolute inset-[30px] w-[420px] h-[525px] object-cover rounded-[35px] shadow-lg border-4 border-lime-400"
+             class="absolute inset-[30px] w-[336px] h-[415px] object-cover rounded-[35px] shadow-lg border-4 border-lime-400"
              src="https://placehold.co/420x525" 
              alt="Player Image" />
     </div>
 
+    <div class="absolute left-[100px] top-[650px] flex gap-4">
+        <button onclick='showModalEdit({
+            id: "{{ player.id }}",
+            nama: "{{ player.nama }}",
+            negara: "{{ player.negara }}",
+            posisi: "{{ player.posisi }}",
+            usia: "{{ player.usia }}",
+            tinggi: "{{ player.tinggi }}",
+            berat: "{{ player.berat }}",
+            thumbnail: "{{ player.thumbnail }}"
+        })' class="bg-lime-400 hover:bg-lime-500 text-indigo-900 font-semibold px-6 py-2 rounded-2xl shadow-md">
+            Edit Player
+        </button>
+        <button id="btn-delete-player"
+            class="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-2xl shadow-md transition-all duration-200">
+            Delete Player
+        </button>
+    </div>
+
+
     <!-- 🧠 Nama Pemain -->
-    <div id="player-name"
-        class="w-[989px] h-36 left-[180px] top-[117px] absolute text-right justify-center text-white text-9xl font-normal font-['League_Gothic'] tracking-wider uppercase">
+   <div class="absolute left-[620px] top-[170px] flex flex-col items-end max-w-[1000px]">
+    <h1 id="player-name" class="text-white text-8xl font-['League_Gothic'] tracking-wider uppercase break-words leading-tight">
         LOREM IPSUM
+    </h1>
     </div>
 
     <!-- 🔹 Baris Atribut Utama -->
-    <div class="absolute left-[657px] top-[300px] flex flex-row gap-[80px]">
+    <div class="absolute left-[620px] top-[320px] flex flex-row gap-[80px]">
         <!-- Negara -->
         <div class="flex flex-col items-start">
-            <div class="text-lime-400 text-3xl font-bold font-['Geologica'] leading-[40px]">
+            <div class="text-lime-400 text-2xl font-bold font-['Geologica'] leading-[25px]">
                 Country
             </div>
-            <div id="player-country" class="text-white text-5xl font-semibold font-['Geologica'] leading-[55px]">
+            <div id="player-country" class="text-white text-3xl font-semibold font-['Geologica'] leading-[55px]">
                 Negara
             </div>
         </div>
 
         <!-- Posisi -->
         <div class="flex flex-col items-start">
-            <div class="text-lime-400 text-3xl font-bold font-['Geologica'] leading-[40px]">
+            <div class="text-lime-400 text-2xl font-bold font-['Geologica'] leading-[25px]">
                 Position
             </div>
-            <div id="player-position" class="text-white text-5xl font-semibold font-['Geologica'] leading-[55px]">
+            <div id="player-position" class="text-white text-3xl font-semibold font-['Geologica'] leading-[55px]">
                 Posisi
             </div>
         </div>
 
         <!-- Usia -->
         <div class="flex flex-col items-start">
-            <div class="text-lime-400 text-3xl font-bold font-['Geologica'] leading-[40px]">
+            <div class="text-lime-400 text-2xl font-bold font-['Geologica'] leading-[25px]">
                 Age
             </div>
-            <div id="player-age" class="text-white text-5xl font-semibold font-['Geologica'] leading-[55px]">
+            <div id="player-age" class="text-white text-3xl font-semibold font-['Geologica'] leading-[55px]">
                 Usia
             </div>
         </div>
     </div>
 
     <!-- 🔹 Baris Atribut Kedua -->
-    <div class="absolute left-[657px] top-[470px] flex flex-row gap-[80px]">
+    <div class="absolute left-[620px] top-[440px] flex flex-row gap-[80px]">
         <!-- Tinggi -->
         <div class="flex flex-col items-start">
-            <div class="text-lime-400 text-3xl font-bold font-['Geologica'] leading-[40px]">
+            <div class="text-lime-400 text-2xl font-bold font-['Geologica'] leading-[25px]">
                 Height
             </div>
-            <div id="player-height" class="text-white text-5xl font-semibold font-['Geologica'] leading-[55px]">
+            <div id="player-height" class="text-white text-3xl font-semibold font-['Geologica'] leading-[55px]">
                 -
             </div>
         </div>
 
         <!-- Berat -->
         <div class="flex flex-col items-start">
-            <div class="text-lime-400 text-3xl font-bold font-['Geologica'] leading-[40px]">
+            <div class="text-lime-400 text-2xl font-bold font-['Geologica'] leading-[25px]">
                 Weight
             </div>
-            <div id="player-weight" class="text-white text-5xl font-semibold font-['Geologica'] leading-[55px]">
+            <div id="player-weight" class="text-white text-3xl font-semibold font-['Geologica'] leading-[55px]">
                 -
             </div>
         </div>
     </div>
 
     <!-- Tombol / Aksi -->
-    <div data-property-1="Frame 5099" class="w-[705px] h-14 left-[648px] top-[632px] absolute overflow-hidden">
-        <div class="w-[695px] h-14 left-[5px] top-[3px] absolute bg-white rounded-3xl"></div>
-        <div class="w-36 h-9 left-[279px] top-[11px] absolute justify-center text-indigo-900 text-xl font-normal font-['Geologica'] leading-6">
+    <div class="absolute left-[620px] top-[560px]">
+        <button
+            id="btn-add-comment"
+            class="w-[500px] h-14 bg-white text-indigo-900 text-xl font-normal font-['Geologica'] rounded-full shadow-md hover:bg-gray-100 transition-all duration-200"
+        >
             Add Comment
-        </div>
+        </button>
     </div>
 
     <p>DEBUG Player ID: {{ player_id }}</p>
@@ -126,6 +150,44 @@ async function loadPlayerDetail() {
 }
 
 loadPlayerDetail();
+
+document.getElementById('btn-delete-player').addEventListener('click', async () => {
+    if (!confirm('Yakin ingin menghapus player ini?')) return;
+
+    try {
+        const response = await fetch(`{% url 'rafi_player:delete_player' player.id %}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        });
+
+        if (!response.ok) throw new Error('Gagal hapus player');
+
+        alert('Player berhasil dihapus!');
+        window.location.href = "{% url 'rafi_player:player_list' %}"; // redirect ke list
+    } catch (err) {
+        console.error(err);
+        alert('Terjadi kesalahan saat hapus player');
+    }
+});
+
+document.querySelectorAll('.edit-button').forEach(button => {
+    button.addEventListener('click', async () => {
+        const playerId = button.dataset.playerId;
+        console.log("Tombol edit diklik untuk playerId:", playerId);
+        try {
+            const response = await fetch(`/player/${playerId}/json/`);
+            if (!response.ok) throw new Error('Gagal mengambil data pemain');
+            const player = await response.json();
+            showModalEdit(player);
+        } catch (err) {
+            console.error("Gagal mengambil data pemain:", err);
+            showToast('Error saat mengambil data pemain', '', 'error');
+        }
+    });
+});
+
 </script>
 
 {% endblock content %}

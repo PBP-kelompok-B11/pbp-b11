@@ -13,6 +13,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from .models import Player  # pastikan impor model Player
 
+from django.views.decorators.http import require_http_methods
+
 @csrf_exempt
 @require_POST
 def add_player_ajax(request):
@@ -102,18 +104,49 @@ def player_create(request):
         form = PlayerForm()
     return render(request, 'player_form.html', {'form': form})
 
-def player_update(request, pk):
-    player = get_object_or_404(Player, pk=pk)
-    if request.method == 'POST':
-        form = PlayerForm(request.POST, instance=player)
-        if form.is_valid():
-            form.save()
-            return redirect('rafi_player:player_detail', pk=pk)
-    else:
-        form = PlayerForm(instance=player)
-    return render(request, 'player_form.html', {'form': form})
+# def player_update(request, pk):
+#     player = get_object_or_404(Player, pk=pk)
+#     if request.method == 'POST':
+#         form = PlayerForm(request.POST, instance=player)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('rafi_player:player_detail', pk=pk)
+#     else:
+#         form = PlayerForm(instance=player)
+#     return render(request, 'player_form.html', {'form': form})
 
-def player_delete(request, pk):
-    player = get_object_or_404(Player, pk=pk)
+def edit_player_ajax(request, pk):
+    if request.method == 'POST':
+        player = get_object_or_404(Player, pk=pk)
+        player.nama = request.POST.get('nama')
+        player.negara = request.POST.get('negara')
+        player.usia = request.POST.get('usia')
+        player.tinggi = request.POST.get('tinggi')
+        player.berat = request.POST.get('berat')
+        player.posisi = request.POST.get('posisi')
+        player.thumbnail = request.POST.get('thumbnail')
+        player.save()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid method'})
+
+@require_POST
+def delete_player(request, player_id):
+    player = get_object_or_404(Player, pk=player_id)
     player.delete()
-    return redirect('rafi_player:player_list')
+    return redirect('rafi_player:player_list')  # arahkan ke halaman list pemain
+
+# @require_http_methods(["POST"])
+# def edit_player(request, player_id):
+#     player = get_object_or_404(Player, pk=player_id)
+
+#     # Update field dari form
+#     player.nama = request.POST.get('nama')
+#     player.negara = request.POST.get('negara')
+#     player.posisi = request.POST.get('posisi')
+#     player.usia = request.POST.get('usia')
+#     player.tinggi = request.POST.get('tinggi')
+#     player.berat = request.POST.get('berat')
+#     player.save()
+
+#     # Return HTTP 200 tanpa redirect
+#     return JsonResponse({'success': True})
