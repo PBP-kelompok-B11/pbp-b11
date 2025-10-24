@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Widget Lists</h3>
+   
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Target Profile</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for widget in widgets %}
+            <tr id="widget-row-{{ widget.id} }">
+                <td>{{ widget.id }}</td>
+                <td>{{ widget.title }}</td>
+                <td>{{ widget.get_widget_types_display }}</td>
+                <td>{{ widget.content_type }} - {{ widget.object_id }}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm editWidgetBtn" data-id="{{ widget.id }}">Edit</button>
+                    <button class="btn btn-danger btn-sm deleteWidgetBtn" data-id="{{ widget.id}}">Delete</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No widget available</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(".deleteWidgetBtn").click(function(){
+        let id = $(this).data("id");
+        Swal.fire({
+            title: "Are you sure you want to delete it?",
+            text: "Deleted widgets cannot be restored!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Delete",
+            cancelButtonText: "Cancel"
+        }).then((result) =>{
+            if(result.isConfirmed){
+                $.post(`profile/widget/delete/${id}/`,
+                { "csrfmiddlewaretoken": "{{ csrf_token }}"}, function(res){
+                    if(res.status === "success"){
+                        $(`#widget-row-${id}`).remove();
+                        Swal.fire("Deleted!", "Widget has been removed", "Success")
+                    }
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

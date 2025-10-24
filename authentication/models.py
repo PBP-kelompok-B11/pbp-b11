@@ -9,6 +9,6 @@ class UserProfile(models.Model):
     umur = models.PositiveIntegerField()
     nomor_handphone = models.CharField(max_length=20)
 
-    def str(self):
+    def __str__(self):
         return self.user.username
 

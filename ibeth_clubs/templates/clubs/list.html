@@ -7,7 +7,9 @@
     <!-- left column with CTA -->
     <div class="col-span-4 space-y-6">
       <div class="card-glass p-8">
-        <h2 class="text-2xl font-bold text-white mb-3">Discover more than 100 football club around the globe!</h2>
+        <h2 class="text-2xl font-bold text-white mb-3">
+          Discover more than 100 football clubs around the globe!
+        </h2>
         <a href="{% url 'club_create' %}" class="inline-block btn-lime mt-4">Add Club</a>
       </div>
     </div>
@@ -15,7 +17,8 @@
     <!-- right column: club grid -->
     <div class="col-span-8 bg-white rounded-3xl p-6 overflow-hidden">
       <div class="bg-indigo-900 rounded-2xl p-6">
-        <div class="grid grid-cols-4 gap-6">
+        <!-- ✅ tambahin id di sini -->
+        <div id="club-list-container" class="grid grid-cols-4 gap-6">
           {% for club in clubs %}
             <div class="relative rounded-2xl overflow-hidden">
               <div class="bg-lime-400 rounded-2xl absolute inset-2"></div>
@@ -38,4 +41,7 @@
     </div>
   </div>
 </div>
+
+<!-- ✅ include komponen filter -->
+{% include 'club_filter_component.html' %}
 {% endblock %}

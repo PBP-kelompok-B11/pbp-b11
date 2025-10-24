@@ -1,5 +1,7 @@
 from django.contrib import admin
 from .models import UserProfile
+from nina_media_gallery.models import Media
+
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
@@ -18,11 +20,5 @@ class UserProfileAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         # Mencegah hapus data dari admin
         return False
-from .models import Media
 
-# Register your models here.
-@admin.register(Media)
-class MediaAdmin(admin.ModelAdmin):
-    list_display = ['category', 'deskripsi']
-    search_fields = ['category']
-    list_filter = ['category', 'created_at']
+
