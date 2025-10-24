@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from .models import Event, EventParticipation
-from .forms import EventForm, EventParticipationForm
+from .models import Event
+from .forms import EventForm
 from django.core.paginator import Paginator
 
 
@@ -11,7 +11,7 @@ from django.core.paginator import Paginator
 
 def event_list(request):
     """Menampilkan daftar semua event sepak bola."""
-    events = Event.objects.all().order_by('-tanggal-selesai')
+    events = Event.objects.all().order_by('-tanggal_selesai')
     paginator = Paginator(events, 5)  # tampilkan 5 per halaman
 
     page_number = request.GET.get('page')
@@ -105,7 +105,7 @@ def event_create(request):
         return redirect('event_list')  # ubah ke halaman list event kamu
 
     # kalau GET request
-    return render(request, 'add_competition.html')
+    return render(request, 'event_create.html')
 
 
 

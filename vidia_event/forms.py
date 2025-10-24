@@ -1,6 +1,6 @@
 # events/forms.py
 from django import forms
-from .models import Event, EventParticipation
+from .models import Event
 
 class EventForm(forms.ModelForm):
     class Meta:
@@ -19,32 +19,6 @@ class EventForm(forms.ModelForm):
             'lokasi': 'Lokasi',
             'tanggal_mulai': 'Tanggal Mulai',
             'tanggal_selesai': 'Tanggal Selesai',
-        }
-
-
-class EventParticipationForm(forms.ModelForm):
-    class Meta:
-        model = EventParticipation
-        fields = ['player', 'club', 'peran', 'hasil']
-        widgets = {
-            'player': forms.Select(attrs={
-                    'class': 'w-48 h-10 bg-lime-400 text-indigo-900 text-xl font-normal rounded-[36px] px-3'
-                        }),
-            'club': forms.Select(attrs={
-                    'class': 'w-48 h-10 bg-lime-400 text-indigo-900 text-xl font-normal rounded-[36px] px-3'
-                        }),
-            'peran': forms.Select(attrs={
-                    'class': 'w-48 h-10 bg-lime-400 text-indigo-900 text-xl font-normal rounded-[36px] px-3'
-                        }),
-            'hasil': forms.Select(attrs={
-                    'class': 'w-48 h-10 bg-lime-400 text-indigo-900 text-xl font-normal rounded-[36px] px-3'
-                        }),
-        }
-        labels = {
-            'player': 'Pemain',
-            'club': 'Klub',
-            'peran': 'Peran',
-            'hasil': 'Hasil',
         }
 
     def clean(self):

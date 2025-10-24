@@ -1,45 +1,59 @@
 {% extends 'base.html' %} 
 {% load static %} 
 {% block content %}
-<div class="relative h-[955px] w-[1920px] overflow-hidden bg-indigo-900">
-  <div class="absolute top-[175px] left-[77px] h-36 w-[574px] justify-center text-right font-['League_Gothic'] text-8xl font-normal text-white">COMPETITION</div>
-  <div class="absolute top-[84px] left-[801px] h-[721px] w-[1016px] overflow-hidden">
+
+<!-- Biar halaman utama fix dan nggak bisa discroll -->
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* ⛔ Cegah scroll global */
+  }
+</style>
+
+<div class="relative w-screen h-screen overflow-hidden bg-indigo-900">
+  <!-- Judul -->
+  <div class="absolute top-[175px] left-[100px] h-36 w-[574px] font-['League_Gothic'] text-8xl font-normal text-white">
+    COMPETITION
+  </div>
+
+  <!-- Area utama (kanan) -->
+  <div class="absolute top-[84px] left-[500px] h-[721px] w-[900px] overflow-hidden">
     <!-- Background boxes -->
-    <div class="absolute top-[-1px] left-[-1px] h-[625px] w-[1017px] rounded-[38px] bg-white"></div>
-    <div class="absolute top-[14px] left-[17px] h-[595px] w-[978px] rounded-3xl bg-indigo-900"></div>
+    <div class="absolute top-[50px] left-[-1px] h-[625px] w-[901px] rounded-[38px] bg-white"></div>
+    <div class="absolute top-[64px] left-[17px] h-[595px] w-[868px] rounded-3xl bg-indigo-900"></div>
 
-    <!-- Container utama -->
-    <div class="absolute top-[25px] left-[28px] w-[956px] h-[600px] overflow-y-auto rounded-2xl bg-indigo-900 p-2">
+    <!-- Container utama scrollable -->
+    <div class="absolute top-[75px] left-[28px] w-[855px] h-[500px] overflow-y-auto overflow-x-hidden rounded-2xl bg-indigo-900 p-2">
+      {% if page_obj %}
+        {% for event in page_obj %}
+          <a href="{% url 'vidia_event:event_detail' event.pk %}" class="block relative h-28 w-full mb-4 group transition">
+            <!-- Kotak hijau -->
+            <div class="absolute top-0 left-0 h-28 w-full rounded-2xl bg-lime-400 group-hover:bg-lime-300 transition"></div>
 
-    {% if page_obj %}
-      {% for event in page_obj %}
-        <a href="{% url 'event_detail' event.pk %}" class="block relative h-28 w-full mb-4 group transition">
-          <!-- Kotak hijau -->
-          <div class="absolute top-0 left-0 h-28 w-full rounded-2xl bg-lime-400 group-hover:bg-lime-300 transition"></div>
+            <!-- Kotak biru di kanan -->
+            <div class="absolute top-[63px] right-[25px] h-20 w-60 rounded-2xl bg-indigo-900"></div>
 
-          <!-- Kotak biru di kanan -->
-          <div class="absolute top-[13px] right-[25px] h-20 w-60 rounded-2xl bg-indigo-900"></div>
+            <!-- Nama event -->
+            <div class="absolute top-[72px] left-[39px] w-[563px] font-['Geologica'] text-5xl leading-[62.5px] font-normal text-indigo-900">
+              {{ event.nama_event }}
+            </div>
 
-          <!-- Nama event -->
-          <div class="absolute top-[22px] left-[39px] w-[563px] font-['Geologica'] text-5xl leading-[62.5px] font-normal text-indigo-900">
-            {{ event.nama_event }}
-          </div>
-
-          <!-- Pemenang -->
-          <div class="absolute top-[22px] right-[75px] w-24 font-['Geologica'] text-5xl leading-[62.5px] font-semibold text-white">
-            {{ event.pemenang }}
-          </div>
-        </a>
-      {% endfor %}
-    {% else %}
-      <p class="text-center text-gray-400 mt-60">No competitions yet.</p>
-    {% endif %}
-
+            <!-- Pemenang -->
+            <div class="absolute top-[72px] right-[75px] w-24 font-['Geologica'] text-5xl leading-[62.5px] font-semibold text-white">
+              {{ event.pemenang }}
+            </div>
+          </a>
+        {% endfor %}
+      {% else %}
+        <p class="text-center text-gray-400 mt-60">No competitions yet.</p>
+      {% endif %}
     </div>
 
-
     <!-- PAGINATION BUTTONS -->
-    <div class="absolute top-[650px] left-[28px] w-[956px] flex justify-center space-x-4 text-lime-400 font-['Geologica'] text-xl">
+    <div class="absolute top-[680px] left-[28px] w-[956px] flex justify-center space-x-4 text-lime-400 font-['Geologica'] text-xl">
       {% if page_obj.has_previous %}
         <a href="?page={{ page_obj.previous_page_number }}" class="hover:text-lime-200">&laquo; Prev</a>
       {% endif %}
@@ -50,20 +64,28 @@
         <a href="?page={{ page_obj.next_page_number }}" class="hover:text-lime-200">Next &raquo;</a>
       {% endif %}
     </div>
-
   </div>
-  <div class="absolute top-[342px] left-[100px] w-96 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">Discover more than 100 competition around the globe!</div>
-    <a href="{% url 'event_create' %}">
-      <div data-property-1="Component 38" class="absolute top-[417px] left-[100px] h-12 w-60 overflow-hidden">
-        <div class="absolute top-0 left-0 h-12 w-60 rounded-[36px] bg-lime-400"></div>
-        <div class="absolute top-[5px] left-[12px] w-52 justify-center text-center font-['Geologica'] text-2xl leading-10 font-normal text-indigo-900">Add Competition</div>
-      </div>
-    </a>
+
+  <!-- Deskripsi kiri -->
+  <div class="absolute top-[342px] left-[100px] w-96 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">
+    Discover more than 100 competition around the globe!
+  </div>
+
+  <!-- Tombol Add Competition -->
+  <a href="{% url 'vidia_event:event_create' %}" class="absolute top-[417px] left-[100px] h-12 w-60 cursor-pointer z-50">
+    <div class="relative h-full w-full overflow-hidden rounded-[36px] bg-lime-400 transition hover:bg-lime-300 flex items-center justify-center">
+      <span class="font-['Geologica'] text-2xl leading-10 font-normal text-indigo-900">
+        Add Competition
+      </span>
+    </div>
+  </a>
+
+  <!-- SVG background kiri -->
   <div class="absolute top-[392.2px] left-[-38px] h-[532.47px] w-96 origin-top-left rotate-[-9.33deg]">
     <svg viewBox="0 0 444 517" fill="none" class="h-full w-full">
       <path d="M403.493 320.269C325.455 558.021 117.482 533.718 86.0948 436.53C56.6724 345.426 149.839 278.662 212.786 274.763C272.671 271.053 282.789 322.371 231.247 339.316C124.051 374.558 -75.0639 213.756 -7.92073 3.03597M403.493 320.269L325.1 360.136M403.493 320.269L433.788 397.871" stroke="#B0FE08" stroke-width="20" />
     </svg>
   </div>
 </div>
-{% endblock %}
 
+{% endblock %}

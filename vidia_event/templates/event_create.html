@@ -3,11 +3,11 @@
 {% load static %}
 
 {% block content %}
-<form action="{% url 'event_create' %}" method="POST">
+<form action="{% url 'vidia_event:event_create' %}" method="POST">
     {% csrf_token %}
     <div class="w-[1075px] h-[1372px] relative bg-indigo-900 overflow-hidden">
         <!-- BACK BUTTON -->
-        <a href="{% url 'event_list' %}" class="absolute left-[81px] top-[200px] w-[50px] h-[64px] block hover:opacity-80 transition">
+        <a href="{% url 'vidia_event:event_list' %}" class="absolute left-[81px] top-[200px] w-[50px] h-[64px] block hover:opacity-80 transition">
             <svg width="50" height="64" viewBox="0 0 50 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M32.8851 2.00525L3.99023 23.5169L32.8851 48.5052M38.7072 13.3043L27.7291 23.5169L38.7072 32.969" stroke="#B0FE08" stroke-width="5"/>
             </svg>
@@ -15,7 +15,7 @@
         <di class="w-24 left-[144px] top-[207px] absolute justify-center text-lime-400 text-5xl font-normal font-['Geologica'] leading-10">Back</div>
 
         <!-- TITLE -->
-        <div class="w-[989px] h-36 left-[-164px] top-[280px] absolute text-right justify-center text-white text-7xl font-normal font-['League_Gothic']">ADD COMPETITION</div>
+        <div class="w-[989px] h-36 left-[-164px] top-[280px] absolute justify-center text-right text-white text-7xl font-normal font-['League_Gothic']">ADD COMPETITION</div>
 
         <!-- INPUT: Event -->
         <label for="event" class="w-[540px] left-[81px] top-[447px] absolute justify-center text-lime-400 text-2xl font-normal font-['Geologica'] leading-loose">Event</label>
