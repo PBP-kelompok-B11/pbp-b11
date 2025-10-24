@@ -1,24 +1,79 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white/5 p-8 rounded-3xl">
-  <h2 class="text-3xl font-bold mb-4 text-white">{{ title|default:"Form" }}</h2>
+<div class="min-h-screen bg-indigo-900 text-white pt-28 relative overflow-hidden">
 
-  <form method="post" class="space-y-4">
-    {% csrf_token %}
-    {% for field in form %}
-      <div>
-        <label class="block text-sm text-lime-400 mb-1">{{ field.label }}</label>
-        {{ field }}
-        {% if field.errors %}
-          <p class="text-red-400 text-sm">{{ field.errors }}</p>
-        {% endif %}
+  <!-- Dekorasi teks besar -->
+  <div class="absolute text-[160px] font-bold text-white opacity-10 left-[-40px] top-[90px] select-none pointer-events-none">
+    CLUB
+  </div>
+
+  <!-- Panah dekorasi -->
+  <div class="absolute left-[-10px] top-[180px] w-[220px] h-[380px]">
+    <svg viewBox="0 0 444 517" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+      <path d="M403.493 320.269C325.455 558.021 117.482 533.718 86.0948 436.53C56.6724 345.426 149.839 278.662 212.786 274.763C272.671 271.053 282.789 322.371 231.247 339.316C124.051 374.558 -75.0639 213.756 -7.92073 3.03597M403.493 320.269L325.1 360.136M403.493 320.269L433.788 397.871" 
+            stroke="#B0FE08" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- FORM CONTAINER -->
+  <div class="flex items-center justify-center py-10 relative z-10">
+    <form action="{% url 'ibeth_clubs:club_create' %}" method="POST" enctype="multipart/form-data"
+          class="relative bg-indigo-900/80 backdrop-blur-lg rounded-3xl shadow-lg p-8 w-[750px] border border-white/10">
+      {% csrf_token %}
+      
+      <!-- BACK BUTTON -->
+      <a href="{% url 'ibeth_clubs:club_list' %}" class="absolute left-6 top-14 w-[40px] h-[50px] block hover:opacity-80 transition">
+        <svg width="40" height="50" viewBox="0 0 50 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32.8851 2.00525L3.99023 23.5169L32.8851 48.5052M38.7072 13.3043L27.7291 23.5169L38.7072 32.969" stroke="#B0FE08" stroke-width="4"/>
+        </svg>
+      </a>
+      <div class="absolute left-[70px] top-[60px] text-lime-400 text-3xl font-['Geologica'] leading-10">Back</div>
+
+      <!-- TITLE -->
+      <h1 class="left-[100px] top-[100px] text-white text-8xl font-['League_Gothic'] mt-20 mb-0 tracking-wide">
+        ADD CLUB
+      </h1>
+
+      <!-- INPUT: Nama -->
+      <div class="mb-6">
+        <label for="nama" class="block text-lime-400 text-xl font-['Geologica'] mb-2">Nama Klub</label>
+        <input type="text" id="nama" name="nama"
+               class="w-full h-11 bg-indigo-900 text-white placeholder-gray-400 rounded-[24px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
       </div>
-    {% endfor %}
 
-    <div class="flex gap-3 mt-4">
-      <button type="submit" class="btn-lime">Submit</button>
-      <a href="{% url 'club_list' %}" class="px-4 py-2 rounded bg-white/10">Batal</a>
-    </div>
-  </form>
+      <!-- INPUT: Negara -->
+      <div class="mb-6">
+        <label for="negara" class="block text-lime-400 text-xl font-['Geologica'] mb-2">Negara</label>
+        <input type="text" id="negara" name="negara"
+               class="w-full h-11 bg-indigo-900 text-white placeholder-gray-400 rounded-[24px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+      </div>
+
+      <!-- INPUT: Stadion -->
+      <div class="mb-6">
+        <label for="stadion" class="block text-lime-400 text-xl font-['Geologica'] mb-2">Stadion</label>
+        <input type="text" id="stadion" name="stadion"
+               class="w-full h-11 bg-indigo-900 text-white placeholder-gray-400 rounded-[24px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+      </div>
+
+      <!-- INPUT: Tahun Berdiri -->
+      <div class="mb-10">
+        <label for="tahun_berdiri" class="block text-lime-400 text-xl font-['Geologica'] mb-2">Tahun Berdiri</label>
+        <input type="text" id="tahun_berdiri" name="tahun_berdiri"
+               class="w-full h-11 bg-indigo-900 text-white placeholder-gray-400 rounded-[24px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+      </div>
+
+      <div class="flex justify-center">
+        <button type="submit"
+                class="w-48 h-11 bg-lime-400 rounded-[30px] text-indigo-900 text-xl font-['Geologica'] leading-8 hover:bg-lime-300 transition">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- FOOTER LIME -->
+  <div class="absolute bottom-0 left-0 w-full h-12 bg-lime-400"></div>
 </div>
 {% endblock %}
