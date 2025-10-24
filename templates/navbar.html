@@ -1,10 +1,14 @@
+<style>
+  
+  </style>
+
 <nav class="fixed top-0 left-0 w-full bg-[#1A1B99] shadow-md z-50 border-b-4 border-[#C3FF00]">
   <div class="max-w-7xl mx-auto px-8">
     <div class="flex justify-between items-center h-20">
 
       <!-- Logo PBP 11 -->
       <div class="flex items-center space-x-0">
-        <span class="bg-[#C3FF00] text-[#1A1B99] text-2xl font-bold px-5 py-2 rounded-l-full">
+        <span class="bg-[#C3FF00] text-[#1A1B99] text-2xl font-bold border-2 border-[#C3FF00] px-5 py-2 rounded-l-full">
           PBP
         </span>
         <span class="text-[#C3FF00] text-2xl font-bold border-2 border-[#C3FF00] px-5 py-2 rounded-r-full">
@@ -17,8 +21,11 @@
         <a href="{% url 'rafi_player:player_list' %}" class="text-white text-xl font-normal hover:text-[#C3FF00] transition">
           Player
         </a>
-        <a href="{% url 'clubs:club_list' %}" class="text-white text-xl font-normal hover:text-[#C3FF00] transition">
+        <a href="{% url 'ibeth_clubs:club_list' %}" class="text-white text-xl font-normal hover:text-[#C3FF00] transition">
           Club
+        </a>
+        <a href="{% url 'vidia_event:event_list' %}" class="text-white text-xl font-normal hover:text-[#C3FF00] transition">
+          Events
         </a>
         <a href="{% url 'authentication:home_view' %}" class="text-white text-xl font-normal hover:text-[#C3FF00] transition">
           Home
@@ -55,7 +62,7 @@
       <a href="{% url 'rafi_player:player_list' %}" class="block text-white hover:text-[#C3FF00]">
         Player
       </a>
-      <a href="{% url 'clubs:club_list' %}" class="block text-white hover:text-[#C3FF00]">
+      <a href="{% url 'ibeth_clubs:club_list' %}" class="block text-white hover:text-[#C3FF00]">
         Club
       </a>
       <a href="{% url 'authentication:home_view' %}" class="block text-white hover:text-[#C3FF00]">

@@ -1,0 +1,20 @@
+{% load static %}
+<article>
+    <div class="gallery-container">
+        <div class="gallery-grid" id="galleryGrid">
+            {% for media in medias %}
+            <div class="gallery-item">
+                {% if media.thumbnail %}
+                    <img src="{{ media.thumbnail }}" alt="{{ media.deskripsi }}" 
+                         class="w-full h-full object-cover rounded-lg">
+                {% else %}
+                    <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <circle cx="12" cy="8" r="4"/>
+                        <path d="M12 14c-6 0-8 4-8 4v2h16v-2s-2-4-8-4z"/>
+                    </svg>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</article>

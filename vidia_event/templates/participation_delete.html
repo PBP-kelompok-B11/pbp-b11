@@ -1,0 +1,68 @@
+<!-- templates/events/participation_confirm_delete.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Konfirmasi Hapus Partisipan</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff5f5;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      width: 420px;
+      text-align: center;
+    }
+    h2 {
+      color: #dc3545;
+    }
+    p {
+      color: #444;
+      margin: 20px 0;
+    }
+    form {
+      margin-top: 20px;
+    }
+    button {
+      background: #dc3545;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #b02a37;
+    }
+    a {
+      display: inline-block;
+      margin-left: 10px;
+      text-decoration: none;
+      color: #555;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Konfirmasi Hapus</h2>
+    <p>Apakah kamu yakin ingin menghapus partisipasi ini dari event <b>{{ participation.event.nama_event }}</b>?</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit">Ya, Hapus</button>
+      <a href="{% url 'event_detail' participation.event.id %}">Batal</a>
+    </form>
+  </div>
+</body>
+</html>
