@@ -1,11 +1,8 @@
 # events/models.py
 from django.db import models
 from rafi_player.models import Player
-<<<<<<< HEAD
-from clubs.models import Club
-=======
 from ibeth_clubs.models import Club
->>>>>>> ef1b59a86dabf23991d6d6bc49820b3fced4cc57
+
 class Event(models.Model):
     LIGA = 'liga'
     TURNAMEN = 'turnamen'

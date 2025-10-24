@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from nina_media_gallery.forms import MediaForm
 from nina_media_gallery.models import Media
 from django.http import HttpResponseRedirect, JsonResponse
+from django.urls import reverse
 
 # Create your views here.
 def is_admin(user):
@@ -21,65 +22,87 @@ def gallery_list(request):
 def gallery_details(request, id):
     media = get_object_or_404(Media, pk=id)
     media.increment_views()
+    
+    # Get all media ordered by created_at
+    all_media = Media.objects.all().order_by('created_at')
+    media_list = list(all_media)
+    
+    # Find current index
+    try:
+        current_index = media_list.index(media)
+        
+        # Get previous and next
+        previous_media = media_list[current_index - 1] if current_index > 0 else None
+        next_media = media_list[current_index + 1] if current_index < len(media_list) - 1 else None
+    except ValueError:
+        previous_media = None
+        next_media = None
 
     context = {
-        'media': media
+        'media': media,
+        'previous_media': previous_media,
+        'next_media': next_media,
     }
     return render(request, 'media_detail.html', context)
-
 def get_gallery_items(request):
-    """API endpoint untuk mengambil semua media items"""
-    try:
-        media_items = Media.objects.all()
-        data = []
-        
-        for item in media_items:
-            data.append({
-                'id': item.id,
-                'deskripsi': item.deskripsi,
-                'category': item.category,
-                'thumbnail': item.thumbnail if item.thumbnail else '',
-                'created_at': item.created_at.strftime('%Y-%m-%d %H:%M:%S') if hasattr(item, 'created_at') else ''
-            })
-        
-        return JsonResponse({
-            'status': 'success',
-            'data': data
-        })
-    except Exception as e:
-        return JsonResponse({
-            'status': 'error',
-            'message': str(e)
-        }, status=500)
+   def get_gallery_items(request):
+    media = Media.objects.all().values('deskripsi', 'media_file')
+    data = [
+        {
+            "deskripsi": item['deskripsi'],
+            "image_url": "/media/" + item['media_file']  # Sesuaikan MEDIA_URL
+        }
+        for item in media
+    ]
+    return JsonResponse(data, safe=False)
 
 # @user_passes_test(is_admin)
 def gallery_upload(request):
-    try:
-        deskripsi = request.POST.get('deskripsi')
-        category = request.POST.get('category')
-        thumbnail = request.POST.get('thumbnail')
-
-        new_media = Media(
-            deskripsi=deskripsi,
-            category=category,
-            thumbnail=thumbnail
-        )
-        new_media.save()
-        return JsonResponse({
-                'status': 'success',
-                'message': 'Media uploaded successfully!',
-                'data': {
-                    'id': new_media.id,
-                    'description': new_media.deskripsi,
-                    'category': new_media.category,
-                    'thumbnail': str(new_media.thumbnail)
-                }
-            }, status=201)
-    except Exception as e:
-        return JsonResponse({
-            'status': 'error',
-            'message': f'An error occurred: {str(e)}'
-        }, status=500)
+    if request.method == "POST":
+        # Handle AJAX upload
+        form = MediaForm(request.POST)
+        
+        # Debug: Print POST data
+        print("POST data:", request.POST)
+        
+        if form.is_valid():
+            try:
+                new_media = form.save()
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'Media uploaded successfully!',
+                    'data': {
+                        'id': str(new_media.id),
+                        'description': new_media.deskripsi,
+                        'category': new_media.category,
+                        'thumbnail': str(new_media.thumbnail) if new_media.thumbnail else None
+                    }
+                }, status=201)
+            except Exception as e:
+                import traceback
+                print(f"Save Error: {str(e)}")
+                print(traceback.format_exc())
+                return JsonResponse({
+                    'status': 'error',
+                    'message': f'An error occurred: {str(e)}'
+                }, status=500)
+        else:
+            # Form tidak valid, kembalikan error
+            print("Form errors:", form.errors)
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Form validation failed',
+                'errors': form.errors
+            }, status=400)
+    
+    # Handle GET request - render form page
+    else:
+        form = MediaForm()
+        context = {
+            'form': form
+        }
+        return render(request, 'upload.html', context)
+    
 @user_passes_test(is_admin)
 def gallery_update(request, id):
     media = get_object_or_404(Media, pk=id)
@@ -94,9 +117,7 @@ def gallery_update(request, id):
 
     return render(request, 'form.html', context)
 
-@user_passes_test(is_admin)
 def gallery_delete(request, id):
     media = get_object_or_404(Media, pk=id)
     media.delete()
-    return redirect('nina_media_gallery:gallery_list')
-
+    return HttpResponseRedirect(reverse('nina_media_gallery:gallery_list'))

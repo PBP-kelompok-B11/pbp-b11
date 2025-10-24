@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'nina_profile',
     'nina_media_gallery',
     'rafi_player',
-    'clubs',
+    'ibeth_clubs',
     'authentication',
     'vidia_event',
 ]
