@@ -10,6 +10,7 @@ class ClubForm(forms.ModelForm):
             'negara': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),
             'stadion': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),
             'tahun_berdiri': forms.NumberInput(attrs={'class': 'input input-bordered w-full'}),
+            'url_gambar': forms.URLInput(attrs={'class': 'input input-bordered w-full'}),
         }
 
 
