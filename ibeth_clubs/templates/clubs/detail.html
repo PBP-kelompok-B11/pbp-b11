@@ -1,63 +1,73 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="max-w-4xl mx-auto space-y-6">
-  <div class="bg-white/5 p-6 rounded-2xl">
-    <div class="flex justify-between items-start">
+<div class="min-h-screen bg-indigo-900 text-white px-4 pb-12">
+  <!-- Tambah margin top agar tidak nempel ke atas -->
+  <div class="max-w-5xl mx-auto mt-28 space-y-8 bg-white/5 p-8 rounded-2xl shadow-lg">
+
+    <!-- Bagian Info Klub -->
+    <div class="flex flex-wrap justify-between items-start gap-4">
       <div>
-        <h1 class="text-3xl font-bold text-white">{{ club.nama }}</h1>
+        <h1 class="text-4xl font-bold text-white mb-2">{{ club.nama }}</h1>
         <p class="text-sm text-white/70">{{ club.negara }} • {{ club.stadion }}</p>
         <p class="text-sm text-white/70">Founded: {{ club.tahun_berdiri }}</p>
       </div>
-      <div class="space-x-2">
-        <a href="{% url 'ibeth_clubs:club_update' club.pk %}" class="px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 transition">
+      <div class="space-x-2 flex">
+        <a href="{% url 'ibeth_clubs:club_update' club.pk %}"
+           class="px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 transition text-white">
           Edit
         </a>
-        <a href="{% url 'ibeth_clubs:club_delete' club.pk %}" class="px-4 py-2 rounded bg-red-600 hover:bg-red-700 transition">
-          Hapus
+        <a href="{% url 'ibeth_clubs:club_delete' club.pk %}"
+           class="px-4 py-2 rounded bg-red-600 hover:bg-red-700 transition text-white">
+          Delete
         </a>
       </div>
     </div>
-  </div>
 
-  <div class="bg-white/5 p-6 rounded-2xl">
-    <div class="flex justify-between items-center">
-      <h2 class="text-xl font-semibold text-white">Peringkat Klub</h2>
-      <a href="{% url 'ibeth_clubs:club_ranking_create' club.pk %}" class="px-4 py-2 rounded bg-lime-500 hover:bg-lime-600 transition">
-        Tambah Peringkat
-      </a>
+    <!-- Bagian Tabel Peringkat -->
+    <div class="bg-white/5 p-6 rounded-2xl shadow-inner">
+      <div class="flex justify-between items-center flex-wrap gap-3">
+        <h2 class="text-2xl font-semibold text-white">Club Rankings</h2>
+        
+      </div>
+
+      {% if rankings %}
+        <div class="overflow-x-auto mt-6">
+          <table class="table-auto w-full text-white border-collapse">
+            <thead>
+              <tr class="text-left text-sm text-white/70 border-b border-white/20">
+                <th class="py-3 px-2">Musim</th>
+                <th class="py-3 px-2">Peringkat</th>
+                <th class="py-3 px-2">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in rankings %}
+                <tr class="border-b border-white/10 hover:bg-white/10 transition">
+                  <td class="py-2 px-2">{{ r.musim }}</td>
+                  <td class="py-2 px-2">{{ r.peringkat }}</td>
+                  <td class="py-2 px-2 space-x-2">
+                    <a href="{% url 'ibeth_clubs:club_ranking_update' r.pk %}"
+                       class="px-3 py-1 rounded bg-blue-500 hover:bg-blue-600 transition text-white">Edit</a>
+                    <a href="{% url 'ibeth_clubs:club_ranking_delete' r.pk %}"
+                       class="px-3 py-1 rounded bg-red-600 hover:bg-red-700 transition text-white">Delete</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="mt-4 text-white/70">This club's ranking is in the range of 1-10.</p>
+      {% endif %}
     </div>
 
-    {% if rankings %}
-      <table class="table-auto w-full mt-4 text-white">
-        <thead>
-          <tr class="text-left text-sm text-white/70 border-b border-white/10">
-            <th class="py-2">Musim</th>
-            <th class="py-2">Peringkat</th>
-            <th class="py-2">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for r in rankings %}
-            <tr class="border-b border-white/5 hover:bg-white/10 transition">
-              <td class="py-2">{{ r.musim }}</td>
-              <td class="py-2">{{ r.peringkat }}</td>
-              <td class="py-2 space-x-2">
-                <a href="{% url 'ibeth_clubs:club_ranking_update' r.pk %}" class="px-2 py-1 rounded bg-blue-500 hover:bg-blue-600 transition">Edit</a>
-                <a href="{% url 'ibeth_clubs:club_ranking_delete' r.pk %}" class="px-2 py-1 rounded bg-red-600 hover:bg-red-700 transition">Hapus</a>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <p class="mt-4 text-white/70">Belum ada data peringkat untuk klub ini.</p>
-    {% endif %}
-  </div>
-
-  <div>
-    <a href="{% url 'ibeth_clubs:club_list' %}" class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 transition">
-      ← Kembali ke daftar klub
-    </a>
+    <!-- Tombol Kembali -->
+    <div class="pt-4 text-right">
+      <a href="{% url 'ibeth_clubs:club_list' %}"
+         class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 transition text-white">
+        ← Return to club list
+      </a>
+    </div>
   </div>
 </div>
 {% endblock %}
