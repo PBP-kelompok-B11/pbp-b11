@@ -67,7 +67,7 @@ def search_players(request):
         return JsonResponse({'query': query, 'results': data, 'jenis': 'pemain'})
 
     # HTML fallback -> render ke template list players
-    return render(request, 'rafi_player/list.html', {
+    return render(request, 'rafi_player/templates/list.html', {
         'query': query,
         'players': results,
         'jenis': 'pemain'
@@ -107,7 +107,7 @@ def filter_players(request):
         ]
         return JsonResponse({'results': data})
 
-    return render(request, 'search/filter_results.html', {'results': results})
+    return render(request, 'search/templates/player_filter_component.html', {'results': results})
 
 
 # ===============================
@@ -141,7 +141,7 @@ def search_clubs(request):
         ]
         return JsonResponse({'query': query, 'results': data, 'jenis': 'klub'})
 
-    return render(request, 'ibeth_clubs/list.html', {
+    return render(request, 'ibeth_clubs/templates/list.html', {
         'query': query,
         'clubs': results,
         'jenis': 'klub'
@@ -178,7 +178,7 @@ def filter_clubs(request):
         ]
         return JsonResponse({'results': data})
 
-    return render(request, 'search/filter_clubs.html', {'results': results})
+    return render(request, 'search/templates/club_filter_component.html', {'results': results})
 
 
 # ===============================
@@ -198,14 +198,14 @@ def search_history(request):
         ]
         return JsonResponse({'history': data})
 
-    return render(request, 'search/history.html', {'histories': history})
+    return render(request, 'search/templates/history.html', {'histories': history})
 
 
 # ===============================
 # SEARCH FORM
 # ===============================
 def search_form(request):
-    return render(request, 'search/form.html')
+    return render(request, 'search/templates/form.html')
 
 
 # ===============================
@@ -272,7 +272,7 @@ def search_events(request):
         ]
         return JsonResponse({'query': query, 'results': data, 'jenis': 'event'})
 
-    return render(request, 'vidia_event/list.html', {
+    return render(request, 'vidia_event/event_list.html', {
         'query': query,
         'events': results,
         'jenis': 'event'
@@ -313,4 +313,4 @@ def filter_events(request):
         ]
         return JsonResponse({'results': data})
 
-    return render(request, 'search/filter_events.html', {'results': results})
+    return render(request, 'search/templates/event_filter_component.html', {'results': results})

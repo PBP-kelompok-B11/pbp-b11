@@ -11,10 +11,10 @@ class SearchQueryAdmin(admin.ModelAdmin):
     readonly_fields = ('kata_kunci', 'jenis', 'user', 'tanggal')
 
     def has_add_permission(self, request):
-        """Biar admin gak bisa nambah manual search record (harus dari user)."""
+        """Agar admin tidak bisa nambah manual search record (harus dari user)."""
         return False
 
     def has_change_permission(self, request, obj=None):
-        """Biar admin cuma bisa lihat, gak bisa ubah record pencarian."""
+        """Agar admin hanya bisa lihat, tidak bisa ubah record pencarian."""
         return False
 
