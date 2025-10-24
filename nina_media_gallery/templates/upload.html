@@ -14,16 +14,10 @@
     <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50 transition-opacity duration-300 ease-out">
 
         <!-- Konten Modal -->
-        <div id="modalContent" class="bg-[#1E1BFF] w-11/12 md:w-1/2 p-10 rounded-xl shadow-2xl text-white transform scale-90 opacity-0 transition-all duration-300 ease-out">
+        <div id="modalContent" class="bg-[#1E1BFF] w-11/12 md:w-1/2 p-10 rounded-xl shadow-2xl text-white transform scale-90 opacity-0 transition-all duration-300 ease-out relative">
 
             <!-- Tombol Close -->
             <button onclick="closeModal()" class="absolute top-4 right-6 text-white hover:text-gray-300 text-2xl">&times;</button>
-
-            <!-- Back -->
-            <a href="{% url 'nina_media_gallery:gallery_list' %}" 
-               class="flex items-center text-lime-400 mb-2 hover:text-white transition">
-                <span class="text-xl mr-2">&larr;</span> Back to Gallery
-            </a>
 
             <!-- Judul -->
             <h1 class="text-5xl font-bold mb-8 tracking-wide">Upload Media</h1>
@@ -36,25 +30,28 @@
                     <!-- Deskripsi -->
                     <div>
                         <label class="block text-white mb-2 font-medium">Deskripsi</label>
-                        {{ form.deksripsi|as_widget(attrs={
-                            'class': 'w-full px-4 py-3 rounded-full bg-transparent border border-white text-white focus:outline-none'
-                        }) }}
+                        <textarea name="deskripsi" required
+                            class="w-full px-4 py-3 rounded-lg bg-transparent border border-white text-white focus:outline-none focus:border-lime-400" 
+                            placeholder="Masukkan deskripsi media" rows="3"></textarea>
                     </div>
 
                     <!-- Kategori -->
                     <div>
                         <label class="block text-white mb-2 font-medium">Kategori</label>
-                        {{ form.category|as_widget(attrs={
-                            'class': 'w-full px-4 py-3 rounded-full bg-transparent border border-white text-white focus:outline-none'
-                        }) }}
+                        <select name="category" id="category" required
+                            class="w-full px-4 py-3 rounded-full bg-indigo-800 border border-white text-white focus:outline-none focus:border-lime-400">
+                            <option value="">Pilih Kategori</option>
+                            <option value="foto">Photo</option>
+                            <option value="video">Video</option>
+                        </select>
                     </div>
 
                     <!-- Thumbnail -->
                     <div>
-                        <label class="block text-white mb-2 font-medium">Thumbnail</label>
-                        {{ form.thumbnail|as_widget(attrs={
-                            'class': 'w-full px-4 py-3 rounded-full bg-transparent border border-white text-white focus:outline-none'
-                        }) }}
+                        <label class="block text-white mb-2 font-medium">Thumbnail URL</label>
+                        <input type="url" name="thumbnail" 
+                            class="w-full px-4 py-3 rounded-full bg-transparent border border-white text-white focus:outline-none focus:border-lime-400"
+                            placeholder="https://example.com/image.jpg">
                     </div>
                 </div>
 
@@ -97,23 +94,47 @@ document.getElementById("uploadForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
     // Validasi kosong
-    const inputs = this.querySelectorAll("input, textarea, select");
+    const deskripsi = this.querySelector('[name="deskripsi"]');
+    const category = this.querySelector('[name="category"]');
+    const thumbnail = this.querySelector('[name="thumbnail"]');
+    
     let valid = true;
-    inputs.forEach(input => {
-        if (!input.value.trim()) {
-            valid = false;
-            input.classList.add("border-red-500");
-        } else {
-            input.classList.remove("border-red-500");
-        }
-    });
+    
+    // Validasi deskripsi (required)
+    if (!deskripsi.value.trim()) {
+        valid = false;
+        deskripsi.classList.add("border-red-500");
+    } else {
+        deskripsi.classList.remove("border-red-500");
+    }
+    
+    // Validasi category (required)
+    if (!category.value) {
+        valid = false;
+        category.classList.add("border-red-500");
+    } else {
+        category.classList.remove("border-red-500");
+    }
+    
+    // Thumbnail adalah optional (blank=True, null=True)
+    thumbnail.classList.remove("border-red-500");
 
     if (!valid) {
-        showToast("⚠️ Please fill in all fields!", "error");
+        showToast("⚠️ Mohon isi deskripsi dan pilih kategori!", "error");
         return;
     }
 
+    // Debug: Log data sebelum kirim
+    console.log("Deskripsi:", deskripsi.value);
+    console.log("Category:", category.value);
+    console.log("Thumbnail:", thumbnail.value);
+
     let formData = new FormData(this);
+    
+    // Debug: Log FormData
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
 
     fetch("{% url 'nina_media_gallery:gallery_upload' %}", {
         method: "POST",
@@ -122,6 +143,7 @@ document.getElementById("uploadForm").addEventListener("submit", function(e) {
     })
     .then(response => response.json())
     .then(data => {
+        console.log("Response:", data);
         if (data.status === "success") {
             showToast("✅ Upload berhasil!", "success");
             setTimeout(() => {
@@ -132,7 +154,8 @@ document.getElementById("uploadForm").addEventListener("submit", function(e) {
             showToast("❌ " + (data.message || "Upload gagal!"), "error");
         }
     })
-    .catch(() => {
+    .catch((error) => {
+        console.error("Error:", error);
         showToast("❌ Terjadi kesalahan server!", "error");
     });
 });

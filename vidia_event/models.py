@@ -2,6 +2,7 @@
 from django.db import models
 from rafi_player.models import Player
 from ibeth_clubs.models import Club
+
 class Event(models.Model):
     LIGA = 'liga'
     TURNAMEN = 'turnamen'

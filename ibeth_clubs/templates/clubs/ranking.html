@@ -14,12 +14,12 @@
     <tbody>
       {% for r in rankings %}
       <tr class="border-t border-white/5">
-        <td class="py-2"><a href="{% url 'club_detail' r.club.pk %}">{{ r.club.nama }}</a></td>
+        <td class="py-2"><a href="{% url 'ibeth_clubs:club_detail' r.club.pk %}">{{ r.club.nama }}</a></td>
         <td>{{ r.musim }}</td>
         <td>{{ r.peringkat }}</td>
         <td>
-          <a href="{% url 'club_ranking_update' r.pk %}" class="px-2 py-1 rounded bg-blue-500">Edit</a>
-          <a href="{% url 'club_ranking_delete' r.pk %}" class="px-2 py-1 rounded bg-red-600">Hapus</a>
+          <a href="{% url 'ibeth_clubs:club_ranking_update' r.pk %}" class="px-2 py-1 rounded bg-blue-500">Edit</a>
+          <a href="{% url 'ibeth_clubs:club_ranking_delete' r.pk %}" class="px-2 py-1 rounded bg-red-600">Hapus</a>
         </td>
       </tr>
       {% empty %}
@@ -28,7 +28,7 @@
     </tbody>
   </table>
   <div class="mt-4">
-    <a href="{% url 'club_list' %}" class="px-4 py-2 rounded bg-white/10">Kembali</a>
+    <a href="{% url 'obeth_clubs:club_list' %}" class="px-4 py-2 rounded bg-white/10">Kembali</a>
   </div>
 </div>
 {% endblock %}
