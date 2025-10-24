@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+  
+
+</head>
+<body>
+  <!-- <header>
+    <div class="logo">
+      <span class="logo-circle">PBP</span>
+      <span class="logo-number">11</span>
+    </div>
+    <nav>
+      <a href="#">Player</a>
+      <a href="#">Club</a>
+      <a href="#">Competition</a>
+      <a href="#">Home</a>
+    </nav>
+    <button class="login-btn">Login</button>
+  </header> -->
+
+  <main>
+    <section class="player-section">
+        <div class="player-text mt-10">
+
+            <div class="player-header">
+            <h1>PLAYER</h1>
+            <p>Discover more than 100 talented players around the globe!</p>
+            </div>
+            
+            <!-- tombol tetap di atas -->
+            <button onclick="showModal()" class="add-btn">Add Player</button>
+
+            <div class="filter-buttons">
+            <button id="filter-all" class="add-btn">Show All</button>
+            <button id="filter-my" class="add-btn">Show My</button>
+            </div>
+
+            <!-- judul dan deskripsi -->
+           
+        </div>
+
+        <div id="loading" class="rounded-lg border border-gray-200 p-12 text-center hidden mt-10">
+        <svg class="animate-spin h-8 w-8 text-green-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
+        <p class="text-gray-600 mt-3">Loading players...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="hidden bg-red-100 text-red-700 p-4 rounded mt-10">
+            Error loading players!
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty" class="hidden text-gray-600 mt-10 text-center">
+            No players found.
+        </div>
+
+        <div class="player-grid-wrapper mt-20">
+            <div id=grid class="player-grid">
+            <!-- 16 contoh card -->
+            <!-- <div class="player-card"></div>
+            <div class="player-card"></div>
+            <div class="player-card"></div>
+            <div class="player-card"></div>
+            <div class="player-card"></div>
+            <div class="player-card"></div>
+            <div class="player-card"></div>
+            <div class="player-card"></div>
+            <div class="player-card"></div>
+            <div class="player-card"></div>
+            <div class="player-card"></div>
+            <div class="player-card"></div>
+            <div class="player-card"></div>
+            <div class="player-card"></div>
+            <div class="player-card"></div>
+            <div class="player-card"></div> -->
+            </div>
+        </div>
+
+    </section>
+  </main>
+
+  <footer></footer>
+</body>
+
+<script>
+    console.log("JS Loaded");
+    const PLAYER_API_ENDPOINT = "{% url 'rafi_player:show_json_player' %}";
+    const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+    // DOM Elements
+    const loadingSpinner = document.getElementById('loading');
+    const errorMessage = document.getElementById('error');
+    const emptyStateDisplay = document.getElementById('empty');
+    const playerGridContainer = document.getElementById('grid');
+    const showAllPlayerButton = document.getElementById('filter-all');
+    const showMyPlayerButton = document.getElementById('filter-my');
+
+    // State Variables
+    let activeFilter = 'all';
+    let allPlayerData = [];
+
+    // Update filter button appearance
+    function updateFilterButtonsAppearance() {
+    if (!showAllPlayerButton || !showMyPlayerButton) return;
+    
+    if (activeFilter === 'all') {
+    showAllPlayerButton.className = 'filter-btn active';
+    showMyPlayerButton.className = 'filter-btn';
+    } else {
+    showAllPlayerButton.className = 'filter-btn';
+    showMyPlayerButton.className = 'filter-btn active';
+    }
+    }
+
+    // Show/hide page sections
+    function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+    loadingSpinner.classList.toggle('hidden', !showLoading);
+    errorMessage.classList.toggle('hidden', !showError);
+    emptyStateDisplay.classList.toggle('hidden', !showEmpty);
+    playerGridContainer.classList.toggle('hidden', !showGrid);
+    
+    // Add grid classes when showing grid
+    if (showGrid) {
+        playerGridContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+    }
+    }
+
+    // Get readable category name
+    // Get readable position name
+    function getReadablePosition(posisiCode) {
+        const posisiMapping = {
+            "Penjaga Gawang": "Goalkeeper",
+            "Bek": "Defender",
+            "Gelandang": "Midfielder",
+            "Striker": "Forward",
+        };
+        return posisiMapping[posisiCode] || posisiCode;
+    }
+
+    function buildPlayerCardElement(player) {
+
+        // card.addEventListener('click', () => {
+        //     // URL-nya disesuaikan dengan path Django kamu
+            
+        //     // atau kalau kamu pakai url pattern bernama:
+        //     // window.location.href = `{% url 'rafi_player:player_detail' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', player.id);
+        // });
+
+        const card = document.createElement('div');
+        card.classList.add('player-card');
+        card.style.position = 'relative';
+        card.style.overflow = 'hidden';
+        card.style.borderRadius = '12px'; // biar halus
+        card.style.aspectRatio = '3 / 4'; // contoh rasio 3:4
+        card.style.backgroundColor = '#222'; // fallback kalau thumbnail null
+
+        card.addEventListener('click', () => {
+            const detailUrl = `{% url 'rafi_player:player_detail' '00000000-0000-0000-0000-000000000000' %}`
+                .replace('00000000-0000-0000-0000-000000000000', player.id);
+            window.location.href = detailUrl;
+        });
+
+        // --- Thumbnail gambar ---
+        const img = document.createElement('img');
+        img.src = player.thumbnail || 'https://via.placeholder.com/300x400?text=No+Image';
+        img.alt = player.nama;
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        img.style.position = 'absolute';
+        img.style.top = '0';
+        img.style.left = '0';
+        card.appendChild(img);
+
+        // --- Overlay nama pemain ---
+        const content = document.createElement('div');
+        content.style.position = 'absolute';
+        content.style.bottom = '0';
+        content.style.width = '100%';
+        content.style.background = 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)';
+        content.style.color = 'white';
+        content.style.textAlign = 'center';
+        content.style.fontWeight = '600';
+        content.style.fontSize = '1rem';
+        content.style.padding = '0.5rem';
+        content.innerText = player.nama;
+
+        card.appendChild(content);
+        return card;
+    }
+
+
+        //////////////
+    function renderAllPlayerCards(playerItems) {
+        playerGridContainer.innerHTML = '';
+        playerItems.forEach(playerItem => {
+            const cardElement = buildPlayerCardElement(playerItem);
+            playerGridContainer.appendChild(cardElement);
+        });
+    }
+
+    // Filter and display player
+    function filterAndDisplayPlayer() {
+    updateFilterButtonsAppearance();
+    
+    const filteredPlayer = activeFilter === 'all' 
+        ? allPlayerData 
+        : allPlayerData.filter(player => Number(player.user_id) === Number(CURRENT_USER_ID));
+    
+    if (filteredPlayer.length === 0) {
+        displayPageSection({ showEmpty: true });
+    } else {
+        renderAllPlayerCards(filteredPlayer);
+        displayPageSection({ showGrid: true });
+    }
+    }
+
+    // Fetch player data from server
+    async function fetchPlayerFromServer() {
+    try {
+        displayPageSection({ showLoading: true });
+        
+        const response = await fetch(PLAYER_API_ENDPOINT, {
+        headers: { 'Accept': 'application/json' },
+        });
+
+        if (!response.ok) {
+        throw new Error('Failed to fetch player data from server');
+        }
+
+       
+        const playerData = await response.json();
+        allPlayerData = playerData || [];
+
+         console.log("Data dari server:", playerData); // <--- ini penting
+
+        
+        filterAndDisplayPlayer();
+
+        
+    } catch (error) {
+        console.error('Error loading player:', error);
+        displayPageSection({ showError: true });
+    }
+    }
+
+    // Event handlers
+    function handleShowAllPlayerClick() {
+    activeFilter = 'all';
+    filterAndDisplayPlayer();
+    }
+
+    function handleShowMyPlayerClick() {
+    activeFilter = 'my';
+    filterAndDisplayPlayer();
+    }
+
+    // Initialize page
+    function initializePlayerPage() {
+    showAllPlayerButton.addEventListener('click', handleShowAllPlayerClick);
+    showMyPlayerButton.addEventListener('click', handleShowMyPlayerClick);
+    
+    fetchPlayerFromServer();
+    }
+
+    // Start application
+    initializePlayerPage();
+
+
+    document.addEventListener('playerAdded', function() {
+        // Refresh data without page reload
+        fetchPlayerFromServer();
+    });
+</script>
+{% endblock content %}
