@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rafi_player',
     'clubs',
     'authentication',
+    'comments',
 ]
 
 MIDDLEWARE = [
