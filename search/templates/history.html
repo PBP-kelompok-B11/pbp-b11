@@ -1,0 +1,64 @@
+<!-- templates/search/history.html -->
+<div id="searchHistoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
+    <div class="bg-indigo-900 w-[900px] rounded-[32px] shadow-lg overflow-hidden p-10 relative text-white font-['Geologica']">
+      <!-- Back button -->
+      <button id="closeHistoryModal" class="absolute top-6 left-6 flex items-center text-lime-400 hover:text-lime-300">
+        <div class="w-4 h-4 border-l-4 border-b-4 border-lime-400 rotate-45 mr-2"></div>
+        <span class="text-2xl">Back</span>
+      </button>
+  
+      <!-- Title -->
+      <h2 class="text-lime-400 text-4xl mb-10 text-center">Search History</h2>
+  
+      <!-- History List -->
+      <div class="space-y-6 max-h-[500px] overflow-y-auto pr-2">
+        {% if histories %}
+          {% for item in histories %}
+          <div class="bg-indigo-950 rounded-3xl p-4 border border-lime-400">
+            <p class="text-lime-400 text-lg">Keyword</p>
+            <p class="text-white text-xl font-semibold">{{ item.query }}</p>
+            <p class="text-sm text-gray-300 mt-1">Searched at {{ item.created_at|date:"d M Y, H:i" }}</p>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-gray-400 text-center text-xl">You have no search history yet.</p>
+        {% endif %}
+      </div>
+  
+      <!-- Clear History Button -->
+      <div class="flex justify-center mt-10">
+        <button id="clearHistoryBtn" class="bg-lime-400 text-indigo-900 text-2xl font-semibold py-3 px-10 rounded-[36px] hover:bg-lime-300 transition">
+          Clear History
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Show modal (dipanggil dari AJAX)
+    function openHistoryModal() {
+      document.getElementById('searchHistoryModal').classList.remove('hidden');
+    }
+  
+    // Close modal
+    document.getElementById('closeHistoryModal').addEventListener('click', () => {
+      document.getElementById('searchHistoryModal').classList.add('hidden');
+    });
+  
+    // Clear history via AJAX
+    document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+      fetch("{% url 'clear_search_history' %}", {
+        method: "POST",
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        }
+      });
+    });
+  </script>
+  

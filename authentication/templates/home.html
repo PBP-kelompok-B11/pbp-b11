@@ -5,7 +5,7 @@
 {% block content %}
 <script src="https://cdn.tailwindcss.com"></script>
 
-<div class="relative min-h-screen bg-indigo-900 overflow-hidden text-white font-[Geologica]">
+<div class="relative min-h-screen bg-indigo-900 overflow-hidden text-white font-[Geologica] pb-20"> <!-- Tambah padding bottom -->
 
     <!-- HEADER -->
     <header class="flex items-center justify-between px-8 md:px-16 py-6 border-b border-indigo-800">
@@ -58,8 +58,8 @@
         <h2 class="absolute hidden xl:block left-[15%] top-[10%] text-white text-[180px] md:text-[240px] xl:text-[300px] font-[League_Gothic] opacity-20">BEYOND</h2>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="w-full bg-lime-400 text-indigo-900 py-6 text-center font-[Geologica] text-sm md:text-base">
+    <!-- FOOTER - Position absolute di bawah -->
+    <footer class="absolute bottom-0 left-0 w-full bg-lime-400 text-indigo-900 py-6 text-center font-[Geologica] text-sm md:text-2xl">
         © 2025 Beyond90 — PBP-11
     </footer>
 </div>

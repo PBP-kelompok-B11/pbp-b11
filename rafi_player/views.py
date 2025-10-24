@@ -1,9 +1,23 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 
 # Create your views here.
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Player
 from .forms import PlayerForm
+
+def show_json_player(request):
+    players = Player.objects.all()
+    data = [
+        {
+            "id": player.id,
+            "nama": player.nama,
+            "thumbnail": player.thumbnail.url if player.thumbnail else None,
+            "user_id": player.user.id if hasattr(player, 'user') else None,
+        }
+        for player in players
+    ]
+    return JsonResponse(data, safe=False)
 
 def player_list(request):
     players = Player.objects.all()
