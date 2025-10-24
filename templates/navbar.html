@@ -43,8 +43,8 @@
 
       <!-- Menu + Login -->
       <div class="hidden md:flex items-center space-x-6">
-        <a href="{% url 'rafi_player:player_list' %}" class="text-white hover:text-[#C3FF00]">Player</a>
-        <a href="{% url 'ibeth_clubs:club_list' %}" class="text-white hover:text-[#C3FF00]">Club</a>
+        <a href="{% url 'rafi_player:list' %}" class="text-white hover:text-[#C3FF00]">Player</a>
+        <a href="{% url 'ibeth_clubs:list' %}" class="text-white hover:text-[#C3FF00]">Club</a>
         <a href="{% url 'vidia_event:event_list' %}" class="text-white hover:text-[#C3FF00]">Events</a>
         {% if user.is_authenticated %}
           <span class="text-white">{{ user.username }}</span>
@@ -67,8 +67,8 @@
   <!-- Mobile Nav -->
   <div class="mobile-menu hidden bg-[#1A1B99] border-t border-[#C3FF00]">
     <div class="px-6 py-4 space-y-4 text-center">
-      <a href="{% url 'rafi_player:player_list' %}" class="block text-white hover:text-[#C3FF00]">Player</a>
-      <a href="{% url 'ibeth_clubs:club_list' %}" class="block text-white hover:text-[#C3FF00]">Club</a>
+      <a href="{% url 'rafi_player:list' %}" class="block text-white hover:text-[#C3FF00]">Player</a>
+      <a href="{% url 'ibeth_clubs:list' %}" class="block text-white hover:text-[#C3FF00]">Club</a>
       <a href="{% url 'vidia_event:event_list' %}" class="block text-white hover:text-[#C3FF00]">Events</a>
       <a href="{% url 'authentication:home_view' %}" class="block text-white hover:text-[#C3FF00]">Home</a>
 
@@ -92,7 +92,6 @@
   </script>
 </nav>
 
-<!-- Tambahin script search AJAX lo di bawah sini atau di base.html -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const searchForm = document.getElementById('searchForm');

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'ibeth_clubs',
     'authentication',
     'vidia_event',
+    'search',
 ]
 
 MIDDLEWARE = [
