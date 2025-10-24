@@ -92,7 +92,7 @@ def login_view(request):
                 return JsonResponse({
                     'success': True,
                     'message': f"Halo {username}, selamat datang kembali!",
-                    'redirect_url': '/home/'
+                    'redirect_url': ''
                 })
 
             # Kalau normal → redirect biasa
