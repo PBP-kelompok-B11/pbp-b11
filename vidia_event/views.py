@@ -12,7 +12,7 @@ from authentication.views import admin_only
 def event_list(request):
     """Menampilkan daftar semua event sepak bola."""
     events = Event.objects.all().order_by('-tanggal_selesai')
-    paginator = Paginator(events, 5)  # tampilkan 5 per halaman
+    paginator = Paginator(events, 5)  
 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -36,10 +36,10 @@ def event_create(request):
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
 
-        # --- cari event berdasarkan nama ---
+
         event = Event.objects.filter(nama_event__iexact=event_name).first()
         if not event:
-            # Kalau event belum ada, buat baru
+           
             event = Event.objects.create(
                 nama_event=event_name,
                 tipe=type_name,
@@ -48,8 +48,8 @@ def event_create(request):
                 tanggal_selesai=end_date,
             )
 
-        # setelah semua berhasil disimpan
-        return redirect('vidia_event:event_list')  # ubah ke halaman list event kamu
+        
+        return redirect('vidia_event:event_list')  
 
     # kalau GET request
     return render(request, 'event_create.html')
@@ -58,7 +58,6 @@ def event_create(request):
 def event_update(request, pk):
     event = get_object_or_404(Event, pk=pk)
     if request.method == 'POST':
-        # Update data event
         event.nama_event = request.POST.get('event')
         event.tipe = request.POST.get('tipe')
         event.lokasi = request.POST.get('lokasi')

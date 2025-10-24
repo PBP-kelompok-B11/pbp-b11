@@ -41,8 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main',
-    'nina_profile',
     'nina_media_gallery',
     'rafi_player',
     'ibeth_clubs',

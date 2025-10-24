@@ -3,14 +3,12 @@
 
 {% block content %}
 <style>
-    /* Jangan override .hidden secara global - gunakan scoped selector untuk modal saja */
-
-    /* Jangan ubah positioning navbar global; hanya atur z-index jika perlu */
+  
     header, .navbar, nav {
         z-index: 11001;
     }
 
-    /* Paksa warna link navbar agar kontras (lebih spesifik) */
+
     header a, .navbar a, nav a {
         color: white !important;
     }
@@ -496,7 +494,7 @@
     }
 
     .hidden {
-        /* jangan definisikan global behavior di sini */
+       
     }
 </style>
 
@@ -694,7 +692,6 @@
 
     // Fungsi untuk modal delete
     function confirmDelete(mediaId) {
-        // Set the media id to delete and show the modal
         mediaToDelete = mediaId;
         const deleteModal = document.getElementById('deleteModal');
         if (deleteModal) {
@@ -708,9 +705,9 @@
         mediaToDelete = null;
     }
 
-    // Setup event listeners ketika halaman dimuat
+
     document.addEventListener('DOMContentLoaded', function() {
-        // Setup confirm delete button
+    
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
         if (confirmDeleteBtn) {
             confirmDeleteBtn.addEventListener('click', function() {
@@ -851,7 +848,7 @@
                 if (data.status === 'success') {
                     showToast('✅ Media berhasil diupdate!', 'success');
                     closeEditModal();
-                    window.location.reload(); // atau update DOM langsung
+                    window.location.reload(); 
                 } else {
                     showToast('❌ ' + (data.message || 'Update gagal!'), 'error');
                 }
@@ -874,11 +871,11 @@
 
     // Fungsi delete media
     function deleteMedia(mediaId) {
-        // Gunakan URL pattern Django yang benar
+        
         const deleteUrl = `{% url 'nina_media_gallery:gallery_delete' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', mediaId);
         
         fetch(deleteUrl, {
-            method: 'POST', // sesuaikan: 'DELETE' jika view menerima DELETE
+            method: 'POST',
             headers: {
                 'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',

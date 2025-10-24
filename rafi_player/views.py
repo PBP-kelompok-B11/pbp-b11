@@ -11,7 +11,7 @@ from .models import Player
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from .models import Player  # pastikan impor model Player
+from .models import Player 
 
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
@@ -28,7 +28,6 @@ def add_player_ajax(request):
     posisi = request.POST.get("posisi")
     thumbnail= request.POST.get("thumbnail")
 
-    # Validasi sederhana
     if not all([nama, negara, usia, tinggi, berat, posisi, thumbnail]):
         return HttpResponse(b"Missing fields", status=400)
 
@@ -44,7 +43,7 @@ def add_player_ajax(request):
     )
     new_player.save()
 
-    # Return JSON biar bisa ditangani di JS
+
     return JsonResponse({'message': 'CREATED'})
 
 def show_json_player(request):
@@ -88,7 +87,6 @@ def show_json_player_by_id(request, player_id):
 def player_detail(request, player_id):
     player = get_object_or_404(Player, pk=player_id)
 
-    # gunakan related_name sesuai models.py
     achievements = player.prestasi.all()
     stats = player.statistik_musim.all()
     careers = player.riwayat_karier.all()
@@ -134,4 +132,4 @@ def edit_player_ajax(request, pk):
 def delete_player(request, player_id):
     player = get_object_or_404(Player, pk=player_id)
     player.delete()
-    return redirect('rafi_player:player_list')  # arahkan ke halaman list pemain
+    return redirect('rafi_player:player_list') 

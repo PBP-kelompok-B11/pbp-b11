@@ -50,7 +50,7 @@ def get_gallery_items(request):
     data = [
         {
             "deskripsi": item['deskripsi'],
-            "image_url": "/media/" + item['media_file']  # Sesuaikan MEDIA_URL
+            "image_url": "/media/" + item['media_file']  
         }
         for item in media
     ]
@@ -62,7 +62,7 @@ def gallery_upload(request):
         # Handle AJAX upload
         form = MediaForm(request.POST)
         
-        # Debug: Print POST data
+        
         print("POST data:", request.POST)
         
         if form.is_valid():
