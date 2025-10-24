@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       container.innerHTML = '';
       if (data.results.length === 0) {
-        container.innerHTML = '<p style="color:white;">Tidak ada event ditemukan.</p>';
+        container.innerHTML = '<p style="color:#333;">Tidak ada event ditemukan.</p>';
       } else {
         data.results.forEach(e => {
           container.innerHTML += `
