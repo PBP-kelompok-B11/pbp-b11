@@ -4,7 +4,7 @@ from .models import Club, ClubRanking
 class ClubForm(forms.ModelForm):
     class Meta:
         model = Club
-        fields = ['nama', 'negara', 'stadion', 'tahun_berdiri']
+        fields = ['nama', 'negara', 'stadion', 'tahun_berdiri', 'url_gambar']
         widgets = {
             'nama': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),
             'negara': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),
