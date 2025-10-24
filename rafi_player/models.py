@@ -41,7 +41,7 @@ class SeasonStats(models.Model):
     pertandingan = models.IntegerField()
     gol = models.IntegerField()
     assist = models.IntegerField()
-    kartu = models.IntegerField()
+    kartu = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.player.nama} - {self.musim}"

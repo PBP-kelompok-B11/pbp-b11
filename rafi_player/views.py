@@ -16,6 +16,7 @@ from .models import Player  # pastikan impor model Player
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 
+
 @csrf_exempt
 @login_required(login_url='/login/')
 @login_required
@@ -46,6 +47,7 @@ def add_player_ajax(request):
 
     # Return JSON biar bisa ditangani di JS
     return JsonResponse({'message': 'CREATED'})
+
 
 def show_json_player(request):
     player_list = Player.objects.all()
@@ -84,6 +86,7 @@ def show_json_player_by_id(request, player_id):
         return JsonResponse(data)
     except Player.DoesNotExist:
         return JsonResponse({'detail': 'Not found'}, status=404)
+
 
 def player_detail(request, player_id):
     player = get_object_or_404(Player, pk=player_id)
