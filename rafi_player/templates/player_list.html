@@ -6,19 +6,6 @@
 
 </head>
 <body>
-  <!-- <header>
-    <div class="logo">
-      <span class="logo-circle">PBP</span>
-      <span class="logo-number">11</span>
-    </div>
-    <nav>
-      <a href="#">Player</a>
-      <a href="#">Club</a>
-      <a href="#">Competition</a>
-      <a href="#">Home</a>
-    </nav>
-    <button class="login-btn">Login</button>
-  </header> -->
 
   <main>
     <section class="player-section">
@@ -30,12 +17,14 @@
             </div>
             
             <!-- tombol tetap di atas -->
-            <button onclick="showModal()" class="add-btn">Add Player</button>
+            {% if user.is_authenticated %}
+                <button onclick="showPlayerModal()" class="add-btn">Add Player</button>
 
-            <div class="filter-buttons">
-            <button id="filter-all" class="add-btn">Show All</button>
-            <button id="filter-my" class="add-btn">Show My</button>
-            </div>
+                <div class="filter-buttons">
+                    <button id="filter-all" class="add-btn">Show All</button>
+                    <button id="filter-my" class="add-btn">Show My</button>
+                </div>
+            {% endif %}
 
             <!-- judul dan deskripsi -->
            
@@ -61,23 +50,6 @@
 
         <div class="player-grid-wrapper mt-20">
             <div id=grid class="player-grid">
-            <!-- 16 contoh card -->
-            <!-- <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div> -->
             </div>
         </div>
 
@@ -91,6 +63,11 @@
     console.log("JS Loaded");
     const PLAYER_API_ENDPOINT = "{% url 'rafi_player:show_json_player' %}";
     const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+    console.log("Current user ID:", CURRENT_USER_ID);
+    console.log("Tipe data CURRENT_USER_ID:", typeof CURRENT_USER_ID);
+
+    
 
     // DOM Elements
     const loadingSpinner = document.getElementById('loading');
@@ -144,12 +121,6 @@
 
     function buildPlayerCardElement(player) {
 
-        // card.addEventListener('click', () => {
-        //     // URL-nya disesuaikan dengan path Django kamu
-            
-        //     // atau kalau kamu pakai url pattern bernama:
-        //     // window.location.href = `{% url 'rafi_player:player_detail' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', player.id);
-        // });
 
         const card = document.createElement('div');
         card.classList.add('player-card');
@@ -237,7 +208,11 @@
         const playerData = await response.json();
         allPlayerData = playerData || [];
 
-         console.log("Data dari server:", playerData); // <--- ini penting
+         console.log("Data dari server:", playerData); 
+         console.log("Semua players:", allPlayerData);
+        allPlayerData.forEach(player => {
+            console.log(`Player ${player.nama} - user_id: ${player.user_id}`);
+        });
 
         
         filterAndDisplayPlayer();
@@ -262,18 +237,22 @@
 
     // Initialize page
     function initializePlayerPage() {
-    showAllPlayerButton.addEventListener('click', handleShowAllPlayerClick);
-    showMyPlayerButton.addEventListener('click', handleShowMyPlayerClick);
-    
-    fetchPlayerFromServer();
+    if (showAllPlayerButton) {
+        showAllPlayerButton.addEventListener('click', handleShowAllPlayerClick);
     }
+    if (showMyPlayerButton) {
+        showMyPlayerButton.addEventListener('click', handleShowMyPlayerClick);
+    }
+
+    fetchPlayerFromServer();
+}
+
 
     // Start application
     initializePlayerPage();
 
 
     document.addEventListener('playerAdded', function() {
-        // Refresh data without page reload
         fetchPlayerFromServer();
     });
 </script>

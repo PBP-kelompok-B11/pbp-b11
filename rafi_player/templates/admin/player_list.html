@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto pt-24 px-4">
+    <h2 class="text-2xl font-semibold mb-6">Daftar Player</h2>
+
+    <!-- Tombol tambah player -->
+    <a href="{% url 'rafi_player:admin_player_add' %}" 
+       class="bg-lime-500 hover:bg-lime-600 text-white font-medium py-2 px-4 rounded mb-4 inline-block">
+        Tambah Player
+    </a>
+
+    <!-- Tabel daftar player -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full border border-gray-300 text-left">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="py-2 px-4 border-b border-gray-300">Nama</th>
+                    <th class="py-2 px-4 border-b border-gray-300">Negara</th>
+                    <th class="py-2 px-4 border-b border-gray-300">Usia</th>
+                    <th class="py-2 px-4 border-b border-gray-300">Posisi</th>
+                    <th class="py-2 px-4 border-b border-gray-300">User</th>
+                    <th class="py-2 px-4 border-b border-gray-300">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in players %}
+                <tr class="hover:bg-gray-100">
+                    <td class="py-2 px-4 border-b border-gray-300">{{ player.nama }}</td>
+                    <td class="py-2 px-4 border-b border-gray-300">{{ player.negara }}</td>
+                    <td class="py-2 px-4 border-b border-gray-300">{{ player.usia }}</td>
+                    <td class="py-2 px-4 border-b border-gray-300">{{ player.posisi }}</td>
+                    <td class="py-2 px-4 border-b border-gray-300">
+                        {% if player.user %}
+                            {{ player.user.username }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="py-2 px-4 border-b border-gray-300 space-x-2">
+                        <a href="{% url 'rafi_player:admin_player_edit' player.id %}" 
+                           class="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded text-sm">
+                            Edit
+                        </a>
+                        <a href="{% url 'rafi_player:admin_player_delete' player.id %}" 
+                           class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-4">Belum ada player</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

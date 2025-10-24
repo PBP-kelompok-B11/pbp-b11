@@ -3,14 +3,12 @@
 
 {% block content %}
 <style>
-    /* Jangan override .hidden secara global - gunakan scoped selector untuk modal saja */
-
-    /* Jangan ubah positioning navbar global; hanya atur z-index jika perlu */
+  
     header, .navbar, nav {
         z-index: 11001;
     }
 
-    /* Paksa warna link navbar agar kontras (lebih spesifik) */
+
     header a, .navbar a, nav a {
         color: white !important;
     }
@@ -152,6 +150,23 @@
         height: 100%;
         object-fit: contain;
         object-position: center;
+    }
+
+    /* Play overlay for videos */
+    .play-overlay{
+        position: absolute;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        color: rgba(255,255,255,0.95);
+        background: linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.25));
+        pointer-events: none; /* click handled by container */
+        text-shadow: 0 4px 16px rgba(0,0,0,0.6);
+    }
+    .gallery-item[data-category="video"] .play-overlay{
+        display: flex;
     }
 
     /* Responsive adjustments */
@@ -479,7 +494,7 @@
     }
 
     .hidden {
-        /* jangan definisikan global behavior di sini */
+       
     }
 </style>
 
@@ -493,7 +508,11 @@
     <div class="gallery-container">
         <div class="gallery-grid">
             {% for media in media_list %}
-            <div class="gallery-item" data-id="{{ media.id }}">
+            <div class="gallery-item"
+                 data-id="{{ media.id }}"
+                 data-category="{{ media.category }}"
+                 {% if media.file %} data-video-src="{{ media.file.url }}"{% elif media.video %} data-video-src="{{ media.video.url }}"{% elif media.video_url %} data-video-src="{{ media.video_url }}"{% elif media.url %} data-video-src="{{ media.url }}"{% endif %}
+                 data-poster="{% if media.thumbnail %}{{ media.thumbnail }}{% endif %}">
                 <!-- Thumbnail Link -->
                 <a href="{% url 'nina_media_gallery:gallery_details' media.id %}" class="thumbnail-container">
                     {% if media.thumbnail %}
@@ -508,6 +527,9 @@
                             <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
                         </svg>
                     {% endif %}
+
+                    {# overlay play hanya untuk video #}
+                    <div class="play-overlay" aria-hidden="true">▶</div>
                 </a>
 
                 <!-- Media Info -->
@@ -522,7 +544,7 @@
                     
                     <!-- Kategori dan Action Buttons -->
                     <div class="media-meta">
-                        <span class="category-badge">{{ media.get_category_display }}</span>
+                        <span class="category-badge" data-value="{{ media.category }}">{{ media.get_category_display }}</span>
                         <div class="action-buttons">
                             <button type="button" onclick= "editMedia('{{media.id}}')" class="edit-btn">Edit</button>
                             <button type="button" onclick= "confirmDelete('{{media.id}}')" class="delete-btn">Delete</button>
@@ -533,9 +555,6 @@
             {% empty %}
             <!-- Empty State -->
             <div class="empty-state" style="grid-column: 1 / -1;">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-                </svg>
                 <h3>Belum Ada Media</h3>
                 <p>Klik tombol "+ Add Media" untuk mengupload media pertama Anda</p>
             </div>
@@ -555,6 +574,50 @@
         </div>
     </div>
     
+    <div id="editModal" class="modal hidden">
+        <div class="modal-content">
+            <button type="button" onclick="closeEditModal()" class="absolute top-4 right-6 text-white hover:text-gray-300 text-3xl">&times;</button>
+            <h1 class="text-5xl font-bold mb-8 tracking-wide">Edit Media</h1>
+            <form id="editForm" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="media_id" id="editMediaId">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-white mb-2 font-medium">Deskripsi</label>
+                        <textarea name="deskripsi" id="editDeskripsi" required class="w-full px-4 py-3 rounded-lg bg-indigo-900 border border-white text-white focus:outline-none focus:border-lime-400" rows="3"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-white mb-2 font-medium">Kategori</label>
+                        <select name="category" id="editCategory" required class="w-full px-4 py-3 rounded-full bg-indigo-800 border border-white text-white focus:outline-none focus:border-lime-400">
+                            <option value="">Pilih Kategori</option>
+                            <option value="foto">Photo</option>
+                            <option value="video">Video</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-white mb-2 font-medium">Thumbnail URL</label>
+                        <input type="url" name="thumbnail" id="editThumbnail" class="w-full px-4 py-3 rounded-full bg-indigo-900 border border-white text-white focus:outline-none focus:border-lime-400">
+                    </div>
+                </div>
+                <div class="text-center mt-10">
+                    <button type="submit" class="px-10 py-3 bg-lime-400 text-indigo-900 font-semibold rounded-full hover:bg-lime-300 transition">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Player Modal (video) -->
+    <div id="playerModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-label="Video player" style="max-width: 900px;">
+            <button type="button" onclick="closePlayerModal()" class="absolute top-4 right-6 text-white hover:text-gray-300 text-3xl">&times;</button>
+            <div style="width:100%;">
+                <video id="playerVideo" controls style="width:100%; max-height:70vh; background:#000;" playsinline>
+                    Sorry, your browser doesn't support embedded videos.
+                </video>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Upload -->
     <div id="modal" class="modal hidden">
         <div class="modal-content">
@@ -586,7 +649,7 @@
                     <div>
                         <label class="block text-white mb-2 font-medium">Thumbnail URL</label>
                         <input type="url" name="thumbnail" 
-                            class="w-full px-4 py-3 rounded-full bg-transparent border border-white text-white focus:outline-none focus:border-lime-400"
+                            class="w-full px-4 py-3 rounded-full bg-indigo-900 border border-white text-white focus:outline-none focus:border-lime-400"
                             placeholder="https://example.com/image.jpg">
                     </div>
                 </div>
@@ -629,7 +692,6 @@
 
     // Fungsi untuk modal delete
     function confirmDelete(mediaId) {
-        // Set the media id to delete and show the modal
         mediaToDelete = mediaId;
         const deleteModal = document.getElementById('deleteModal');
         if (deleteModal) {
@@ -643,9 +705,9 @@
         mediaToDelete = null;
     }
 
-    // Setup event listeners ketika halaman dimuat
+
     document.addEventListener('DOMContentLoaded', function() {
-        // Setup confirm delete button
+    
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
         if (confirmDeleteBtn) {
             confirmDeleteBtn.addEventListener('click', function() {
@@ -674,22 +736,146 @@
                 }
             });
         }
+
+        // Setup player behavior: klik thumbnail untuk video -> buka player modal
+        document.querySelectorAll('.gallery-item').forEach(function(item){
+            const cat = (item.dataset.category || '').toLowerCase();
+            const thumb = item.querySelector('.thumbnail-container');
+            if (!thumb) return;
+
+            if (cat === 'video') {
+                thumb.addEventListener('click', function(evt){
+                    evt.preventDefault(); // jangan navigasi ke details
+                    const src = item.dataset.videoSrc;
+                    const poster = item.dataset.poster || '';
+                    if (!src) {
+                        showToast('❌ Sumber video tidak ditemukan untuk media ini', 'error');
+                        return;
+                    }
+                    openPlayerModal(src, poster);
+                });
+            }
+            // untuk foto: biarkan link default ke detail
+        });
+
+        // Close player modal ketika klik di luar content
+        const playerModal = document.getElementById('playerModal');
+        if (playerModal) {
+            playerModal.addEventListener('click', function(e){
+                if (e.target === playerModal) {
+                    closePlayerModal();
+                }
+            });
+        }
     });
 
-    // Fungsi edit media
+    // Player modal functions
+    function openPlayerModal(src, poster = '') {
+        const modal = document.getElementById('playerModal');
+        const video = document.getElementById('playerVideo');
+        if (!video || !modal) return;
+
+        // set src and poster (poster improves UX)
+        video.src = src;
+        if (poster) {
+            video.setAttribute('poster', poster);
+        } else {
+            video.removeAttribute('poster');
+        }
+        video.load();
+
+        modal.classList.remove('hidden');
+        setTimeout(()=> modal.querySelector('.modal-content').classList.add('show'), 10);
+
+        // Try play (may be blocked by autoplay policy)
+        video.play().catch(()=>{ /* ignore play block */ });
+    }
+
+    function closePlayerModal() {
+        const modal = document.getElementById('playerModal');
+        const video = document.getElementById('playerVideo');
+        if (!modal || !video) return;
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+
+        modal.querySelector('.modal-content').classList.remove('show');
+        setTimeout(()=> modal.classList.add('hidden'), 250);
+    }
+
     function editMedia(mediaId) {
-        // Gunakan URL pattern Django yang benar
-        const editUrl = `{% url 'nina_media_gallery:gallery_update' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', mediaId);
-        window.location.href = editUrl;
+        // 1. Ambil data media dari DOM
+        const mediaEl = document.querySelector(`[data-id="${mediaId}"]`);
+        if (!mediaEl) return;
+
+        const deskripsi = mediaEl.querySelector('.media-description').innerText;
+        // Ambil category langsung dari dataset, bukan dari teks tampil
+        const categoryValue = (mediaEl.dataset.category || '').toLowerCase();
+        const thumbnail = mediaEl.querySelector('img') ? mediaEl.querySelector('img').src : '';
+
+        // 2. Tampilkan modal edit
+        const modal = document.getElementById('editModal');
+        modal.classList.remove('hidden');
+        const content = modal.querySelector('.modal-content');
+        content.classList.add('show');
+
+        // 3. Isi form dengan data media
+        const form = modal.querySelector('#editForm');
+        form.querySelector('#editMediaId').value = mediaId;
+        form.querySelector('#editDeskripsi').value = deskripsi;
+        // isi select category dengan value yg benar ('foto' / 'video')
+        form.querySelector('#editCategory').value = categoryValue;
+        form.querySelector('#editThumbnail').value = thumbnail;
+
+        // 4. Submit handler untuk update media
+        form.onsubmit = function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch(`{% url 'nina_media_gallery:gallery_update' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', mediaId), {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: formData
+            })
+            .then(res => {
+                // Jika response bukan JSON (mis. redirect), coba parse aman
+                return res.json().catch(() => ({ status: res.ok ? 'success' : 'error' }));
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    showToast('✅ Media berhasil diupdate!', 'success');
+                    closeEditModal();
+                    window.location.reload(); 
+                } else {
+                    showToast('❌ ' + (data.message || 'Update gagal!'), 'error');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showToast('❌ Terjadi kesalahan saat update', 'error');
+            });
+        };
+    }
+
+    function closeEditModal() {
+        const modal = document.getElementById('editModal');
+        const content = modal.querySelector('.modal-content');
+        content.classList.remove('show');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
     }
 
     // Fungsi delete media
     function deleteMedia(mediaId) {
-        // Gunakan URL pattern Django yang benar
+        
         const deleteUrl = `{% url 'nina_media_gallery:gallery_delete' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', mediaId);
         
         fetch(deleteUrl, {
-            method: 'POST', // sesuaikan: 'DELETE' jika view menerima DELETE
+            method: 'POST',
             headers: {
                 'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
@@ -817,7 +1003,7 @@
     // Test untuk memastikan JavaScript berjalan
     console.log('Gallery page JavaScript loaded successfully');
 
-// Ambil CSRF token dari cookie (Django)
+   // Ambil CSRF token dari cookie (Django)
    function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
