@@ -18,7 +18,6 @@ class Event(models.Model):
     lokasi = models.CharField(max_length=100)
     tanggal_mulai = models.DateField()
     tanggal_selesai = models.DateField()
-    pemenang = models.CharField(max_length=100) 
     def __str__(self):
         return self.nama_event
 

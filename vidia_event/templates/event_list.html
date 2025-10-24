@@ -24,26 +24,42 @@
     <!-- Background boxes -->
     <div class="absolute top-[50px] left-[-1px] h-[625px] w-[901px] rounded-[38px] bg-white"></div>
     <div class="absolute top-[64px] left-[17px] h-[595px] w-[868px] rounded-3xl bg-indigo-900"></div>
+  <style>
+  /* Scrollbar untuk Webkit (Chrome, Safari) */
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 10px;             /* Lebar scrollbar */
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: #4F46E5;     /* Warna track (indigo) */
+    border-radius: 8px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background-color: #B0FE08; /* Warna thumb (lime) */
+    border-radius: 8px;
+    border: 2px solid #4F46E5; /* Biar ada padding di track */
+  }
+
+  /* Firefox */
+  .scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: #B0FE08 #4F46E5;
+  }
+  </style>
 
     <!-- Container utama scrollable -->
-    <div class="absolute top-[75px] left-[28px] w-[855px] h-[500px] overflow-y-auto overflow-x-hidden rounded-2xl bg-indigo-900 p-2">
+    <div class="absolute top-[75px] left-[28px] w-[855px] h-[572px] overflow-y-auto overflow-x-hidden rounded-2xl bg-indigo-900 p-2 scrollbar-custom">
       {% if page_obj %}
         {% for event in page_obj %}
           <a href="{% url 'vidia_event:event_detail' event.pk %}" class="block relative h-28 w-full mb-4 group transition">
-            <!-- Kotak hijau -->
             <div class="absolute top-0 left-0 h-28 w-full rounded-2xl bg-lime-400 group-hover:bg-lime-300 transition"></div>
-
-            <!-- Kotak biru di kanan -->
-            <div class="absolute top-[63px] right-[25px] h-20 w-60 rounded-2xl bg-indigo-900"></div>
-
-            <!-- Nama event -->
-            <div class="absolute top-[72px] left-[39px] w-[563px] font-['Geologica'] text-5xl leading-[62.5px] font-normal text-indigo-900">
+            <div class="absolute top-[20px] right-[15px] h-20 w-60 rounded-2xl bg-indigo-900"></div>
+            <div class="absolute top-[26px] left-[39px] w-[563px] font-['Geologica'] text-5xl leading-[62.5px] font-normal text-indigo-900">
               {{ event.nama_event }}
             </div>
-
-            <!-- Pemenang -->
-            <div class="absolute top-[72px] right-[75px] w-24 font-['Geologica'] text-5xl leading-[62.5px] font-semibold text-white">
-              {{ event.pemenang }}
+            <div class="absolute top-[26px] right-[80px] w-24 font-['Geologica'] text-5xl leading-[62.5px] font-semibold text-white">
+              0 - 1
             </div>
           </a>
         {% endfor %}
@@ -53,17 +69,7 @@
     </div>
 
     <!-- PAGINATION BUTTONS -->
-    <div class="absolute top-[680px] left-[28px] w-[956px] flex justify-center space-x-4 text-lime-400 font-['Geologica'] text-xl">
-      {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}" class="hover:text-lime-200">&laquo; Prev</a>
-      {% endif %}
 
-      <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-
-      {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}" class="hover:text-lime-200">Next &raquo;</a>
-      {% endif %}
-    </div>
   </div>
 
   <!-- Deskripsi kiri -->
@@ -81,9 +87,10 @@
   </a>
 
   <!-- SVG background kiri -->
-  <div class="absolute top-[392.2px] left-[-38px] h-[532.47px] w-96 origin-top-left rotate-[-9.33deg]">
-    <svg viewBox="0 0 444 517" fill="none" class="h-full w-full">
-      <path d="M403.493 320.269C325.455 558.021 117.482 533.718 86.0948 436.53C56.6724 345.426 149.839 278.662 212.786 274.763C272.671 271.053 282.789 322.371 231.247 339.316C124.051 374.558 -75.0639 213.756 -7.92073 3.03597M403.493 320.269L325.1 360.136M403.493 320.269L433.788 397.871" stroke="#B0FE08" stroke-width="20" />
+  <div class="absolute left-[-10px] top-[380px] w-[220px] h-[380px]">
+    <svg viewBox="0 0 444 517" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+      <path d="M403.493 320.269C325.455 558.021 117.482 533.718 86.0948 436.53C56.6724 345.426 149.839 278.662 212.786 274.763C272.671 271.053 282.789 322.371 231.247 339.316C124.051 374.558 -75.0639 213.756 -7.92073 3.03597M403.493 320.269L325.1 360.136M403.493 320.269L433.788 397.871" 
+            stroke="#B0FE08" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </div>
 </div>

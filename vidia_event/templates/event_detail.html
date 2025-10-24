@@ -1,33 +1,63 @@
-{% extends 'base.html' %} 
-{% load static %} 
-{% block content %}
-<div class="relative h-[955px] w-[1920px] overflow-hidden bg-indigo-900">
-  <div class="w-40 h-16 relative">
-    <div class="w-24 left-[180px] top-[70px] absolute justify-center text-lime-400 text-3xl font-normal font-['Geologica'] leading-10">Back</div>
-    <div class="w-11 h-16 left-[120px] top-[69px] absolute">
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="fixed top-0 left-0 h-screen w-screen overflow-hidden bg-indigo-900">
+  <!-- Tombol Back -->
+  <div class="relative h-16 w-40">
+    <div class="absolute top-[115px] left-[180px] z-50 w-24 justify-center font-['Geologica'] text-4xl leading-10 font-normal text-lime-400">Back</div>
+    <a href="{% url 'vidia_event:event_list' %}" class="relative z-50">
+      <div class="absolute top-[115px] left-[120px] z-50 h-16 w-11 cursor-pointer">
         <svg width="50" height="64" viewBox="0 0 50 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M32.8851 2.00525L3.99023 23.5169L32.8851 48.5052M38.7072 13.3043L27.7291 23.5169L38.7072 32.969" stroke="#B0FE08" stroke-width="5"/>
+          <path d="M32.8851 2.00525L3.99023 23.5169L32.8851 48.5052M38.7072 13.3043L27.7291 23.5169L38.7072 32.969" stroke="#B0FE08" stroke-width="5" />
         </svg>
-    </div>
+      </div>
+    </a>
   </div>
-  <div class="relative h-[949px] w-[1920px] overflow-hidden">
-    <div class="absolute top-[407px] left-[111px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">Ipsum Dolor sit Amet</div>
-    <div class="absolute top-[338px] left-[111px] w-96 justify-center font-['Geologica'] text-5xl leading-[60px] font-bold text-lime-400">Lorem</div>
-    <div class="absolute top-[401px] left-[631px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">Ipsum Dolor sit Amet</div>
-    <div class="absolute top-[332px] left-[631px] w-96 justify-center font-['Geologica'] text-5xl leading-[60px] font-bold text-lime-400">Lorem</div>
-    <div class="absolute top-[401px] left-[371px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">Ipsum Dolor sit Amet</div>
-    <div class="absolute top-[332px] left-[371px] w-96 justify-center font-['Geologica'] text-5xl leading-[60px] font-bold text-lime-400">Lorem</div>
-    <div class="absolute top-[395px] left-[891px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">Ipsum Dolor sit Amet</div>
-    <div class="absolute top-[326px] left-[891px] w-96 justify-center font-['Geologica'] text-5xl leading-[60px] font-bold text-lime-400">Lorem</div>
+
+  <div class="relative h-full w-full overflow-hidden">
+    <!-- Tipe -->
+    <div class="absolute top-[338px] left-[111px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Tipe</div>
+    <div class="absolute top-[395px] left-[112px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.get_tipe_display }}</div>
+
+    <!-- Lokasi -->
+    <div class="absolute top-[338px] left-[371px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Lokasi</div>
+    <div class="absolute top-[395px] left-[372px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.lokasi }}</div>
+
+    <!-- Tanggal Mulai -->
+    <div class="absolute top-[338px] left-[631px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Tanggal Mulai</div>
+    <div class="absolute top-[395px] left-[632px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tanggal_mulai }}</div>
+
+    <!-- Tanggal Selesai -->
+    <div class="absolute top-[338px] left-[911px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Tanggal Selesai</div>
+    <div class="absolute top-[395px] left-[912px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tanggal_selesai }}</div>
+
+    <!-- Deskripsi -->
     <div class="absolute top-[506px] left-[111px] w-[833px] justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur porttitor pharetra tellus, eget consectetur metus aliquet vel. Donec porta purus id felis bibendum vestibulum. Nunc tristique tortor sit amet ligula faucibus malesuada. Ut ac auctor lacus,</div>
-    <div data-property-1="Frame 5099" class="absolute top-[667px] left-[102px] h-14 w-[705px] overflow-hidden">
-      <div class="absolute top-[3px] left-[5px] h-14 w-[695px] rounded-3xl bg-white"></div>
+
+    <!-- Tombol Edit & Delete -->
+    <div class="absolute top-[660px] left-[811px] flex space-x-4">
+      <a href="{% url 'vidia_event:event_update' event.pk %}"
+          class="px-6 py-2 bg-lime-400 text-indigo-900 font-['Geologica'] text-xl rounded-2xl hover:bg-lime-300 transition">
+          Edit
+      </a>
+      <form action="{% url 'vidia_event:event_delete' event.pk %}" method="POST" onsubmit="return confirm('Are you sure you want to delete this event?');">
+        {% csrf_token %}
+        <button type="submit"
+                class="px-6 py-2 bg-red-500 text-white font-['Geologica'] text-xl rounded-2xl hover:bg-red-400 transition">
+          Delete
+        </button>
+      </form>
+    </div>
+
+    <!-- Add Comment -->
+    <div data-property-1="Frame 5099" class="absolute top-[660px] left-[102px] h-14 w-[705px] overflow-hidden">
+      <div class="absolute top-[3px] left-[5px] h-12 w-[695px] rounded-2xl bg-white"></div>
       <div class="absolute top-[11px] left-[279px] h-9 w-36 justify-center font-['Geologica'] text-xl leading-normal font-normal text-indigo-900">Add Comment</div>
     </div>
+
+    <!-- Header Event -->
     <div data-property-1="Frame 5098" class="absolute top-[152px] left-[102px] h-28 w-[956px] overflow-hidden">
       <div class="absolute top-0 left-0 h-28 w-[956px] rounded-2xl bg-lime-400"></div>
-      <div class="absolute top-[13px] left-[707px] h-20 w-60 rounded-2xl bg-indigo-900"></div>
-      <div class="absolute top-[22px] left-[39px] w-[563px] justify-center font-['Geologica'] text-5xl leading-[62.50px] font-normal text-indigo-900">Lorem vs Ipsum</div>
+      <div class="absolute top-[13px] left-[707px] h-20 w-60 rounded-xl bg-indigo-900"></div>
+      <div class="absolute top-[22px] left-[39px] w-[563px] justify-center font-['Geologica'] text-5xl leading-[62.50px] font-normal text-indigo-900">{{ event.nama_event }}</div>
       <div class="absolute top-[22px] left-[775px] w-24 justify-center font-['Geologica'] text-5xl leading-[62.50px] font-semibold text-white">0 - 1</div>
     </div>
   </div>

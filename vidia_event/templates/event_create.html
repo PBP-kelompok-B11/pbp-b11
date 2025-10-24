@@ -1,53 +1,111 @@
-
 {% extends 'base.html' %}
 {% load static %}
 
 {% block content %}
-<form action="{% url 'vidia_event:event_create' %}" method="POST">
-    {% csrf_token %}
-    <div class="w-[1075px] h-[1372px] relative bg-indigo-900 overflow-hidden">
-        <!-- BACK BUTTON -->
-        <a href="{% url 'vidia_event:event_list' %}" class="absolute left-[81px] top-[200px] w-[50px] h-[64px] block hover:opacity-80 transition">
-            <svg width="50" height="64" viewBox="0 0 50 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M32.8851 2.00525L3.99023 23.5169L32.8851 48.5052M38.7072 13.3043L27.7291 23.5169L38.7072 32.969" stroke="#B0FE08" stroke-width="5"/>
-            </svg>
-        </a>
-        <di class="w-24 left-[144px] top-[207px] absolute justify-center text-lime-400 text-5xl font-normal font-['Geologica'] leading-10">Back</div>
+<div class="min-h-screen bg-indigo-900 text-white pt-28 relative overflow-hidden">
+  
+{% if messages %}
+  <div class="fixed top-8 right-8 z-50">
+    {% for message in messages %}
+      <div class="mb-3 px-6 py-3 rounded-xl shadow-lg text-lg font-semibold
+                  {% if message.tags == 'success' %}
+                    bg-green-500 text-white
+                  {% elif message.tags == 'error' %}
+                    bg-red-500 text-white
+                  {% else %}
+                    bg-gray-500 text-white
+                  {% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
 
-        <!-- TITLE -->
-        <div class="w-[989px] h-36 left-[-164px] top-[280px] absolute justify-center text-right text-white text-7xl font-normal font-['League_Gothic']">ADD COMPETITION</div>
+  <!-- Dekorasi teks besar -->
+  <div class="absolute text-[160px] font-bold text-white opacity-10 left-[-40px] top-[90px] select-none pointer-events-none">
+    COMPETITION
+  </div>
 
-        <!-- INPUT: Event -->
-        <label for="event" class="w-[540px] left-[81px] top-[447px] absolute justify-center text-lime-400 text-2xl font-normal font-['Geologica'] leading-loose">Event</label>
-        <input type="text" id="event" name="event"
-               class="w-[915px] h-13 left-[80px] top-[489px] absolute bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+  <!-- Panah dekorasi -->
+  <div class="absolute left-[-10px] top-[180px] w-[220px] h-[380px]">
+    <svg viewBox="0 0 444 517" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+      <path d="M403.493 320.269C325.455 558.021 117.482 533.718 86.0948 436.53C56.6724 345.426 149.839 278.662 212.786 274.763C272.671 271.053 282.789 322.371 231.247 339.316C124.051 374.558 -75.0639 213.756 -7.92073 3.03597M403.493 320.269L325.1 360.136M403.493 320.269L433.788 397.871" 
+            stroke="#B0FE08" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
 
-        <!-- INPUT: Clubs -->
-        <label for="clubs" class="w-[540px] left-[81px] top-[573px] absolute justify-center text-lime-400 text-2xl font-normal font-['Geologica'] leading-loose">Clubs</label>
-        <input type="text" id="clubs" name="clubs"
-               class="w-[915px] h-13 left-[80px] top-[615px] absolute bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+  <!-- FORM CONTAINER -->
+  <div class="flex items-center justify-center py-10 relative z-10">
+    <form action="{% url 'vidia_event:event_create' %}" method="POST"
+          class="relative bg-indigo-900/80 backdrop-blur-lg rounded-3xl shadow-lg p-10 w-[900px] border border-white/10" id="eventForm">
+        {% csrf_token %}
+      
+      <!-- BACK BUTTON -->
+      <a href="{% url 'vidia_event:event_list' %}" class="absolute left-10 top-20 w-[50px] h-[64px] block hover:opacity-80 transition">
+        <svg width="50" height="64" viewBox="0 0 50 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32.8851 2.00525L3.99023 23.5169L32.8851 48.5052M38.7072 13.3043L27.7291 23.5169L38.7072 32.969" stroke="#B0FE08" stroke-width="5"/>
+        </svg>
+      </a>
+      <div class="absolute left-[100px] top-[80px] text-lime-400 text-3xl font-['Geologica'] leading-10">Back</div>
 
-        <!-- INPUT: Players -->
-        <label for="players" class="w-[540px] left-[81px] top-[699px] absolute justify-center text-lime-400 text-2xl font-normal font-['Geologica'] leading-loose">Players</label>
-        <input type="text" id="players" name="players"
-               class="w-[915px] h-13 left-[80px] top-[741px] absolute bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+      <!-- TITLE -->
+      <h1 class="left-[100px] text-white text-8xl font-['League_Gothic'] mt-32 mb-12 tracking-wide">
+        ADD COMPETITION
+      </h1>
 
-        <!-- INPUT: Captain -->
-        <label for="captain" class="w-[540px] left-[81px] top-[825px] absolute justify-center text-lime-400 text-2xl font-normal font-['Geologica'] leading-loose">Captain</label>
-        <input type="text" id="captain" name="captain"
-               class="w-[915px] h-13 left-[80px] top-[867px] absolute bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
-
-        <!-- INPUT: Winner -->
-        <label for="winner" class="w-[540px] left-[81px] top-[951px] absolute justify-center text-lime-400 text-2xl font-normal font-['Geologica'] leading-loose">Winner</label>
-        <input type="text" id="winner" name="winner"
-               class="w-[915px] h-13 left-[80px] top-[993px] absolute bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
-
-        <!-- SUBMIT BUTTON -->
-        <div class="w-60 h-12 left-[420px] top-[1106px] absolute overflow-hidden">
-            <button type="submit" class="w-60 h-12 bg-lime-400 rounded-[36px] text-indigo-900 text-2xl font-normal font-['Geologica'] leading-10 hover:bg-lime-300 transition">
-                Submit
-            </button>
+        <!-- Event -->
+        <div class="mb-8">
+            <label for="event" class="block text-lime-400 text-2xl font-['Geologica'] mb-2">Event</label>
+            <input type="text" id="event" name="event"
+       value="{% if is_update %}{{ event.nama_event }}{% endif %}"
+       class="w-full h-12 bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
         </div>
-    </div>
-</form>
+
+        <!-- Tipe -->
+        <div class="mb-8">
+            <label for="tipe" class="block text-lime-400 text-2xl font-['Geologica'] mb-2">Tipe</label>
+            <input type="text" id="tipe" name="tipe"
+       value="{% if is_update %}{{ event.tipe }}{% endif %}"
+       class="w-full h-12 bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+        </div>
+
+        <!-- Lokasi -->
+        <div class="mb-8">
+            <label for="lokasi" class="block text-lime-400 text-2xl font-['Geologica'] mb-2">Lokasi</label>
+            <input type="text" id="lokasi" name="lokasi"
+       value="{% if is_update %}{{ event.lokasi }}{% endif %}"
+       class="w-full h-12 bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+        </div>
+
+        <!-- Tanggal Mulai -->
+        <div class="mb-8">
+            <label for="start_date" class="block text-lime-400 text-2xl font-['Geologica'] mb-2">Tanggal Mulai</label>
+            <input type="text" id="start_date" name="start_date"
+       value="{% if is_update %}{{ event.tanggal_mulai }}{% endif %}"
+       class="w-full h-12 bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+        </div>
+
+        <!-- Tanggal Selesai -->
+        <div class="mb-12">
+            <label for="end_date" class="block text-lime-400 text-2xl font-['Geologica'] mb-2">Tanggal Selesai</label>
+            <input type="text" id="end_date" name="end_date"
+       value="{% if is_update %}{{ event.tanggal_selesai }}{% endif %}"
+       class="w-full h-12 bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+        </div>
+
+        <!-- Submit -->
+        <div class="flex justify-center">
+          <button type="submit"
+                class="w-60 h-12 bg-lime-400 rounded-[36px] text-indigo-900 text-2xl font-['Geologica'] leading-10 hover:bg-lime-300 transition">
+            {% if is_update %}Update{% else %}Submit{% endif %}
+          </button>
+        </div>
+    </form>
+
+  </div>
+
+  <!-- FOOTER LIME -->
+  <div class="absolute bottom-0 left-0 w-full h-12 bg-lime-400"></div>
+</div>
 {% endblock %}
+
