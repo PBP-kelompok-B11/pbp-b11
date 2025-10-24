@@ -6,3 +6,4 @@ urlpatterns = [
     path('clubs/', include('ibeth_clubs.urls', namespace='clubs')),
     path('auth/', include('authentication.urls', namespace='authentication')),  
 ]
+#testetstes
