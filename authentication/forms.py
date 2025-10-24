@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import Media, ModelForm
 
 class MediaForm(ModelForm):
     class Meta:
