@@ -9,7 +9,7 @@ from .models import UserProfile
 def register_view(request):
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'success': True, 'redirect_url': '/home/'})
+            return JsonResponse({'success': True, 'redirect_url': ''})
         return redirect('authentication:home_view')
 
     if request.method == 'POST':
@@ -75,7 +75,7 @@ def login_view(request):
     # Kalau udah login, langsung ke home
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'success': True, 'redirect_url': '/home/'})
+            return JsonResponse({'success': True, 'redirect_url': ''})
         return redirect('authentication:home_view')
 
     if request.method == 'POST':
@@ -92,7 +92,7 @@ def login_view(request):
                 return JsonResponse({
                     'success': True,
                     'message': f"Halo {username}, selamat datang kembali!",
-                    'redirect_url': '/home/'
+                    'redirect_url': ''
                 })
 
             # Kalau normal → redirect biasa

@@ -1,12 +1,9 @@
-<style>
-  
-  </style>
-
+<!-- Navbar + Searchbar -->
 <nav class="fixed top-0 left-0 w-full bg-[#1A1B99] shadow-md z-50 border-b-4 border-[#C3FF00]">
   <div class="max-w-7xl mx-auto px-8">
     <div class="flex justify-between items-center h-20">
 
-      <!-- Logo PBP 11 -->
+      <!-- Logo -->
       <div class="flex items-center space-x-0">
         <span class="bg-[#C3FF00] text-[#1A1B99] text-2xl font-bold border-2 border-[#C3FF00] px-5 py-2 rounded-l-full">
           PBP
@@ -16,38 +13,49 @@
         </span>
       </div>
 
-      <!-- Menu Navigasi -->
-      <div class="hidden md:flex items-center space-x-14">
-        <a href="{% url 'rafi_player:player_list' %}" class="text-white text-xl font-normal hover:text-[#C3FF00] transition">
-          Player
-        </a>
-        <a href="{% url 'ibeth_clubs:club_list' %}" class="text-white text-xl font-normal hover:text-[#C3FF00] transition">
-          Club
-        </a>
-        <a href="{% url 'vidia_event:event_list' %}" class="text-white text-xl font-normal hover:text-[#C3FF00] transition">
-          Events
-        </a>
-        <a href="{% url 'authentication:home_view' %}" class="text-white text-xl font-normal hover:text-[#C3FF00] transition">
-          Home
-        </a>
+      <!-- Searchbar -->
+      <div class="flex-1 mx-8">
+        <form id="searchForm" class="search-form relative" method="GET">
+          <div class="search-wrapper flex items-center bg-white border-2 border-gray-200 rounded-lg overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+            
+            <!-- Search Type -->
+            <select id="searchType" name="type" class="search-type px-4 py-2 border-r border-gray-200 bg-gray-100 text-gray-700 outline-none cursor-pointer">
+              <option value="players">Players</option>
+              <option value="clubs">Clubs</option>
+              <option value="events">Events</option>
+            </select>
+
+            <!-- Input -->
+            <input type="text" id="searchInput" name="q" class="search-input flex-1 px-4 py-2 outline-none text-gray-900" placeholder="Search players, clubs, or events..." autocomplete="off">
+
+            <!-- Button -->
+            <button type="submit" class="search-button px-4 py-2 bg-blue-600 text-white hover:bg-blue-700">
+              🔍
+            </button>
+          </div>
+
+          <!-- Dropdown Results -->
+          <div id="searchResults" class="search-results absolute w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-y-auto hidden z-50">
+            <div class="results-content p-2"></div>
+          </div>
+        </form>
       </div>
 
-      <!-- Tombol Login -->
-      <div class="hidden md:flex items-center">
+      <!-- Menu + Login -->
+      <div class="hidden md:flex items-center space-x-6">
+        <a href="{% url 'rafi_player:player_list' %}" class="text-white hover:text-[#C3FF00]">Player</a>
+        <a href="{% url 'ibeth_clubs:club_list' %}" class="text-white hover:text-[#C3FF00]">Club</a>
+        <a href="{% url 'vidia_event:event_list' %}" class="text-white hover:text-[#C3FF00]">Events</a>
         {% if user.is_authenticated %}
-          <span class="text-white mr-6">{{ user.username }}</span>
-          <a href="{% url 'authentication:logout_view' %}" class="bg-red-500 hover:bg-red-600 text-white font-medium px-5 py-2 rounded-full">
-            Logout
-          </a>
+          <span class="text-white">{{ user.username }}</span>
+          <a href="{% url 'authentication:logout_view' %}" class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600">Logout</a>
         {% else %}
-          <a href="{% url 'authentication:login_view' %}" class="bg-[#C3FF00] text-[#1A1B99] hover:bg-[#adff00] font-medium px-8 py-2 rounded-full text-lg transition">
-            Login
-          </a>
+          <a href="{% url 'authentication:login_view' %}" class="bg-[#C3FF00] text-[#1A1B99] px-4 py-2 rounded-full hover:bg-[#adff00]">Login</a>
         {% endif %}
       </div>
 
       <!-- Mobile Button -->
-      <button class="md:hidden block text-white focus:outline-none mobile-menu-button">
+      <button class="md:hidden block text-white mobile-menu-button">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
@@ -59,29 +67,21 @@
   <!-- Mobile Nav -->
   <div class="mobile-menu hidden bg-[#1A1B99] border-t border-[#C3FF00]">
     <div class="px-6 py-4 space-y-4 text-center">
-      <a href="{% url 'rafi_player:player_list' %}" class="block text-white hover:text-[#C3FF00]">
-        Player
-      </a>
-      <a href="{% url 'ibeth_clubs:club_list' %}" class="block text-white hover:text-[#C3FF00]">
-        Club
-      </a>
-      <a href="{% url 'authentication:home_view' %}" class="block text-white hover:text-[#C3FF00]">
-        Home
-      </a>
+      <a href="{% url 'rafi_player:player_list' %}" class="block text-white hover:text-[#C3FF00]">Player</a>
+      <a href="{% url 'ibeth_clubs:club_list' %}" class="block text-white hover:text-[#C3FF00]">Club</a>
+      <a href="{% url 'vidia_event:event_list' %}" class="block text-white hover:text-[#C3FF00]">Events</a>
+      <a href="{% url 'authentication:home_view' %}" class="block text-white hover:text-[#C3FF00]">Home</a>
 
       {% if user.is_authenticated %}
-      <p class="text-white">{{ user.username }}</p>
-      <a href="{% url 'authentication:logout_view' %}" class="block bg-red-500 text-white py-2 rounded-full mt-3">
-        Logout
-      </a>
+        <p class="text-white">{{ user.username }}</p>
+        <a href="{% url 'authentication:logout_view' %}" class="block bg-red-500 text-white py-2 rounded-full mt-3 hover:bg-red-600">Logout</a>
       {% else %}
-      <a href="{% url 'authentication:login_view' %}" class="block bg-[#C3FF00] text-[#1A1B99] py-2 rounded-full font-medium mt-3">
-        Login
-      </a>
+        <a href="{% url 'authentication:login_view' %}" class="block bg-[#C3FF00] text-[#1A1B99] py-2 rounded-full font-medium mt-3 hover:bg-[#adff00]">Login</a>
       {% endif %}
     </div>
   </div>
 
+  <!-- Mobile Toggle Script -->
   <script>
     const btn = document.querySelector(".mobile-menu-button");
     const menu = document.querySelector(".mobile-menu");
@@ -91,3 +91,136 @@
     });
   </script>
 </nav>
+
+<!-- Tambahin script search AJAX lo di bawah sini atau di base.html -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.getElementById('searchForm');
+    const searchInput = document.getElementById('searchInput');
+    const searchType = document.getElementById('searchType');
+    const searchResults = document.getElementById('searchResults');
+    const resultsContent = document.querySelector('.results-content');
+
+    let debounceTimer;
+
+    // Update placeholder
+    searchType.addEventListener('change', function() {
+        const type = this.value;
+        const placeholders = {
+            'players': 'Search players by name, position, country...',
+            'clubs': 'Search clubs by name or country...',
+            'events': 'Search events by name, type, or location...'
+        };
+        searchInput.placeholder = placeholders[type] || 'Search...';
+        searchInput.focus();
+    });
+
+    // Real-time search
+    searchInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        const query = this.value.trim();
+
+        if (query.length < 2) {
+            searchResults.style.display = 'none';
+            return;
+        }
+
+        resultsContent.innerHTML = '<div class="loading p-2 text-center text-gray-500">Searching...</div>';
+        searchResults.style.display = 'block';
+
+        debounceTimer = setTimeout(() => {
+            performSearch(query);
+        }, 300);
+    });
+
+    function performSearch(query) {
+        const type = searchType.value;
+        let url = `/search/${type}/`;
+
+        fetch(`${url}?q=${encodeURIComponent(query)}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.json())
+        .then(data => displayResults(data, type))
+        .catch(err => {
+            console.error(err);
+            resultsContent.innerHTML = '<div class="no-results p-2 text-center text-gray-500">Error loading results</div>';
+        });
+    }
+
+    function displayResults(data, type) {
+        if (!data.results || data.results.length === 0) {
+            resultsContent.innerHTML = '<div class="no-results p-2 text-center text-gray-500">No results found</div>';
+            return;
+        }
+
+        let html = '';
+        data.results.forEach(item => {
+            if (type === 'players') {
+                html += `<div class="result-item px-4 py-2 cursor-pointer hover:bg-gray-100" onclick="window.location.href='/player/${item.nama}/'">
+                            <div class="font-semibold">${item.nama}</div>
+                            <div class="text-sm text-gray-600">${item.posisi} • ${item.negara} ${item.usia ? `• ${item.usia} years` : ''}</div>
+                         </div>`;
+            } else if (type === 'clubs') {
+                html += `<div class="result-item px-4 py-2 cursor-pointer hover:bg-gray-100" onclick="window.location.href='/club/${item.nama}/'">
+                            <div class="font-semibold">${item.nama}</div>
+                            <div class="text-sm text-gray-600">${item.negara} ${item.liga ? `• ${item.liga}` : ''}</div>
+                         </div>`;
+            } else if (type === 'events') {
+                html += `<div class="result-item px-4 py-2 cursor-pointer hover:bg-gray-100" onclick="window.location.href='/event/${item.nama_event}/'">
+                            <div class="font-semibold">${item.nama_event}</div>
+                            <div class="text-sm text-gray-600">${item.tipe} • ${item.lokasi} • ${item.tanggal_mulai} - ${item.tanggal_selesai}</div>
+                         </div>`;
+            }
+        });
+        resultsContent.innerHTML = html;
+    }
+
+    searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const query = searchInput.value.trim();
+        const type = searchType.value;
+        if (!query) return;
+        window.location.href = `/search/${type}/?q=${encodeURIComponent(query)}`;
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!searchForm.contains(e.target)) searchResults.style.display = 'none';
+    });
+
+    searchInput.addEventListener('focus', function() {
+        if (this.value.trim().length >= 2 && resultsContent.children.length > 0) {
+            searchResults.style.display = 'block';
+        }
+    });
+});
+</script>
+
+<style>
+/* Searchbar styles */
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    border-radius: 0.5rem;
+}
+.search-type {
+    border: none;
+    outline: none;
+}
+.search-input {
+    border: none;
+}
+.search-button {
+    border: none;
+    cursor: pointer;
+}
+.search-results {
+    display: none;
+}
+.result-item {
+    transition: background 0.2s;
+}
+.result-item:hover {
+    background: #f3f4f6;
+}
+</style>

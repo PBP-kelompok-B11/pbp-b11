@@ -2,6 +2,7 @@
 
 INSTALLED_APPS = [
     # ...
-    'clubs',
+    'ibeth_clubs',
     # ...
 ]
+
