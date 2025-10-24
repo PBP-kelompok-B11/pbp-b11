@@ -5,8 +5,9 @@ app_name = 'rafi_player'
 
 urlpatterns = [
     path('', views.player_list, name='player_list'),
-    path('<int:pk>/', views.player_detail, name='player_detail'),
+    path('<uuid:id>/', views.player_detail, name='player_detail'),
     path('create/', views.player_create, name='player_create'),
-    path('<int:pk>/update/', views.player_update, name='player_update'),
-    path('<int:pk>/delete/', views.player_delete, name='player_delete'),
+    path('<uuid:id>/update/', views.player_update, name='player_update'),
+    path('<uuid:id>/delete/', views.player_delete, name='player_delete'),
+    path('json/', views.show_json_player, name='show_json_player'),
 ]
