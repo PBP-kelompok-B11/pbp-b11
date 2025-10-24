@@ -1,0 +1,49 @@
+<!-- comments/form.html -->
+<div id="commentModal" class="fixed inset-0 bg-black/40 flex justify-center items-center z-50 hidden">
+  <div class="bg-indigo-900 text-white rounded-[31px] p-8 w-[600px] max-w-[95vw] shadow-xl relative">
+
+    <!-- Tombol close -->
+    <button type="button" onclick="closeCommentModal()"
+      class="absolute top-3 right-4 text-lime-400 text-2xl font-bold hover:text-lime-300">
+      ✕
+    </button>
+
+    <h2 class="text-lime-400 text-2xl mb-5 text-center font-semibold">Tambah Komentar</h2>
+
+    <form method="POST" id="commentForm" action="{{ form_action }}">
+      {% csrf_token %}
+      
+      <!-- Isi komentar -->
+      {{ form.non_field_errors }}
+      <div class="mb-4">
+        {{ form.isi_komentar }}
+        {% if form.isi_komentar.errors %}
+          <p class="text-red-400 text-sm mt-1">{{ form.isi_komentar.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Tombol submit -->
+      <div class="flex justify-center mt-6">
+        <button type="submit"
+          class="bg-lime-400 text-indigo-900 px-8 py-2 rounded-[36px] text-lg hover:bg-lime-500 transition">
+          Kirim Komentar
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<!-- Script modal -->
+<script>
+  function openCommentModal(actionUrl) {
+    const modal = document.getElementById('commentModal');
+    const form = document.getElementById('commentForm');
+    form.action = actionUrl; // atur action ke URL yang sesuai (misal /comments/player/3/add/)
+    modal.classList.remove('hidden');
+  }
+
+  function closeCommentModal() {
+    document.getElementById('commentModal').classList.add('hidden');
+  }
+</script>
