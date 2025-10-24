@@ -3,7 +3,7 @@ from django.urls import reverse
 from .models import Event
 from .forms import EventForm
 from django.core.paginator import Paginator
-
+from authentication.views import admin_only
 
 # =========================
 # EVENT CRUD VIEWS
@@ -27,6 +27,7 @@ def event_detail(request, pk):
         'event': event,
     })
 
+@admin_only
 def event_create(request):
     if request.method == 'POST':
         event_name = request.POST.get('event')
@@ -53,7 +54,7 @@ def event_create(request):
     # kalau GET request
     return render(request, 'event_create.html')
 
-
+@admin_only
 def event_update(request, pk):
     event = get_object_or_404(Event, pk=pk)
     if request.method == 'POST':
@@ -73,6 +74,7 @@ def event_update(request, pk):
     }
     return render(request, 'event_create.html', context)
 
+@admin_only
 def event_delete(request, pk):
     """Menghapus event."""
     event = get_object_or_404(Event, pk=pk)

@@ -47,7 +47,12 @@ INSTALLED_APPS = [
     'rafi_player',
     'ibeth_clubs',
     'authentication',
+<<<<<<< HEAD
     'comments',
+=======
+    'vidia_event',
+    'search',
+>>>>>>> d31377d4fea72dcaa17a055af095fe323d8d39d2
 ]
 
 MIDDLEWARE = [

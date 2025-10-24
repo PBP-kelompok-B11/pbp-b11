@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Club, ClubRanking
 from .forms import ClubForm, ClubRankingForm
+from authentication.views import admin_only
 
 
 def club_list(request):
@@ -22,7 +23,7 @@ def club_detail(request, pk):
     }
     return render(request, 'clubs/detail.html', context)
 
-
+@admin_only
 def club_create(request):
     if request.method == 'POST':
         form = ClubForm(request.POST)
@@ -39,7 +40,7 @@ def club_create(request):
     }
     return render(request, 'clubs/form.html', context)
 
-
+@admin_only
 def club_update(request, pk):
     club = get_object_or_404(Club, pk=pk)
     if request.method == 'POST':
@@ -57,7 +58,7 @@ def club_update(request, pk):
     }
     return render(request, 'clubs/form.html', context)
 
-
+@admin_only
 def club_delete(request, pk):
     club = get_object_or_404(Club, pk=pk)
     if request.method == 'POST':
@@ -79,7 +80,7 @@ def ranking_list(request):
     }
     return render(request, 'clubs/ranking.html', context)
 
-
+@admin_only
 def club_ranking_create(request, club_pk):
     club = get_object_or_404(Club, pk=club_pk)
     if request.method == 'POST':
@@ -99,7 +100,7 @@ def club_ranking_create(request, club_pk):
     }
     return render(request, 'clubs/form.html', context)
 
-
+@admin_only
 def club_ranking_update(request, pk):
     ranking = get_object_or_404(ClubRanking, pk=pk)
     if request.method == 'POST':
@@ -117,7 +118,7 @@ def club_ranking_update(request, pk):
     }
     return render(request, 'clubs/form.html', context)
 
-
+@admin_only
 def club_ranking_delete(request, pk):
     ranking = get_object_or_404(ClubRanking, pk=pk)
     club_pk = ranking.club.pk

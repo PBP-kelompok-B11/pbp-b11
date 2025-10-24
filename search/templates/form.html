@@ -1,5 +1,18 @@
-<form method="get" action="{% url 'search_redirect' %}">
-    <input type="text" name="q" placeholder="Cari pemain atau klub...">
+<form method="get" action="{% url 'search:search_redirect' %}">
+    <select name="type">
+      <option value="players">Players</option>
+      <option value="clubs">Clubs</option>
+      <option value="events">Events</option>
+    </select>
+  
+    <input
+      type="text"
+      name="q"
+      placeholder="Cari pemain atau klub..."
+      value="{{ request.GET.q|default:'' }}"
+      required
+    />
+  
     <button type="submit">Search</button>
   </form>
   

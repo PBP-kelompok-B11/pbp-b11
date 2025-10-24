@@ -24,7 +24,12 @@ urlpatterns = [
     path('player/', include('rafi_player.urls')),
     path('clubs/', include('ibeth_clubs.urls')),
     path('', include('authentication.urls')),
+<<<<<<< HEAD
     path('comments/', include('comments.urls')),
+=======
+    path('events/', include('vidia_event.urls')), 
+    path('search/', include('search.urls')),
+>>>>>>> d31377d4fea72dcaa17a055af095fe323d8d39d2
 ]
 
 
