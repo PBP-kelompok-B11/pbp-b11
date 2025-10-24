@@ -30,6 +30,7 @@ PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "a-sheriqa-beyond-90.pbp.cs.ui.ac.id",]
+#tes
 CSRF_TRUSTED_ORIGINS = [
     "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/",
 ]
