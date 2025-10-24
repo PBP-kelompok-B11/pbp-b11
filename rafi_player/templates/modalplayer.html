@@ -10,7 +10,7 @@
         </h3>
         <p class="text-sm text-white mt-1">Share your football Player and stories with the community</p>
       </div>
-      <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" onclick="hideModal()">
+      <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" onclick="hidePlayerModal()">
         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
           <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
         </svg>
@@ -51,11 +51,17 @@
         <div class="mb-4">
           <label for="posisi" class="block text-sm font-medium text-white">Posisi</label>
           <select id="posisi" name="posisi" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900" required>
-            <option value="">Pilih posisi pemain</option>
-            <option value="Penjaga Gawang">Penjaga Gawang</option>
-            <option value="Bek">Bek</option>
-            <option value="Gelandang">Gelandang</option>
-            <option value="Striker">Striker</option>
+             <option value="">Pilih posisi pemain</option>
+                <option value="GK">GK (Penjaga Gawang)</option>
+                <option value="DF">DF (Bek)</option>
+                <option value="DFFW">DFFW (Bek / Penyerang)</option>
+                <option value="DFMF">DFMF (Bek / Gelandang)</option>
+                <option value="MF">MF (Gelandang)</option>
+                <option value="MFDF">MFDF (Gelandang / Bek)</option>
+                <option value="MFFW">MFFW (Gelandang / Penyerang)</option>
+                <option value="FW">FW (Penyerang)</option>
+                <option value="FWDF">FWDF (Penyerang / Bek)</option>
+                <option value="FWMF">FWMF (Penyerang / Gelandang)</option>
           </select>
         </div>
         <!-- Thumbnail -->
@@ -71,7 +77,7 @@
     </div>
   </div>
 </div>
-
+{% block scripts %}
 <script>
   // Pantau semua pemanggilan fetch untuk debugging
   const originalFetch = window.fetch;
@@ -81,7 +87,7 @@
   };
 
   // Show modal for adding new player
-  function showModal() {
+  window.showPlayerModal = function() {
       const modal = document.getElementById('crudModal');
       const modalContent = document.getElementById('crudModalContent');
       const modalTitle = document.getElementById('modalTitle');
@@ -96,14 +102,14 @@
   }
 
   // Show modal for editing player
-  function showModalEdit(player) {
+  window.showPlayerModalEdit = function(player) {
       if (!player || typeof player !== 'object' || !player.id) {
           console.error("Error: Parameter 'player' tidak valid atau tidak memiliki ID");
           showToast('Error: Data pemain tidak valid', '', 'error');
           return;
       }
 
-      console.log("showModalEdit dipanggil dengan data:", player);
+      console.log("showPlayerModalEdit dipanggil dengan data:", player);
       document.getElementById('modalTitle').textContent = 'Edit Player';
       document.getElementById('nama').value = player.nama || '';
       document.getElementById('negara').value = player.negara || '';
@@ -124,7 +130,7 @@
   }
 
   // Hide modal
-  function hideModal() {
+  window.hidePlayerModal = function() {
       const modal = document.getElementById('crudModal');
       const modalContent = document.getElementById('crudModalContent');
       modalContent.classList.remove('opacity-100', 'scale-100');
@@ -164,7 +170,7 @@
           }
 
           const data = await response.json();
-          hideModal();
+          hidePlayerModal();
           e.target.reset();
           document.getElementById('editPlayerId').value = '';
           showToast(data.message || (playerId ? 'Player updated successfully!' : 'Player added successfully!'), '', 'success');
@@ -182,3 +188,4 @@
       }
   }
 </script>
+{% endblock scripts %}

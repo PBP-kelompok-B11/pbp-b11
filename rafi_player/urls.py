@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import admin_views
 
 app_name = 'rafi_player'
 
@@ -14,5 +15,11 @@ urlpatterns = [
     # path('player/<uuid:player_id>/edit/', views.edit_player, name='edit_player'),
     # path('player/<int:pk>/edit/', views.edit_player_ajax, name='edit_player_ajax'),
     path('<uuid:pk>/edit/', views.edit_player_ajax, name='edit_player_ajax'),
+   
+
+    path('admin/player/', admin_views.player_list, name='admin_player_list'),
+    path('players/add/', admin_views.player_add, name='admin_player_add'),
+    path('players/<uuid:player_id>/edit/', admin_views.player_edit, name='admin_player_edit'),
+    path('players/<uuid:player_id>/delete/', admin_views.player_delete, name='admin_player_delete'),
 
 ]

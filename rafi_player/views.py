@@ -14,9 +14,11 @@ from django.views.decorators.http import require_POST
 from .models import Player  # pastikan impor model Player
 
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
 
 @csrf_exempt
-@require_POST
+@login_required(login_url='/login/')
+@login_required
 def add_player_ajax(request):
     nama = request.POST.get("nama")
     negara = request.POST.get("negara")
@@ -38,11 +40,12 @@ def add_player_ajax(request):
         berat=berat,
         posisi=posisi,
         thumbnail=thumbnail,
+        user=request.user 
     )
     new_player.save()
 
     # Return JSON biar bisa ditangani di JS
-    return HttpResponse(b"CREATED", status=201)
+    return JsonResponse({'message': 'CREATED'})
 
 def show_json_player(request):
     player_list = Player.objects.all()
@@ -84,11 +87,19 @@ def show_json_player_by_id(request, player_id):
 
 def player_detail(request, player_id):
     player = get_object_or_404(Player, pk=player_id)
-    context = {
+
+    # gunakan related_name sesuai models.py
+    achievements = player.prestasi.all()
+    stats = player.statistik_musim.all()
+    careers = player.riwayat_karier.all()
+
+    return render(request, 'player_details.html', {
+        'player_id': player_id,
         'player': player,
-        'player_id': player_id,  # <---- tambahkan baris ini
-    }
-    return render(request, 'player_details.html', context)
+        'achievements': achievements,
+        'stats': stats,
+        'careers': careers,
+    })
 
 def player_list(request):
     players = Player.objects.all()
