@@ -1,0 +1,53 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<form action="{% url 'event_create' %}" method="POST">
+    {% csrf_token %}
+    <div class="w-[1075px] h-[1372px] relative bg-indigo-900 overflow-hidden">
+        <!-- BACK BUTTON -->
+        <a href="{% url 'event_list' %}" class="absolute left-[81px] top-[200px] w-[50px] h-[64px] block hover:opacity-80 transition">
+            <svg width="50" height="64" viewBox="0 0 50 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32.8851 2.00525L3.99023 23.5169L32.8851 48.5052M38.7072 13.3043L27.7291 23.5169L38.7072 32.969" stroke="#B0FE08" stroke-width="5"/>
+            </svg>
+        </a>
+        <di class="w-24 left-[144px] top-[207px] absolute justify-center text-lime-400 text-5xl font-normal font-['Geologica'] leading-10">Back</div>
+
+        <!-- TITLE -->
+        <div class="w-[989px] h-36 left-[-164px] top-[280px] absolute text-right justify-center text-white text-7xl font-normal font-['League_Gothic']">ADD COMPETITION</div>
+
+        <!-- INPUT: Event -->
+        <label for="event" class="w-[540px] left-[81px] top-[447px] absolute justify-center text-lime-400 text-2xl font-normal font-['Geologica'] leading-loose">Event</label>
+        <input type="text" id="event" name="event"
+               class="w-[915px] h-13 left-[80px] top-[489px] absolute bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+
+        <!-- INPUT: Clubs -->
+        <label for="clubs" class="w-[540px] left-[81px] top-[573px] absolute justify-center text-lime-400 text-2xl font-normal font-['Geologica'] leading-loose">Clubs</label>
+        <input type="text" id="clubs" name="clubs"
+               class="w-[915px] h-13 left-[80px] top-[615px] absolute bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+
+        <!-- INPUT: Players -->
+        <label for="players" class="w-[540px] left-[81px] top-[699px] absolute justify-center text-lime-400 text-2xl font-normal font-['Geologica'] leading-loose">Players</label>
+        <input type="text" id="players" name="players"
+               class="w-[915px] h-13 left-[80px] top-[741px] absolute bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+
+        <!-- INPUT: Captain -->
+        <label for="captain" class="w-[540px] left-[81px] top-[825px] absolute justify-center text-lime-400 text-2xl font-normal font-['Geologica'] leading-loose">Captain</label>
+        <input type="text" id="captain" name="captain"
+               class="w-[915px] h-13 left-[80px] top-[867px] absolute bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+
+        <!-- INPUT: Winner -->
+        <label for="winner" class="w-[540px] left-[81px] top-[951px] absolute justify-center text-lime-400 text-2xl font-normal font-['Geologica'] leading-loose">Winner</label>
+        <input type="text" id="winner" name="winner"
+               class="w-[915px] h-13 left-[80px] top-[993px] absolute bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
+
+        <!-- SUBMIT BUTTON -->
+        <div class="w-60 h-12 left-[420px] top-[1106px] absolute overflow-hidden">
+            <button type="submit" class="w-60 h-12 bg-lime-400 rounded-[36px] text-indigo-900 text-2xl font-normal font-['Geologica'] leading-10 hover:bg-lime-300 transition">
+                Submit
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}

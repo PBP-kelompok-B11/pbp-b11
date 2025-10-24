@@ -17,33 +17,7 @@ class Event(models.Model):
     lokasi = models.CharField(max_length=100)
     tanggal_mulai = models.DateField()
     tanggal_selesai = models.DateField()
-
+    pemenang = models.CharField(max_length=100)
     def __str__(self):
         return self.nama_event
 
-
-class EventParticipation(models.Model):
-    PERAN_CHOICES = [
-        ('pemain', 'Pemain'),
-        ('kapten', 'Kapten'),
-        ('klub', 'Klub'),
-    ]
-
-    HASIL_CHOICES = [
-        ('menang', 'Menang'),
-        ('kalah', 'Kalah'),
-        ('juara', 'Juara'),
-    ]
-    
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    player = models.ForeignKey(Player, on_delete=models.SET_NULL, null=True, blank=True)
-    club = models.ForeignKey(Club, on_delete=models.SET_NULL, null=True, blank=True)
-    peran = models.CharField(max_length=20, choices=PERAN_CHOICES)
-    hasil = models.CharField(max_length=20, choices=HASIL_CHOICES)
-
-    def __str__(self):
-        if self.player:
-            return f"{self.player.name} - {self.event.nama_event}"
-        elif self.club:
-            return f"{self.club.name} - {self.event.nama_event}"
-        return f"{self.event.nama_event}"

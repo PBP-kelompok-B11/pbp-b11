@@ -1,53 +1,35 @@
-<!-- templates/events_detail.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>{{ event.nama_event }}</title>
-  <style>
-    body { font-family: Arial; background: #fdfdfd; padding: 20px; }
-    h1 { color: #222; }
-    a.button, button { background: #007bff; color: white; padding: 8px 12px; border: none; border-radius: 6px; text-decoration: none; cursor: pointer; }
-    a.button:hover, button:hover { background: #0056b3; }
-    .section { margin-top: 20px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-    th, td { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; }
-  </style>
-</head>
-<body>
-  <h1>{{ event.nama_event }}</h1>
-  <p><b>Tipe:</b> {{ event.tipe }}</p>
-  <p><b>Lokasi:</b> {{ event.lokasi }}</p>
-  <p><b>Tanggal:</b> {{ event.tanggal_mulai }} - {{ event.tanggal_selesai }}</p>
-
-  <a href="{% url 'event_update' event.id %}" class="button">Edit</a>
-  <a href="{% url 'event_delete' event.id %}" class="button" style="background:#dc3545;">Hapus</a>
-
-  <div class="section">
-    <h2>Partisipan</h2>
-    <a href="{% url 'participation_add' event.id %}" class="button">+ Tambah Partisipan</a>
-    <table>
-      <tr><th>Nama</th><th>Peran</th><th>Hasil</th><th>Aksi</th></tr>
-      {% for p in participations %}
-      <tr>
-        <td>{% if p.player %}{{ p.player.nama }}{% else %}{{ p.club.nama_klub }}{% endif %}</td>
-        <td>{{ p.peran }}</td>
-        <td>{{ p.hasil }}</td>
-        <td>
-          <a href="{% url 'participation_update' p.id %}" class="button">Edit</a>
-          <form action="{% url 'participation_delete' p.id %}" method="post" style="display:inline;" onsubmit="return confirm('Yakin hapus partisipasi ini?');">
-            {% csrf_token %}
-            <button type="submit" style="background:#dc3545;">Hapus</button>
-          </form>
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="4">Belum ada partisipan.</td></tr>
-      {% endfor %}
-    </table>
+{% extends 'base.html' %} 
+{% load static %} 
+{% block content %}
+<div class="relative h-[955px] w-[1920px] overflow-hidden bg-indigo-900">
+  <div class="w-40 h-16 relative">
+    <div class="w-24 left-[180px] top-[70px] absolute justify-center text-lime-400 text-3xl font-normal font-['Geologica'] leading-10">Back</div>
+    <div class="w-11 h-16 left-[120px] top-[69px] absolute">
+        <svg width="50" height="64" viewBox="0 0 50 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32.8851 2.00525L3.99023 23.5169L32.8851 48.5052M38.7072 13.3043L27.7291 23.5169L38.7072 32.969" stroke="#B0FE08" stroke-width="5"/>
+        </svg>
+    </div>
   </div>
-
-  <br>
-  <a href="{% url 'event_list' %}">← Kembali ke daftar event</a>
-</body>
-</html>
+  <div class="relative h-[949px] w-[1920px] overflow-hidden">
+    <div class="absolute top-[407px] left-[111px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">Ipsum Dolor sit Amet</div>
+    <div class="absolute top-[338px] left-[111px] w-96 justify-center font-['Geologica'] text-5xl leading-[60px] font-bold text-lime-400">Lorem</div>
+    <div class="absolute top-[401px] left-[631px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">Ipsum Dolor sit Amet</div>
+    <div class="absolute top-[332px] left-[631px] w-96 justify-center font-['Geologica'] text-5xl leading-[60px] font-bold text-lime-400">Lorem</div>
+    <div class="absolute top-[401px] left-[371px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">Ipsum Dolor sit Amet</div>
+    <div class="absolute top-[332px] left-[371px] w-96 justify-center font-['Geologica'] text-5xl leading-[60px] font-bold text-lime-400">Lorem</div>
+    <div class="absolute top-[395px] left-[891px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">Ipsum Dolor sit Amet</div>
+    <div class="absolute top-[326px] left-[891px] w-96 justify-center font-['Geologica'] text-5xl leading-[60px] font-bold text-lime-400">Lorem</div>
+    <div class="absolute top-[506px] left-[111px] w-[833px] justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur porttitor pharetra tellus, eget consectetur metus aliquet vel. Donec porta purus id felis bibendum vestibulum. Nunc tristique tortor sit amet ligula faucibus malesuada. Ut ac auctor lacus,</div>
+    <div data-property-1="Frame 5099" class="absolute top-[667px] left-[102px] h-14 w-[705px] overflow-hidden">
+      <div class="absolute top-[3px] left-[5px] h-14 w-[695px] rounded-3xl bg-white"></div>
+      <div class="absolute top-[11px] left-[279px] h-9 w-36 justify-center font-['Geologica'] text-xl leading-normal font-normal text-indigo-900">Add Comment</div>
+    </div>
+    <div data-property-1="Frame 5098" class="absolute top-[152px] left-[102px] h-28 w-[956px] overflow-hidden">
+      <div class="absolute top-0 left-0 h-28 w-[956px] rounded-2xl bg-lime-400"></div>
+      <div class="absolute top-[13px] left-[707px] h-20 w-60 rounded-2xl bg-indigo-900"></div>
+      <div class="absolute top-[22px] left-[39px] w-[563px] justify-center font-['Geologica'] text-5xl leading-[62.50px] font-normal text-indigo-900">Lorem vs Ipsum</div>
+      <div class="absolute top-[22px] left-[775px] w-24 justify-center font-['Geologica'] text-5xl leading-[62.50px] font-semibold text-white">0 - 1</div>
+    </div>
+  </div>
+</div>
+{% endblock %}
