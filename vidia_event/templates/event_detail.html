@@ -48,10 +48,15 @@
     </div>
 
     <!-- Add Comment -->
-    <div data-property-1="Frame 5099" class="absolute top-[660px] left-[102px] h-14 w-[705px] overflow-hidden">
-      <div class="absolute top-[3px] left-[5px] h-12 w-[695px] rounded-2xl bg-white"></div>
-      <div class="absolute top-[11px] left-[279px] h-9 w-36 justify-center font-['Geologica'] text-xl leading-normal font-normal text-indigo-900">Add Comment</div>
+    <div id="addCommentBtn"
+     class="absolute top-[660px] left-[102px] h-14 w-[705px] overflow-hidden cursor-pointer"
+     data-url="{% url 'comments:add_comment_to_event' event.id %}">
+    <div class="absolute top-[3px] left-[5px] h-12 w-[695px] rounded-2xl bg-white"></div>
+    <div class="absolute top-[11px] left-[279px] h-9 w-36 justify-center font-['Geologica'] text-xl leading-normal font-normal text-indigo-900">
+      Add Comment
     </div>
+  </div>
+
 
     <!-- Header Event -->
     <div data-property-1="Frame 5098" class="absolute top-[152px] left-[102px] h-28 w-[956px] overflow-hidden">
@@ -62,4 +67,13 @@
     </div>
   </div>
 </div>
+{% include 'comments/form.html' %}
+
+<script>
+  const addCommentBtn = document.getElementById('addCommentBtn');
+  addCommentBtn.addEventListener('click', function() {
+      const url = this.dataset.url;
+      openCommentModal(url); // fungsi ini ada di form.html
+  });
+</script>
 {% endblock %}
