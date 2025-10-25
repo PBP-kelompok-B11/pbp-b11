@@ -29,12 +29,13 @@ SECRET_KEY = 'django-insecure-z%xc3%tvv@ylnf5rfw=!s426oop%&4euso*i0nfi%8@-*tb^-)
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "a-sheriqa-beyond-90.pbp.cs.ui.ac.id"]
-#tes
+ALLOWED_HOSTS = [ "a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "http://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "localhost", "127.0.0.1"]
+
 CSRF_TRUSTED_ORIGINS = [
-    "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id",
+    "a-sheriqa-beyond-90.pbp.cs.ui.ac.id", 
+    "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", 
+    "http://a-sheriqa-beyond-90.pbp.cs.ui.ac.id"
 ]
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',

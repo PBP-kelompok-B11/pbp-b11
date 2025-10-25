@@ -25,7 +25,7 @@ urlpatterns = [
     path('', include('authentication.urls')),
     path('comments/', include('comments.urls')),
     path('events/', include('vidia_event.urls')), 
-    path('search/', include('search.urls')),
+    path('search/', include('search.urls', namespace='search')),
 ]
 
 

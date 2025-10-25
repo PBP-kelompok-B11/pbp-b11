@@ -31,9 +31,30 @@ def show_xml_by_id(request, news_id):
     except SearchQuery.DoesNotExist:
         return HttpResponse(status=404)
 
+# ===============================
+# REDIRECT FORM -> endpoint search (players|clubs|events)
+# ===============================
+def search_redirect(request):
+    query = request.GET.get('q', '').strip()
+    typ = request.GET.get('type', 'players').lower().strip()
+
+    if not query:
+        return redirect('search:search_form')
+
+    if typ == 'players':
+        target = reverse('search:search_players')   # -> /search/players/
+    elif typ == 'clubs':
+        target = reverse('search:search_clubs')     # -> /search/clubs/
+    elif typ == 'events':
+        target = reverse('search:search_events')    # -> /search/events/
+    else:
+        target = reverse('search:search_players')
+
+    target += f'?q={quote_plus(query)}'
+    return redirect(target)
 
 # ===============================
-# SEARCH PLAYERS (AJAX + HTML fallback -> rafi_player/list.html)
+# SEARCH PLAYERS (AJAX + HTML fallback -> rafi_player/player_list.html)
 # ===============================
 def search_players(request):
     query = request.GET.get('q', '').strip()
@@ -50,8 +71,7 @@ def search_players(request):
         results = Player.objects.filter(
             Q(nama__icontains=query) |
             Q(posisi__icontains=query) |
-            Q(negara__icontains=query) |
-            Q(careerhistory__klub__nama__icontains=query)
+            Q(negara__icontains=query)
         ).distinct()
 
     # AJAX JSON response
@@ -129,7 +149,8 @@ def search_clubs(request):
 
         results = Club.objects.filter(
             Q(nama__icontains=query) |
-            Q(negara__icontains=query)
+            Q(negara__icontains=query) |
+            Q(stadion__icontains=query)
         ).distinct()
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -144,7 +165,7 @@ def search_clubs(request):
         ]
         return JsonResponse({'query': query, 'results': data, 'jenis': 'klub'})
 
-    return render(request, 'clubs/list.html', {
+    return render(request, 'list.html', {
         'query': query,
         'clubs': results,
         'jenis': 'klub'
@@ -212,28 +233,6 @@ def search_form(request):
     return render(request, 'search/form.html')
 
 
-# ===============================
-# REDIRECT FORM -> endpoint search (players|clubs|events)
-# ===============================
-def search_redirect(request):
-    query = request.GET.get('q', '').strip()
-    typ = request.GET.get('type', 'players').lower().strip()
-
-    if not query:
-        return redirect('search:search_form')
-
-    if typ == 'players':
-        target = reverse('search:search_players')   # -> /search/players/
-    elif typ == 'clubs':
-        target = reverse('search:search_clubs')     # -> /search/clubs/
-    elif typ == 'events':
-        target = reverse('search:search_events')    # -> /search/events/
-    else:
-        target = reverse('search:search_players')
-
-    target += f'?q={quote_plus(query)}'
-    return redirect(target)
-
 
 @login_required
 def clear_search_history(request):
@@ -277,7 +276,7 @@ def search_events(request):
         ]
         return JsonResponse({'query': query, 'results': data, 'jenis': 'event'})
 
-    return render(request, 'vidia_event/event_list.html', {
+    return render(request, 'event_list.html', {
         'query': query,
         'events': results,
         'jenis': 'event'
