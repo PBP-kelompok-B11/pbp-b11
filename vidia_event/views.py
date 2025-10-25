@@ -48,6 +48,7 @@ def event_create(request):
                 lokasi=location,
                 tanggal_mulai=start_date,
                 tanggal_selesai=end_date,
+                created_by=request.user
             )
 
         # setelah semua berhasil disimpan
@@ -60,8 +61,11 @@ def event_create(request):
 def event_update(request, pk):
     event = get_object_or_404(Event, pk=pk)
 
+    # Cek permission: hanya creator atau staff/admin
+    if not (request.user == event.created_by or request.user.is_staff):
+        return HttpResponseForbidden("Anda tidak punya akses untuk mengedit event ini.")
+
     if request.method == 'POST':
-        # Parsing string dari form (YYYY-MM-DD) menjadi date
         event.nama_event = request.POST.get('event')
         event.tipe = request.POST.get('tipe')
         event.lokasi = request.POST.get('lokasi')
@@ -70,14 +74,13 @@ def event_update(request, pk):
         end_date_str = request.POST.get('end_date')
 
         if start_date_str:
-            event.tanggal_mulai = start_date_str  # Django bisa parse 'YYYY-MM-DD' otomatis
+            event.tanggal_mulai = start_date_str
         if end_date_str:
             event.tanggal_selesai = end_date_str
 
         event.save()
         return redirect('vidia_event:event_detail', pk=event.pk)
 
-    # Pre-fill form dengan data event, convert tanggal ke format YYYY-MM-DD
     context = {
         'is_update': True,
         'event': event,
