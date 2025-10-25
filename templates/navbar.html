@@ -11,6 +11,9 @@
         <span class="text-[#C3FF00] text-2xl font-bold border-2 border-[#C3FF00] px-5 py-2 rounded-r-full">
           11
         </span>
+        {% if user.is_authenticated %}
+          <span class="text-white"> Hi {{ user.username }}!</span>
+         {% endif %}
       </div>
 
       <!-- Searchbar -->
@@ -48,7 +51,6 @@
         <a href="{% url 'vidia_event:event_list' %}" class="text-white hover:text-[#C3FF00]">Events</a>
         <a href="{% url 'authentication:home_view' %}" class="text-white hover:text-[#C3FF00]">Home</a>
         {% if user.is_authenticated %}
-          <span class="text-white">{{ user.username }}</span>
           <a href="{% url 'authentication:logout_view' %}" class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600">Logout</a>
         {% else %}
           <a href="{% url 'authentication:login_view' %}" class="bg-[#C3FF00] text-[#1A1B99] px-4 py-2 rounded-full hover:bg-[#adff00]">Login</a>
