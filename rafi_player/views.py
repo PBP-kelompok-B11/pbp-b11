@@ -19,9 +19,10 @@ from authentication.views import admin_only
 
 @csrf_exempt
 @login_required(login_url='/login/')
-@login_required
-@admin_only
 def add_player_ajax(request):
+    print("DEBUG - User:", request.user)
+    print("DEBUG - Authenticated:", request.user.is_authenticated)
+
     nama = request.POST.get("nama")
     negara = request.POST.get("negara")
     usia = request.POST.get("usia")
