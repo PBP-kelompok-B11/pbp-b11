@@ -105,6 +105,7 @@ def player_list(request):
     players = Player.objects.all()
     return render(request, 'player_list.html', {'players': players})
 
+@login_required(login_url='/login/')
 def player_create(request):
     if request.method == 'POST':
         form = PlayerForm(request.POST)
@@ -115,7 +116,7 @@ def player_create(request):
         form = PlayerForm()
     return render(request, 'player_form.html', {'form': form})
 
-@admin_only
+@login_required(login_url='/login/')
 def edit_player_ajax(request, pk):
     if request.method == 'POST':
         player = get_object_or_404(Player, pk=pk)
@@ -131,7 +132,7 @@ def edit_player_ajax(request, pk):
     return JsonResponse({'status': 'error', 'message': 'Invalid method'})
 
 @require_POST
-@admin_only
+@login_required(login_url='/login/')    
 def delete_player(request, player_id):
     player = get_object_or_404(Player, pk=player_id)
     player.delete()

@@ -45,7 +45,6 @@ def gallery_details(request, id):
     }
     return render(request, 'media_detail.html', context)
 def get_gallery_items(request):
-   def get_gallery_items(request):
     media = Media.objects.all().values('deskripsi', 'media_file')
     data = [
         {
@@ -57,6 +56,7 @@ def get_gallery_items(request):
     return JsonResponse(data, safe=False)
 
 # @user_passes_test(is_admin)
+@login_required(login_url='/login/')
 def gallery_upload(request):
     if request.method == "POST":
         # Handle AJAX upload
@@ -103,6 +103,7 @@ def gallery_upload(request):
         }
         return render(request, 'upload.html', context)
     
+@login_required(login_url='/login/') 
 def gallery_update(request, id):
     if request.method == 'POST':
         media = Media.objects.get(pk=id)
@@ -121,6 +122,7 @@ def gallery_update(request, id):
         })
     return JsonResponse({"status": "error", "message": "Invalid request"})
 
+@login_required(login_url='/login/')
 def gallery_delete(request, id):
     media = get_object_or_404(Media, pk=id)
     media.delete()
