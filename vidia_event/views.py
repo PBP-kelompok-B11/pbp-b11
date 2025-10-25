@@ -4,6 +4,8 @@ from .models import Event
 from .forms import EventForm
 from django.core.paginator import Paginator
 from authentication.views import admin_only
+from django.contrib.auth.decorators import login_required
+
 
 # =========================
 # EVENT CRUD VIEWS
@@ -27,6 +29,7 @@ def event_detail(request, pk):
         'event': event,
     })
 
+@login_required(login_url='/login/')
 @admin_only
 def event_create(request):
     if request.method == 'POST':
@@ -54,6 +57,7 @@ def event_create(request):
     # kalau GET request
     return render(request, 'event_create.html')
 
+@login_required(login_url='/login/')
 @admin_only
 def event_update(request, pk):
     event = get_object_or_404(Event, pk=pk)

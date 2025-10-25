@@ -30,19 +30,21 @@
     <div class="absolute top-[395px] left-[842px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tanggal_selesai }}</div>
 
     <!-- Tombol Edit & Delete -->
-    <div class="absolute top-[510px] left-[811px] flex space-x-4">
-      <a href="{% url 'vidia_event:event_update' event.pk %}"
-          class="px-6 py-2 bg-lime-400 text-indigo-900 font-['Geologica'] text-xl rounded-2xl hover:bg-lime-300 transition">
-          Edit
-      </a>
-      <form action="{% url 'vidia_event:event_delete' event.pk %}" method="POST" onsubmit="return confirm('Are you sure you want to delete this event?');">
-        {% csrf_token %}
-        <button type="submit"
-                class="px-6 py-2 bg-red-500 text-white font-['Geologica'] text-xl rounded-2xl hover:bg-red-400 transition">
-          Delete
-        </button>
-      </form>
-    </div>
+    {% if user.is_authenticated and (user == event.created_by or user.is_staff) %}
+      <div class="absolute top-[510px] left-[811px] flex space-x-4">
+        <a href="{% url 'vidia_event:event_update' event.pk %}"
+            class="px-6 py-2 bg-lime-400 text-indigo-900 font-['Geologica'] text-xl rounded-2xl hover:bg-lime-300 transition">
+            Edit
+        </a>
+        <form action="{% url 'vidia_event:event_delete' event.pk %}" method="POST" onsubmit="return confirm('Are you sure you want to delete this event?');">
+          {% csrf_token %}
+          <button type="submit"
+                  class="px-6 py-2 bg-red-500 text-white font-['Geologica'] text-xl rounded-2xl hover:bg-red-400 transition">
+            Delete
+          </button>
+        </form>
+      </div>
+    {% endif %}
 
     <!-- Add Comment -->
     <div id="addCommentBtn"
