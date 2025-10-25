@@ -10,6 +10,18 @@ from datetime import date
 import uuid
 
 class Player(models.Model):
+    POSITION_CHOICES = [
+        ("GK", "GK (Penjaga Gawang)"),
+        ("DF", "DF (Bek)"),
+        ("DFFW", "DFFW (Bek / Penyerang)"),
+        ("DFMF", "DFMF (Bek / Gelandang)"),
+        ("MF", "MF (Gelandang)"),
+        ("MFDF", "MFDF (Gelandang / Bek)"),
+        ("MFFW", "MFFW (Gelandang / Penyerang)"),
+        ("FW", "FW (Penyerang)"),
+        ("FWDF", "FWDF (Penyerang / Bek)"),
+        ("FWMF", "FWMF (Penyerang / Gelandang)"),
+    ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -18,7 +30,7 @@ class Player(models.Model):
     usia = models.PositiveIntegerField()
     tinggi = models.FloatField()
     berat = models.FloatField()
-    posisi = models.CharField(max_length=50)
+    posisi = models.CharField(max_length=5, choices=POSITION_CHOICES)
     thumbnail = models.URLField(blank=True, null=True)
 
     def __str__(self):
