@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.contrib.contenttypes.models import ContentType
 from .models import ProfileWidget
 from .forms import ProfileWidgetForm
+from authentication.views import admin_only
 
 def is_admin(user):
     return user.is_active and user.is_staff
@@ -34,6 +35,7 @@ def widget_list(request):
 # Create Widget
 @login_required
 @user_passes_test(is_admin)
+@admin_only
 def widget_create(request, content_type_id=None, object_id=None):
     if request.method == 'POST':
         form = ProfileWidgetForm(request.POST)
@@ -63,6 +65,7 @@ def widget_create(request, content_type_id=None, object_id=None):
 # Update Widget
 @login_required
 @user_passes_test(is_admin)
+@admin_only
 def widget_update(request, pk):
     widget = get_object_or_404(ProfileWidget, pk=pk)
     if request.method == 'POST':
@@ -83,6 +86,7 @@ def widget_update(request, pk):
 # Delete Widget
 @login_required
 @user_passes_test(is_admin)
+@admin_only
 def widget_delete(request, pk):
     widget = get_object_or_404(ProfileWidget, pk=pk)
     if request.method == 'POST':

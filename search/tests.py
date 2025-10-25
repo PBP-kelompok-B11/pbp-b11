@@ -41,7 +41,6 @@ class SearchViewsTestCase(TestCase):
         self.assertTemplateUsed(response, 'search/results.html')
         self.assertContains(response, "Messi")
 
-        # Pastikan query tersimpan
         self.assertTrue(SearchQuery.objects.filter(kata_kunci='Messi', jenis='pemain').exists())
 
     def test_search_players_ajax(self):

@@ -2,6 +2,8 @@
 from django.db import models
 from rafi_player.models import Player
 from ibeth_clubs.models import Club
+from django.contrib.contenttypes.fields import GenericRelation
+from comments.models import Comments
 
 class Event(models.Model):
     LIGA = 'liga'
@@ -18,6 +20,7 @@ class Event(models.Model):
     lokasi = models.CharField(max_length=100)
     tanggal_mulai = models.DateField()
     tanggal_selesai = models.DateField()
+    comments = GenericRelation(Comments)
     def __str__(self):
         return self.nama_event
 

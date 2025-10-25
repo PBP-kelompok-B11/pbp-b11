@@ -1,6 +1,9 @@
+# search/views.py
+from urllib.parse import quote_plus
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
+from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
@@ -14,16 +17,13 @@ from vidia_event.models import Event
 # ===============================
 # SERIALIZATION (JSON & XML)
 # ===============================
-
 def show_json(request):
-    """Menampilkan semua data SearchQuery dalam format JSON."""
     news_list = SearchQuery.objects.all()
     json_data = serializers.serialize("json", news_list)
     return HttpResponse(json_data, content_type="application/json")
 
 
 def show_xml_by_id(request, news_id):
-    """Menampilkan satu data SearchQuery berdasarkan ID dalam format XML."""
     try:
         news_item = SearchQuery.objects.filter(pk=news_id)
         xml_data = serializers.serialize("xml", news_item)
@@ -33,13 +33,11 @@ def show_xml_by_id(request, news_id):
 
 
 # ===============================
-# SEARCH PLAYERS (AJAX)
+# SEARCH PLAYERS (AJAX + HTML fallback -> rafi_player/list.html)
 # ===============================
-
 def search_players(request):
-    """Mencari pemain berdasarkan nama, posisi, klub, atau negara (AJAX support)."""
-    query = request.GET.get('q', '')
-    results = []
+    query = request.GET.get('q', '').strip()
+    results = Player.objects.none()
 
     if query:
         SearchQuery.objects.create(
@@ -56,7 +54,7 @@ def search_players(request):
             Q(careerhistory__klub__nama__icontains=query)
         ).distinct()
 
-    # AJAX response
+    # AJAX JSON response
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         data = [
             {
@@ -68,16 +66,18 @@ def search_players(request):
         ]
         return JsonResponse({'query': query, 'results': data, 'jenis': 'pemain'})
 
-    # Fallback HTML
-    return render(request, 'search/results.html', {'query': query, 'results': results, 'jenis': 'pemain'})
+    # HTML fallback -> render ke template list players
+    return render(request, 'rafi_player/templates/list.html', {
+        'query': query,
+        'players': results,
+        'jenis': 'pemain'
+    })
 
 
 # ===============================
 # FILTER PLAYERS (AJAX)
 # ===============================
-
 def filter_players(request):
-    """Filter pemain dengan AJAX (posisi, negara, usia_min, usia_max)."""
     posisi_filter = request.GET.get('posisi', '')
     negara_filter = request.GET.get('negara', '')
     usia_min = request.GET.get('usia_min', '')
@@ -107,17 +107,15 @@ def filter_players(request):
         ]
         return JsonResponse({'results': data})
 
-    return render(request, 'search/filter_results.html', {'results': results})
+    return render(request, 'search/templates/player_filter_component.html', {'results': results})
 
 
 # ===============================
-# SEARCH CLUBS (AJAX)
+# SEARCH CLUBS (AJAX + HTML fallback -> ibeth_clubs/list.html)
 # ===============================
-
 def search_clubs(request):
-    """Mencari klub sepak bola berdasarkan nama atau negara (AJAX support)."""
-    query = request.GET.get('q', '')
-    results = []
+    query = request.GET.get('q', '').strip()
+    results = Club.objects.none()
 
     if query:
         SearchQuery.objects.create(
@@ -143,15 +141,17 @@ def search_clubs(request):
         ]
         return JsonResponse({'query': query, 'results': data, 'jenis': 'klub'})
 
-    return render(request, 'search/results.html', {'query': query, 'results': results, 'jenis': 'klub'})
+    return render(request, 'ibeth_clubs/templates/list.html', {
+        'query': query,
+        'clubs': results,
+        'jenis': 'klub'
+    })
 
 
 # ===============================
 # FILTER CLUBS (AJAX)
 # ===============================
-
 def filter_clubs(request):
-    """Filter klub sepak bola (negara, liga, tahun_didirikan) pakai AJAX."""
     negara_filter = request.GET.get('negara', '')
     liga_filter = request.GET.get('liga', '')
     tahun_filter = request.GET.get('tahun_didirikan', '')
@@ -178,16 +178,14 @@ def filter_clubs(request):
         ]
         return JsonResponse({'results': data})
 
-    return render(request, 'search/filter_clubs.html', {'results': results})
+    return render(request, 'search/templates/club_filter_component.html', {'results': results})
 
 
 # ===============================
 # SEARCH HISTORY (AJAX)
 # ===============================
-
 @login_required
 def search_history(request):
-    """Menampilkan riwayat pencarian user (AJAX support)."""
     history = SearchQuery.objects.filter(user=request.user).order_by('-tanggal')
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -200,33 +198,39 @@ def search_history(request):
         ]
         return JsonResponse({'history': data})
 
-    return render(request, 'search/history.html', {'histories': history})
-
+    return render(request, 'search/templates/history.html', {'histories': history})
 
 
 # ===============================
 # SEARCH FORM
 # ===============================
-
 def search_form(request):
-    """Menampilkan halaman form pencarian."""
-    return render(request, 'search/form.html')
+    return render(request, 'search/templates/form.html')
 
+
+# ===============================
+# REDIRECT FORM -> endpoint search (players|clubs|events)
+# ===============================
 def search_redirect(request):
-    query = request.GET.get('q', '').strip().lower()
+    query = request.GET.get('q', '').strip()
+    typ = request.GET.get('type', 'players').lower().strip()
 
     if not query:
-        return redirect('home')  # atau halaman default
+        return redirect('search:search_form')
 
-    # cek apakah keyword lebih cocok ke player atau club
-    if Player.objects.filter(name__icontains=query).exists():
-        return redirect(f'/player/?q={query}')
-    elif Club.objects.filter(name__icontains=query).exists():
-        return redirect(f'/club/?q={query}')
+    if typ == 'players':
+        target = reverse('search:search_players')   # -> /search/players/
+    elif typ == 'clubs':
+        target = reverse('search:search_clubs')     # -> /search/clubs/
+    elif typ == 'events':
+        target = reverse('search:search_events')    # -> /search/events/
     else:
-        # fallback kalau gak nemu apa pun
-        return redirect('home')
-    
+        target = reverse('search:search_players')
+
+    target += f'?q={quote_plus(query)}'
+    return redirect(target)
+
+
 @login_required
 def clear_search_history(request):
     if request.method == 'POST':
@@ -234,17 +238,15 @@ def clear_search_history(request):
         return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=400)
 
-# ===============================
-# SEARCH EVENTS (AJAX)
-# ===============================
 
+# ===============================
+# SEARCH EVENTS (AJAX + HTML fallback -> vidia_event/list.html)
+# ===============================
 def search_events(request):
-    """Mencari event berdasarkan nama, tipe, atau lokasi (AJAX support)."""
-    query = request.GET.get('q', '')
-    results = []
+    query = request.GET.get('q', '').strip()
+    results = Event.objects.none()
 
     if query:
-        # Simpan query ke database
         SearchQuery.objects.create(
             user=request.user if request.user.is_authenticated else None,
             kata_kunci=query,
@@ -252,30 +254,27 @@ def search_events(request):
             tanggal=timezone.now()
         )
 
-        # Cari di model Event
         results = Event.objects.filter(
             Q(nama_event__icontains=query) |
             Q(tipe__icontains=query) |
             Q(lokasi__icontains=query)
         ).distinct()
 
-    # Balikkan hasil ke AJAX
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         data = [
             {
                 'nama_event': e.nama_event,
                 'tipe': e.tipe,
                 'lokasi': e.lokasi,
-                'tanggal_mulai': e.tanggal_mulai.strftime("%d %b %Y"),
-                'tanggal_selesai': e.tanggal_selesai.strftime("%d %b %Y"),
+                'tanggal_mulai': e.tanggal_mulai.strftime("%d %b %Y") if e.tanggal_mulai else None,
+                'tanggal_selesai': e.tanggal_selesai.strftime("%d %b %Y") if e.tanggal_selesai else None,
             } for e in results
         ]
         return JsonResponse({'query': query, 'results': data, 'jenis': 'event'})
 
-    # fallback ke HTML biasa
-    return render(request, 'search/results.html', {
+    return render(request, 'vidia_event/event_list.html', {
         'query': query,
-        'results': results,
+        'events': results,
         'jenis': 'event'
     })
 
@@ -283,9 +282,7 @@ def search_events(request):
 # ===============================
 # FILTER EVENTS (AJAX)
 # ===============================
-
 def filter_events(request):
-    """Filter event berdasarkan tipe, lokasi, atau rentang tanggal."""
     tipe_filter = request.GET.get('tipe', '')
     lokasi_filter = request.GET.get('lokasi', '')
     mulai_filter = request.GET.get('tanggal_mulai', '')
@@ -316,4 +313,4 @@ def filter_events(request):
         ]
         return JsonResponse({'results': data})
 
-    return render(request, 'search/filter_events.html', {'results': results})
+    return render(request, 'search/templates/event_filter_component.html', {'results': results})
