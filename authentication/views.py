@@ -5,11 +5,16 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import UserProfile
+from django.contrib.auth.decorators import user_passes_test
+
+# cuma admin (staff/superuser) yang boleh
+def admin_only(view_func):
+    return user_passes_test(lambda u: u.is_staff or u.is_superuser)(view_func)
 
 def register_view(request):
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'success': True, 'redirect_url': '/home/'})
+            return JsonResponse({'success': True, 'redirect_url': ''})
         return redirect('authentication:home_view')
 
     if request.method == 'POST':

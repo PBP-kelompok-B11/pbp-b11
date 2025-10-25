@@ -1,0 +1,33 @@
+<h2>Hasil pencarian untuk "{{ q }}"</h2>
+
+{% if players %}
+  <h3>Pemain ({{ players.count }})</h3>
+  <ul>
+    {% for p in players|slice:":10" %}
+      <li><a href="{% url 'players:player_details' p.id %}">{{ p.nama }}</a></li>
+    {% endfor %}
+  </ul>
+  <p><a href="{% url 'players:player_list' % %}?q={{ q }}">Lihat semua pemain yang cocok</a></p>
+{% endif %}
+
+{% if clubs %}
+  <h3>Klub ({{ clubs.count }})</h3>
+  <ul>
+    {% for c in clubs|slice:":10" %}
+      <li><a href="{% url 'clubs:detail' c.id %}">{{ c.nama }}</a></li>
+    {% endfor %}
+  </ul>
+  <p><a href="{% url 'clubs:list' %}?q={{ q }}">Lihat semua klub yang cocok</a></p>
+{% endif %}
+
+{% if events %}
+  <h3>Event ({{ events.count }})</h3>
+  <ul>
+    {% for e in events|slice:":10" %}
+      <li><a href="{% url 'events:event_detail' e.id %}">{{ e.nama_event }}</a></li>
+    {% endfor %}
+  </ul>
+  <p><a href="{% url 'events:event_list' %}?q={{ q }}">Lihat semua event yang cocok</a></p>
+{% endif %}
+{% if not players and not clubs and not events %}
+  <p>Tidak ada hasil yang ditemukan untuk "{{ q }}".</p

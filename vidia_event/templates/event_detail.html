@@ -1,53 +1,78 @@
-<!-- templates/events_detail.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>{{ event.nama_event }}</title>
-  <style>
-    body { font-family: Arial; background: #fdfdfd; padding: 20px; }
-    h1 { color: #222; }
-    a.button, button { background: #007bff; color: white; padding: 8px 12px; border: none; border-radius: 6px; text-decoration: none; cursor: pointer; }
-    a.button:hover, button:hover { background: #0056b3; }
-    .section { margin-top: 20px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-    th, td { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; }
-  </style>
-</head>
-<body>
-  <h1>{{ event.nama_event }}</h1>
-  <p><b>Tipe:</b> {{ event.tipe }}</p>
-  <p><b>Lokasi:</b> {{ event.lokasi }}</p>
-  <p><b>Tanggal:</b> {{ event.tanggal_mulai }} - {{ event.tanggal_selesai }}</p>
-
-  <a href="{% url 'event_update' event.id %}" class="button">Edit</a>
-  <a href="{% url 'event_delete' event.id %}" class="button" style="background:#dc3545;">Hapus</a>
-
-  <div class="section">
-    <h2>Partisipan</h2>
-    <a href="{% url 'participation_add' event.id %}" class="button">+ Tambah Partisipan</a>
-    <table>
-      <tr><th>Nama</th><th>Peran</th><th>Hasil</th><th>Aksi</th></tr>
-      {% for p in participations %}
-      <tr>
-        <td>{% if p.player %}{{ p.player.nama }}{% else %}{{ p.club.nama_klub }}{% endif %}</td>
-        <td>{{ p.peran }}</td>
-        <td>{{ p.hasil }}</td>
-        <td>
-          <a href="{% url 'participation_update' p.id %}" class="button">Edit</a>
-          <form action="{% url 'participation_delete' p.id %}" method="post" style="display:inline;" onsubmit="return confirm('Yakin hapus partisipasi ini?');">
-            {% csrf_token %}
-            <button type="submit" style="background:#dc3545;">Hapus</button>
-          </form>
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="4">Belum ada partisipan.</td></tr>
-      {% endfor %}
-    </table>
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="fixed top-0 left-0 h-screen w-screen overflow-hidden bg-indigo-900">
+  <!-- Tombol Back -->
+  <div class="relative h-16 w-40">
+    <div class="absolute top-[115px] left-[180px] z-50 w-24 justify-center font-['Geologica'] text-4xl leading-10 font-normal text-lime-400">Back</div>
+    <a href="{% url 'vidia_event:event_list' %}" class="relative z-50">
+      <div class="absolute top-[115px] left-[120px] z-50 h-16 w-11 cursor-pointer">
+        <svg width="50" height="64" viewBox="0 0 50 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32.8851 2.00525L3.99023 23.5169L32.8851 48.5052M38.7072 13.3043L27.7291 23.5169L38.7072 32.969" stroke="#B0FE08" stroke-width="5" />
+        </svg>
+      </div>
+    </a>
   </div>
 
-  <br>
-  <a href="{% url 'event_list' %}">← Kembali ke daftar event</a>
-</body>
-</html>
+  <div class="relative h-full w-full overflow-hidden">
+    <!-- Tipe -->
+    <div class="absolute top-[338px] left-[111px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Tipe</div>
+    <div class="absolute top-[395px] left-[112px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.get_tipe_display }}</div>
+
+    <!-- Lokasi -->
+    <div class="absolute top-[338px] left-[321px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Lokasi</div>
+    <div class="absolute top-[395px] left-[322px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.lokasi }}</div>
+
+    <!-- Tanggal Mulai -->
+    <div class="absolute top-[338px] left-[541px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Tanggal Mulai</div>
+    <div class="absolute top-[395px] left-[542px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tanggal_mulai }}</div>
+
+    <!-- Tanggal Selesai -->
+    <div class="absolute top-[338px] left-[841px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Tanggal Selesai</div>
+    <div class="absolute top-[395px] left-[842px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tanggal_selesai }}</div>
+
+    <!-- Tombol Edit & Delete -->
+    {% if user.is_authenticated and user == event.created_by or user.is_staff %}
+      <div class="absolute top-[510px] left-[811px] flex space-x-4">
+        <a href="{% url 'vidia_event:event_update' event.pk %}"
+            class="px-6 py-2 bg-lime-400 text-indigo-900 font-['Geologica'] text-xl rounded-2xl hover:bg-lime-300 transition">
+            Edit
+        </a>
+        <form action="{% url 'vidia_event:event_delete' event.pk %}" method="POST" onsubmit="return confirm('Are you sure you want to delete this event?');">
+          {% csrf_token %}
+          <button type="submit"
+                  class="px-6 py-2 bg-red-500 text-white font-['Geologica'] text-xl rounded-2xl hover:bg-red-400 transition">
+            Delete
+          </button>
+        </form>
+      </div>
+    {% endif %}
+
+    <!-- Add Comment -->
+    <div id="addCommentBtn"
+     class="absolute top-[660px] left-[102px] h-14 w-[705px] overflow-hidden cursor-pointer"
+     data-url="{% url 'comments:add_comment_to_event' event.id %}">
+    <div class="absolute top-[3px] left-[5px] h-12 w-[695px] rounded-2xl bg-white"></div>
+    <div class="absolute top-[11px] left-[279px] h-9 w-36 justify-center font-['Geologica'] text-xl leading-normal font-normal text-indigo-900">
+      Add Comment
+    </div>
+  </div>
+
+
+    <!-- Header Event -->
+    <div data-property-1="Frame 5098" class="absolute top-[152px] left-[102px] h-28 w-[956px] overflow-hidden">
+      <div class="absolute top-0 left-0 h-28 w-[956px] rounded-2xl bg-lime-400"></div>
+      <div class="absolute top-[13px] left-[707px] h-20 w-60 rounded-xl bg-indigo-900"></div>
+      <div class="absolute top-[22px] left-[39px] w-[563px] justify-center font-['Geologica'] text-5xl leading-[62.50px] font-normal text-indigo-900">{{ event.nama_event }}</div>
+      <div class="absolute top-[22px] left-[775px] w-24 justify-center font-['Geologica'] text-5xl leading-[62.50px] font-semibold text-white">0 - 1</div>
+    </div>
+  </div>
+</div>
+{% include 'comments/form.html' %}
+
+<script>
+  const addCommentBtn = document.getElementById('addCommentBtn');
+  addCommentBtn.addEventListener('click', function() {
+      const url = this.dataset.url;
+      openCommentModal(url); // fungsi ini ada di form.html
+  });
+</script>
+{% endblock %}

@@ -120,7 +120,7 @@ nav a:hover {
   scrollbar-color: #b2ff00 #1e1b74;
 }
 
-/* Custom scrollbar for Chrome */
+
 .player-grid-wrapper::-webkit-scrollbar {
   width: 8px;
 }
@@ -168,7 +168,7 @@ footer {
   margin-top: 0.75rem;
   display: flex;
   gap: 0.75rem;
-                /* jarak antar tombol */
+                
   flex-wrap: wrap;
   background-color: #b2ff00;
   color: #1e1b74;
@@ -191,6 +191,6 @@ footer {
 }
 
 .player-header {
-  margin-top: 3rem; /* sesuaikan angkanya */
+  margin-top: 3rem; 
   margin-bottom: 0.5rem;
 }

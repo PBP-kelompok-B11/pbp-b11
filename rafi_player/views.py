@@ -11,15 +11,16 @@ from .models import Player
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from .models import Player  # pastikan impor model Player
+from .models import Player 
 
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
-
+from authentication.views import admin_only
 
 @csrf_exempt
 @login_required(login_url='/login/')
 @login_required
+@admin_only
 def add_player_ajax(request):
     nama = request.POST.get("nama")
     negara = request.POST.get("negara")
@@ -29,7 +30,6 @@ def add_player_ajax(request):
     posisi = request.POST.get("posisi")
     thumbnail= request.POST.get("thumbnail")
 
-    # Validasi sederhana
     if not all([nama, negara, usia, tinggi, berat, posisi, thumbnail]):
         return HttpResponse(b"Missing fields", status=400)
 
@@ -45,9 +45,8 @@ def add_player_ajax(request):
     )
     new_player.save()
 
-    # Return JSON biar bisa ditangani di JS
-    return JsonResponse({'message': 'CREATED'})
 
+    return JsonResponse({'message': 'CREATED'})
 
 def show_json_player(request):
     player_list = Player.objects.all()
@@ -87,11 +86,9 @@ def show_json_player_by_id(request, player_id):
     except Player.DoesNotExist:
         return JsonResponse({'detail': 'Not found'}, status=404)
 
-
 def player_detail(request, player_id):
     player = get_object_or_404(Player, pk=player_id)
 
-    # gunakan related_name sesuai models.py
     achievements = player.prestasi.all()
     stats = player.statistik_musim.all()
     careers = player.riwayat_karier.all()
@@ -118,17 +115,7 @@ def player_create(request):
         form = PlayerForm()
     return render(request, 'player_form.html', {'form': form})
 
-# def player_update(request, pk):
-#     player = get_object_or_404(Player, pk=pk)
-#     if request.method == 'POST':
-#         form = PlayerForm(request.POST, instance=player)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('rafi_player:player_detail', pk=pk)
-#     else:
-#         form = PlayerForm(instance=player)
-#     return render(request, 'player_form.html', {'form': form})
-
+@admin_only
 def edit_player_ajax(request, pk):
     if request.method == 'POST':
         player = get_object_or_404(Player, pk=pk)
@@ -144,23 +131,8 @@ def edit_player_ajax(request, pk):
     return JsonResponse({'status': 'error', 'message': 'Invalid method'})
 
 @require_POST
+@admin_only
 def delete_player(request, player_id):
     player = get_object_or_404(Player, pk=player_id)
     player.delete()
-    return redirect('rafi_player:player_list')  # arahkan ke halaman list pemain
-
-# @require_http_methods(["POST"])
-# def edit_player(request, player_id):
-#     player = get_object_or_404(Player, pk=player_id)
-
-#     # Update field dari form
-#     player.nama = request.POST.get('nama')
-#     player.negara = request.POST.get('negara')
-#     player.posisi = request.POST.get('posisi')
-#     player.usia = request.POST.get('usia')
-#     player.tinggi = request.POST.get('tinggi')
-#     player.berat = request.POST.get('berat')
-#     player.save()
-
-#     # Return HTTP 200 tanpa redirect
-#     return JsonResponse({'success': True})
+    return redirect('rafi_player:player_list') 

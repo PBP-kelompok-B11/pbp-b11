@@ -14,7 +14,11 @@
     <tbody>
       {% for r in rankings %}
       <tr class="border-t border-white/5">
-        <td class="py-2"><a href="{% url 'ibeth_clubs:club_detail' r.club.pk %}">{{ r.club.nama }}</a></td>
+        <td class="py-2">
+          <a href="{% url 'ibeth_clubs:club_detail' r.club.pk %}" class="text-lime-400 hover:underline">
+            {{ r.club.nama }}
+          </a>
+        </td>
         <td>{{ r.musim }}</td>
         <td>{{ r.peringkat }}</td>
         <td>
@@ -23,12 +27,12 @@
         </td>
       </tr>
       {% empty %}
-      <tr><td colspan="4" class="py-4">Belum ada data peringkat klub.</td></tr>
+      <tr><td colspan="4" class="py-4 text-center">Belum ada data peringkat klub.</td></tr>
       {% endfor %}
     </tbody>
   </table>
   <div class="mt-4">
-    <a href="{% url 'obeth_clubs:club_list' %}" class="px-4 py-2 rounded bg-white/10">Kembali</a>
+    <a href="{% url 'ibeth_clubs:club_list' %}" class="px-4 py-2 rounded bg-white/10">Kembali</a>
   </div>
 </div>
 {% endblock %}
