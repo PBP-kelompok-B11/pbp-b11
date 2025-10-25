@@ -56,20 +56,30 @@ def event_create(request):
 
 def event_update(request, pk):
     event = get_object_or_404(Event, pk=pk)
+
     if request.method == 'POST':
-        # Update data event
+        # Parsing string dari form (YYYY-MM-DD) menjadi date
         event.nama_event = request.POST.get('event')
         event.tipe = request.POST.get('tipe')
         event.lokasi = request.POST.get('lokasi')
-        event.tanggal_mulai = request.POST.get('start_date')
-        event.tanggal_selesai = request.POST.get('end_date')
+
+        start_date_str = request.POST.get('start_date')
+        end_date_str = request.POST.get('end_date')
+
+        if start_date_str:
+            event.tanggal_mulai = start_date_str  # Django bisa parse 'YYYY-MM-DD' otomatis
+        if end_date_str:
+            event.tanggal_selesai = end_date_str
+
         event.save()
         return redirect('vidia_event:event_detail', pk=event.pk)
 
-    # Pre-fill form dengan data event
+    # Pre-fill form dengan data event, convert tanggal ke format YYYY-MM-DD
     context = {
         'is_update': True,
-        'event': event
+        'event': event,
+        'start_date': event.tanggal_mulai.strftime('%Y-%m-%d') if event.tanggal_mulai else '',
+        'end_date': event.tanggal_selesai.strftime('%Y-%m-%d') if event.tanggal_selesai else '',
     }
     return render(request, 'event_create.html', context)
 
