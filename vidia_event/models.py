@@ -5,6 +5,7 @@ from ibeth_clubs.models import Club
 from django.contrib.contenttypes.fields import GenericRelation
 from comments.models import Comments
 from datetime import date
+from django.contrib.auth.models import User
 
 class Event(models.Model):
     LIGA = 'liga'
@@ -22,6 +23,7 @@ class Event(models.Model):
     tanggal_mulai = models.DateField()
     tanggal_selesai = models.DateField()
     comments = GenericRelation(Comments)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     def __str__(self):
         return self.nama_event
 
