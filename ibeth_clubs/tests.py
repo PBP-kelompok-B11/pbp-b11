@@ -34,7 +34,6 @@ class ClubViewsTests(TestCase):
             'stadion': 'New Stadium',
             'tahun_berdiri': 2000
         })
-        # redirect to detail page after creation
         self.assertEqual(resp.status_code, 302)
         new = Club.objects.get(nama='New Club')
         self.assertEqual(new.negara, 'Nowhere')

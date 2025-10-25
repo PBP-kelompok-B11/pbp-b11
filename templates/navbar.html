@@ -46,6 +46,7 @@
         <a href="{% url 'rafi_player:player_list' %}" class="text-white hover:text-[#C3FF00]">Player</a>
         <a href="{% url 'ibeth_clubs:club_list' %}" class="text-white hover:text-[#C3FF00]">Club</a>
         <a href="{% url 'vidia_event:event_list' %}" class="text-white hover:text-[#C3FF00]">Events</a>
+        <a href="{% url 'authentication:home_view' %}" class="text-white hover:text-[#C3FF00]"></a>
         {% if user.is_authenticated %}
           <span class="text-white">{{ user.username }}</span>
           <a href="{% url 'authentication:logout_view' %}" class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600">Logout</a>

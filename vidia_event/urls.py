@@ -13,4 +13,3 @@ urlpatterns = [
 
     
 ]
-# DI PROJEK UTAMA: TULIS path('events/', include('events.urls')),
