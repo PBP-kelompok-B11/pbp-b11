@@ -15,8 +15,8 @@
 
       <!-- Searchbar -->
       <div class="flex-1 mx-8">
-        <form id="searchForm" class="search-form relative" method="GET">
-          <div class="search-wrapper flex items-center bg-white border-2 border-gray-200 rounded-lg overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+        <form id="searchForm" class="search-form relative" method="GET" action="{% url 'search:search_redirect' %}">
+          <div class="search-wrapper flex items-center bg-white border-2 border-BLACK-200 rounded-lg overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
             
             <!-- Search Type -->
             <select id="searchType" name="type" class="search-type px-4 py-2 border-r border-gray-200 bg-gray-100 text-gray-700 outline-none cursor-pointer">
@@ -26,7 +26,7 @@
             </select>
 
             <!-- Input -->
-            <input type="text" id="searchInput" name="q" class="search-input flex-1 px-4 py-2 outline-none text-gray-900" placeholder="Search players, clubs, or events..." autocomplete="off">
+            <input type="text" id="searchInput" name="q" class="search-input flex-1 px-4 py-2 outline-none text-blue-900" placeholder="Search players, clubs, or events..." autocomplete="off">
 
             <!-- Button -->
             <button type="submit" class="search-button px-4 py-2 bg-blue-600 text-white hover:bg-blue-700">
@@ -70,7 +70,7 @@
     <div class="px-6 py-4 space-y-4 text-center">
       <a href="{% url 'rafi_player:player_list' %}" class="block text-white hover:text-[#C3FF00]">Player</a>
       <a href="{% url 'ibeth_clubs:club_list' %}" class="block text-white hover:text-[#C3FF00]">Club</a>
-      <a href="{% url 'vidia_event:event_list' %}" class="block text-white hover:text-[#C3FF00]">Events</a>
+      <a href="{% url 'vidia_event:event_list' %}" class="block text-blue hover:text-[#C3FF00]">Events</a>
       <a href="{% url 'authentication:home_view' %}" class="block text-white hover:text-[#C3FF00]">Home</a>
 
       {% if user.is_authenticated %}
@@ -93,7 +93,7 @@
   </script>
 </nav>
 
-<!-- Tambahin script search AJAX lo di bawah sini atau di base.html -->
+<!-- Tambahin script search AJAX di bawah sini atau di base.html -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const searchForm = document.getElementById('searchForm');
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data.results.forEach(item => {
             if (type === 'players') {
                 html += `<div class="result-item px-4 py-2 cursor-pointer hover:bg-gray-100" onclick="window.location.href='/players/player/${item.id}/'">
-                            <div class="font-semibold">${item.nama}</div>
+                            <div class="font-semibold text-blue-600">${item.nama}</div>
                             <div class="text-sm text-gray-600">${item.posisi} • ${item.negara} ${item.usia ? `• ${item.usia} years` : ''}</div>
                          </div>`;
             } else if (type === 'clubs') {
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (type === 'events') {
                 html += `<div class="result-item px-4 py-2 cursor-pointer hover:bg-gray-100" 
                             onclick="window.location.href='/events/${item.id}/'">
-                            <div class="font-semibold">${item.nama_event}</div>
+                            <div class="font-semibold text-blue-600">${item.nama_event}</div>
                             <div class="text-sm text-gray-600">${item.tipe} • ${item.lokasi} • ${item.tanggal_mulai} - ${item.tanggal_selesai}</div>
                         </div>`;
             }
