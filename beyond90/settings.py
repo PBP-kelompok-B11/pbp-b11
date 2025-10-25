@@ -147,11 +147,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 if DEBUG:
-    STATICFILES_DIRS = [
-        BASE_DIR / 'static' # merujuk ke /static root project pada mode development
-    ]
+    STATICFILES_DIRS = [BASE_DIR / 'static']
 else:
-    STATIC_ROOT = BASE_DIR / 'static'
+    STATIC_ROOT = str(BASE_DIR / 'static')  # harus str() supaya collectstatic jalan
 
 
 # Default primary key field type
