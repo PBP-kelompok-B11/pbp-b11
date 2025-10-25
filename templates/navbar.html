@@ -46,7 +46,7 @@
         <a href="{% url 'rafi_player:player_list' %}" class="text-white hover:text-[#C3FF00]">Player</a>
         <a href="{% url 'ibeth_clubs:club_list' %}" class="text-white hover:text-[#C3FF00]">Club</a>
         <a href="{% url 'vidia_event:event_list' %}" class="text-white hover:text-[#C3FF00]">Events</a>
-        <a href="{% url 'authentication:home_view' %}" class="text-white hover:text-[#C3FF00]"></a>
+        <a href="{% url 'authentication:home_view' %}" class="text-white hover:text-[#C3FF00]">Home</a>
         {% if user.is_authenticated %}
           <span class="text-white">{{ user.username }}</span>
           <a href="{% url 'authentication:logout_view' %}" class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600">Logout</a>
@@ -159,18 +159,18 @@ document.addEventListener('DOMContentLoaded', function() {
         data.results.forEach(item => {
             if (type === 'players') {
                 html += `<div class="result-item px-4 py-2 cursor-pointer hover:bg-gray-100" onclick="window.location.href='/players/player/${item.id}/'">
-                            <div class="font-semibold">${item.nama}</div>
+                            <div class="font-semibold text-blue-600">${item.nama}</div>
                             <div class="text-sm text-gray-600">${item.posisi} • ${item.negara} ${item.usia ? `• ${item.usia} years` : ''}</div>
                          </div>`;
             } else if (type === 'clubs') {
                 html += `<div class="result-item px-4 py-2 cursor-pointer hover:bg-gray-100" onclick="window.location.href='/clubs/${item.id}/'">
-                            <div class="font-semibold">${item.nama}</div>
+                            <div class="font-semibold text-blue-600">${item.nama}</div>
                             <div class="text-sm text-gray-600">${item.negara} ${item.liga ? `• ${item.liga}` : ''}</div>
                          </div>`;
             } else if (type === 'events') {
                 html += `<div class="result-item px-4 py-2 cursor-pointer hover:bg-gray-100" 
                             onclick="window.location.href='/events/${item.id}/'">
-                            <div class="font-semibold">${item.nama_event}</div>
+                            <div class="font-semibold text-blue-600">${item.nama_event}</div>
                             <div class="text-sm text-gray-600">${item.tipe} • ${item.lokasi} • ${item.tanggal_mulai} - ${item.tanggal_selesai}</div>
                         </div>`;
             }
