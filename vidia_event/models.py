@@ -4,6 +4,7 @@ from rafi_player.models import Player
 from ibeth_clubs.models import Club
 from django.contrib.contenttypes.fields import GenericRelation
 from comments.models import Comments
+from datetime import date
 
 class Event(models.Model):
     LIGA = 'liga'

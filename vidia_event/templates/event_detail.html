@@ -30,7 +30,7 @@
     <div class="absolute top-[395px] left-[842px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tanggal_selesai }}</div>
 
     <!-- Tombol Edit & Delete -->
-    {% if user.is_authenticated and (user == event.created_by or user.is_staff) %}
+    {% if user.is_authenticated and user == event.created_by or user.is_staff %}
       <div class="absolute top-[510px] left-[811px] flex space-x-4">
         <a href="{% url 'vidia_event:event_update' event.pk %}"
             class="px-6 py-2 bg-lime-400 text-indigo-900 font-['Geologica'] text-xl rounded-2xl hover:bg-lime-300 transition">
