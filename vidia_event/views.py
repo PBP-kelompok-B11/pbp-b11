@@ -101,5 +101,3 @@ def event_delete(request, pk):
 # =========================
 # PARTICIPATION CRUD VIEWS
 # =========================
-
-
