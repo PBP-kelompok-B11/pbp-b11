@@ -158,20 +158,21 @@ document.addEventListener('DOMContentLoaded', function() {
         let html = '';
         data.results.forEach(item => {
             if (type === 'players') {
-                html += `<div class="result-item px-4 py-2 cursor-pointer hover:bg-gray-100" onclick="window.location.href='/player/${item.nama}/'">
+                html += `<div class="result-item px-4 py-2 cursor-pointer hover:bg-gray-100" onclick="window.location.href='/players/player/${item.id}/'">
                             <div class="font-semibold">${item.nama}</div>
                             <div class="text-sm text-gray-600">${item.posisi} • ${item.negara} ${item.usia ? `• ${item.usia} years` : ''}</div>
                          </div>`;
             } else if (type === 'clubs') {
-                html += `<div class="result-item px-4 py-2 cursor-pointer hover:bg-gray-100" onclick="window.location.href='/club/${item.nama}/'">
+                html += `<div class="result-item px-4 py-2 cursor-pointer hover:bg-gray-100" onclick="window.location.href='/clubs/${item.id}/'">
                             <div class="font-semibold">${item.nama}</div>
                             <div class="text-sm text-gray-600">${item.negara} ${item.liga ? `• ${item.liga}` : ''}</div>
                          </div>`;
             } else if (type === 'events') {
-                html += `<div class="result-item px-4 py-2 cursor-pointer hover:bg-gray-100" onclick="window.location.href='/event/${item.nama_event}/'">
+                html += `<div class="result-item px-4 py-2 cursor-pointer hover:bg-gray-100" 
+                            onclick="window.location.href='/events/${item.id}/'">
                             <div class="font-semibold">${item.nama_event}</div>
                             <div class="text-sm text-gray-600">${item.tipe} • ${item.lokasi} • ${item.tanggal_mulai} - ${item.tanggal_selesai}</div>
-                         </div>`;
+                        </div>`;
             }
         });
         resultsContent.innerHTML = html;

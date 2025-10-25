@@ -58,6 +58,7 @@ def search_players(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         data = [
             {
+                'id' : p.id,
                 'nama': p.nama,
                 'posisi': p.posisi,
                 'negara': p.negara,
@@ -67,7 +68,7 @@ def search_players(request):
         return JsonResponse({'query': query, 'results': data, 'jenis': 'pemain'})
 
     # HTML fallback -> render ke template list players
-    return render(request, 'rafi_player/templates/list.html', {
+    return render(request, 'player_list.html', {
         'query': query,
         'players': results,
         'jenis': 'pemain'
@@ -99,6 +100,7 @@ def filter_players(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         data = [
             {
+                'id' : p.id,
                 'nama': p.nama,
                 'posisi': p.posisi,
                 'negara': p.negara,
@@ -107,7 +109,7 @@ def filter_players(request):
         ]
         return JsonResponse({'results': data})
 
-    return render(request, 'search/templates/player_filter_component.html', {'results': results})
+    return render(request, 'search/player_filter_component.html', {'results': results})
 
 
 # ===============================
@@ -133,6 +135,7 @@ def search_clubs(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         data = [
             {
+                'id' : c.id,
                 'nama': c.nama,
                 'negara': c.negara,
                 'liga': getattr(c, 'liga', None),
@@ -141,7 +144,7 @@ def search_clubs(request):
         ]
         return JsonResponse({'query': query, 'results': data, 'jenis': 'klub'})
 
-    return render(request, 'ibeth_clubs/templates/list.html', {
+    return render(request, 'clubs/list.html', {
         'query': query,
         'clubs': results,
         'jenis': 'klub'
@@ -170,6 +173,7 @@ def filter_clubs(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         data = [
             {
+                'id' : c.id,
                 'nama': c.nama,
                 'negara': c.negara,
                 'liga': getattr(c, 'liga', None),
@@ -178,7 +182,7 @@ def filter_clubs(request):
         ]
         return JsonResponse({'results': data})
 
-    return render(request, 'search/templates/club_filter_component.html', {'results': results})
+    return render(request, 'search/club_filter_component.html', {'results': results})
 
 
 # ===============================
@@ -198,14 +202,14 @@ def search_history(request):
         ]
         return JsonResponse({'history': data})
 
-    return render(request, 'search/templates/history.html', {'histories': history})
+    return render(request, 'search/history.html', {'histories': history})
 
 
 # ===============================
 # SEARCH FORM
 # ===============================
 def search_form(request):
-    return render(request, 'search/templates/form.html')
+    return render(request, 'search/form.html')
 
 
 # ===============================
@@ -263,6 +267,7 @@ def search_events(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         data = [
             {
+                'id': e.id,  
                 'nama_event': e.nama_event,
                 'tipe': e.tipe,
                 'lokasi': e.lokasi,
@@ -304,13 +309,14 @@ def filter_events(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         data = [
             {
+                'id': e.id,  
                 'nama_event': e.nama_event,
                 'tipe': e.tipe,
                 'lokasi': e.lokasi,
-                'tanggal_mulai': e.tanggal_mulai.strftime("%d %b %Y"),
-                'tanggal_selesai': e.tanggal_selesai.strftime("%d %b %Y"),
+                'tanggal_mulai': e.tanggal_mulai.strftime("%d %b %Y") if e.tanggal_mulai else None,
+                'tanggal_selesai': e.tanggal_selesai.strftime("%d %b %Y") if e.tanggal_selesai else None,
             } for e in results
         ]
         return JsonResponse({'results': data})
 
-    return render(request, 'search/templates/event_filter_component.html', {'results': results})
+    return render(request, 'search/event_filter_component.html', {'results': results})

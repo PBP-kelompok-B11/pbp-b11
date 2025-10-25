@@ -3,7 +3,23 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from .models import Comments
+from .forms import CommentForm
 from rafi_player.models import Player
+from vidia_event.models import Event
+
+def add_comment_to_event(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.content_object = event
+            comment.user = request.user
+            comment.save()
+            return redirect('vidia_event:event_detail', pk=event.id)
+    else:
+        form = CommentForm()
+    return render(request, 'comments/form.html', {'form': form, 'form_action': request.path})
 
 def comment_list(request, player_id):
     player = get_object_or_404(Player, id=player_id)
