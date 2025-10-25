@@ -27,18 +27,18 @@ SECRET_KEY = 'django-insecure-z%xc3%tvv@ylnf5rfw=!s426oop%&4euso*i0nfi%8@-*tb^-)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
-    "a-sheriqa-beyond-90.pbp.cs.ui.ac.id",
+    'a-sheriqa-beyond-90.pbp.cs.ui.ac.id',
     "localhost",
     "127.0.0.1"
 ]
 
 #tes sesuatu
 CSRF_TRUSTED_ORIGINS = [
-    "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", 
-    "http://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", 
+    'https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id', 
+    'http://a-sheriqa-beyond-90.pbp.cs.ui.ac.id', 
 ]
 
 INSTALLED_APPS = [
