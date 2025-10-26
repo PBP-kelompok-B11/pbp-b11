@@ -18,8 +18,11 @@
   </div>
 
   <div class="flex items-center justify-center py-10 relative z-10">
-    <form action="{% url 'ibeth_clubs:club_update' club.id %}" method="POST" enctype="multipart/form-data"
-          class="relative bg-indigo-900/80 backdrop-blur-lg rounded-3xl shadow-lg p-8 w-[750px] border border-white/10">
+    <form 
+      action="{% if is_edit %}{% url 'ibeth_clubs:club_update' club.id %}{% else %}{% url 'ibeth_clubs:club_create' %}{% endif %}" 
+      method="POST" enctype="multipart/form-data"
+      class="relative bg-indigo-900/80 backdrop-blur-lg rounded-3xl shadow-lg p-8 w-[750px] border border-white/10"
+    >
       {% csrf_token %}
       
       <!-- Back Button -->
@@ -31,43 +34,43 @@
       <div class="absolute left-[70px] top-[60px] text-lime-400 text-3xl font-['Geologica'] leading-10">Back</div>
 
       <h1 class="left-[100px] top-[100px] text-white text-8xl font-['League_Gothic'] mt-20 mb-0 tracking-wide">
-        EDIT CLUB
+        {% if is_edit %}EDIT CLUB{% else %}ADD CLUB{% endif %}
       </h1>
 
       <div class="mb-6">
         <label for="nama" class="block text-lime-400 text-xl font-['Geologica'] mb-2">Club Name</label>
-        <input type="text" id="nama" name="nama" value="{{ club.nama }}"
+        <input type="text" id="nama" name="nama" value="{{ club.nama|default:'' }}"
                class="w-full h-11 bg-indigo-900 text-white placeholder-gray-400 rounded-[24px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
       </div>
 
       <div class="mb-6">
         <label for="negara" class="block text-lime-400 text-xl font-['Geologica'] mb-2">Country</label>
-        <input type="text" id="negara" name="negara" value="{{ club.negara }}"
+        <input type="text" id="negara" name="negara" value="{{ club.negara|default:'' }}"
                class="w-full h-11 bg-indigo-900 text-white placeholder-gray-400 rounded-[24px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
       </div>
 
       <div class="mb-6">
         <label for="stadion" class="block text-lime-400 text-xl font-['Geologica'] mb-2">Stadium</label>
-        <input type="text" id="stadion" name="stadion" value="{{ club.stadion }}"
+        <input type="text" id="stadion" name="stadion" value="{{ club.stadion|default:'' }}"
                class="w-full h-11 bg-indigo-900 text-white placeholder-gray-400 rounded-[24px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
       </div>
 
       <div class="mb-6">
         <label for="tahun_berdiri" class="block text-lime-400 text-xl font-['Geologica'] mb-2">Year Founded</label>
-        <input type="text" id="tahun_berdiri" name="tahun_berdiri" value="{{ club.tahun_berdiri }}"
+        <input type="text" id="tahun_berdiri" name="tahun_berdiri" value="{{ club.tahun_berdiri|default:'' }}"
                class="w-full h-11 bg-indigo-900 text-white placeholder-gray-400 rounded-[24px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
       </div>
 
       <div class="mb-10">
         <label for="url_gambar" class="block text-lime-400 text-xl font-['Geologica'] mb-2">Club Image URL</label>
-        <input type="url" id="url_gambar" name="url_gambar" value="{{ club.url_gambar }}"
+        <input type="url" id="url_gambar" name="url_gambar" value="{{ club.url_gambar|default:'' }}"
                class="w-full h-11 bg-indigo-900 text-white placeholder-gray-400 rounded-[24px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
       </div>
 
       <div class="flex justify-center">
         <button type="submit"
                 class="w-48 h-11 bg-lime-400 rounded-[30px] text-indigo-900 text-xl font-['Geologica'] leading-8 hover:bg-lime-300 transition">
-          Update
+          {% if is_edit %}Update{% else %}Add{% endif %}
         </button>
       </div>
     </form>

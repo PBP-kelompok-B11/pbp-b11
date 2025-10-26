@@ -47,6 +47,7 @@ def club_create(request):
     context = {
         'form': form,
         'is_edit': False,
+        'club': None,  
     }
     return render(request, 'clubs/form.html', context)
 
