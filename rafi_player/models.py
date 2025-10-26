@@ -19,7 +19,7 @@ class Player(models.Model):
     tinggi = models.FloatField()
     berat = models.FloatField()
     posisi = models.CharField(max_length=50)
-    thumbnail = models.URLField(blank=True, null=True)
+    thumbnail = models.URLField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return self.nama
