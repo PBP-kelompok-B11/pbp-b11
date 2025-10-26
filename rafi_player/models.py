@@ -4,7 +4,8 @@ from django.db import models
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import date
-
+from django.contrib.contenttypes.fields import GenericRelation
+from comments.models import Comments
 
 # Create your models here.
 import uuid
@@ -20,7 +21,8 @@ class Player(models.Model):
     berat = models.FloatField()
     posisi = models.CharField(max_length=50)
     thumbnail = models.URLField(max_length=500, blank=True, null=True)
-
+    comments = GenericRelation(Comments)
+    
     def __str__(self):
         return self.nama
 

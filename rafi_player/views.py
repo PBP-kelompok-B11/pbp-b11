@@ -16,7 +16,8 @@ from .models import Player
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from authentication.views import admin_only
-
+from comments.models import Comments
+from comments.forms import CommentForm
 @csrf_exempt
 @login_required(login_url='/login/')
 @login_required(login_url='/login/')
@@ -96,6 +97,13 @@ def player_detail(request, player_id):
     achievements = player.prestasi.all()
     stats = player.statistik_musim.all()
     careers = player.riwayat_karier.all()
+    comments = Comments.objects.filter(
+        content_type__model='player',
+        object_id=player.id
+    ).order_by('-tanggal')
+
+    # Siapkan form komentar baru
+    form = CommentForm()
 
     return render(request, 'player_details.html', {
         'player_id': player_id,
@@ -103,6 +111,8 @@ def player_detail(request, player_id):
         'achievements': achievements,
         'stats': stats,
         'careers': careers,
+        'comments': comments,
+        'form': form,
     })
 
 def player_list(request):

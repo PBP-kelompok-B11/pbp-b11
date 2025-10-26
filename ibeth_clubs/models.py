@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
+from comments.models import Comments
 
 class Club(models.Model):
     nama = models.CharField(max_length=100)
@@ -6,6 +8,7 @@ class Club(models.Model):
     stadion = models.CharField(max_length=100)
     tahun_berdiri = models.PositiveIntegerField()
     url_gambar = models.URLField(blank=True, null=True)
+    comments = GenericRelation(Comments)
 
     def __str__(self):
         return self.nama
