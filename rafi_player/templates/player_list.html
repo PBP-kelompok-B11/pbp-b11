@@ -56,7 +56,6 @@
         </div>
 
         
-
         <div class="player-grid-wrapper mt-20">
             <div id="grid" class="player-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-96 relative">
                 
@@ -91,12 +90,12 @@
 <script>
     console.log("JS Loaded");
     const PLAYER_API_ENDPOINT = "{% url 'rafi_player:show_json_player' %}";
-    const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+    // const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+    let CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}" || null;
 
     console.log("Current user ID:", CURRENT_USER_ID);
     console.log("Tipe data CURRENT_USER_ID:", typeof CURRENT_USER_ID);
-
-    
 
     // DOM Elements
     const loadingSpinner = document.getElementById('loading');
