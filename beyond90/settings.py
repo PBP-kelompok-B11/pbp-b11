@@ -153,10 +153,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Untuk development
 if DEBUG:
-    STATICFILES_DIRS = [BASE_DIR / 'static']  # development
+    STATICFILES_DIRS = [BASE_DIR / 'static']
 else:
-    STATIC_ROOT = str(BASE_DIR / 'staticfiles')  # production
+    STATIC_ROOT = BASE_DIR / 'staticfiles'  # <== ini wajib untuk collectstatic
 
 
 # Default primary key field type
