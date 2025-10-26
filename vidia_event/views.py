@@ -72,7 +72,6 @@ def event_update(request, pk):
         return HttpResponseForbidden("Anda tidak punya akses untuk mengedit event ini.")
 
     if request.method == 'POST':
-        event.nama_event = request.POST.get('nama_event')
         event.lokasi = request.POST.get('lokasi')
         event.tanggal = request.POST.get('tanggal')
         event.tim_home = request.POST.get('tim_home')
@@ -81,6 +80,13 @@ def event_update(request, pk):
         skor_away = request.POST.get('skor_away')
         event.skor_home = int(skor_home) if skor_home else None
         event.skor_away = int(skor_away) if skor_away else None
+        event.tim_away = request.POST.get('tim_away')
+        event.tim_away = request.POST.get('tim_away')
+        if event.tim_home and event.tim_away:
+            event.nama_event = f"{event.tim_home} vs {event.tim_away}"
+        else:
+            # fallback kalau salah satu kosong
+            event.nama_event = "Event Tanpa Nama"
         event.save()
         return redirect('vidia_event:event_detail', pk=event.pk)
 

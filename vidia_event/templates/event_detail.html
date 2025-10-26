@@ -2,11 +2,11 @@
 <div class="fixed top-0 left-0 h-screen w-screen overflow-hidden" style="background-color: #2d1b8f;">
   <!-- Tombol Back -->
   <div class="relative h-16 w-40">
-    <div class="absolute top-[115px] left-[180px] z-50 w-24 justify-center font-['Geologica'] text-4xl leading-10 font-normal text-lime-400">Back</div>
+    <div class="absolute top-[130px] left-[180px] z-50 w-24 justify-center font-['Geologica'] text-4xl leading-10 font-normal text-lime-400">Back</div>
     <a href="{% url 'vidia_event:event_list' %}" class="relative z-50">
-      <div class="absolute top-[115px] left-[120px] z-50 h-16 w-11 cursor-pointer">
+      <div class="absolute top-[130px] left-[120px] z-50 h-16 w-11 cursor-pointer">
         <svg width="50" height="64" viewBox="0 0 50 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M32.8851 2.00525L3.99023 23.5169L32.8851 48.5052M38.7072 13.3043L27.7291 23.5169L38.7072 32.969" stroke="#B0FE08" stroke-width="5" />
+          <path d="M32.8851 2.00525L3.99023 23.5169L32.8851 48.5052M38.7072 13.3043L27.7291 23.5169L38.7072 32.969" stroke="#B0FE08" stroke-width="5"/>
         </svg>
       </div>
     </a>
@@ -18,19 +18,19 @@
     <div class="absolute top-[395px] left-[112px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.Lokasi }}</div>
 
     <!-- Tim Home -->
-    <div class="absolute top-[338px] left-[321px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Team Home</div>
-    <div class="absolute top-[395px] left-[322px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tim_home }}</div>
+    <div class="absolute top-[338px] left-[281px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Team Home</div>
+    <div class="absolute top-[395px] left-[282px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tim_home }}</div>
 
     <!-- Tim Away -->
     <div class="absolute top-[338px] left-[531px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Team Away</div>
     <div class="absolute top-[395px] left-[532px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tim_away }}</div>
 
     <!-- Tanggal -->
-    <div class="absolute top-[338px] left-[741px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Tanggal</div>
-    <div class="absolute top-[395px] left-[742px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tanggal }}</div>
+    <div class="absolute top-[338px] left-[771px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Tanggal</div>
+    <div class="absolute top-[395px] left-[772px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tanggal }}</div>
     <!-- Created by  -->
-    <div class="absolute top-[338px] left-[951px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Created by</div>
-    <div class="absolute top-[395px] left-[952px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.created_by }}</div>
+    <div class="absolute top-[338px] left-[971px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Created by</div>
+    <div class="absolute top-[395px] left-[972px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.created_by }}</div>
 
 
     <!-- Tombol Edit & Delete -->
@@ -63,11 +63,11 @@
 
 
     <!-- Header Event -->
-    <div data-property-1="Frame 5098" class="absolute top-[152px] left-[102px] h-28 w-[956px] overflow-hidden">
-      <div class="absolute top-0 left-0 h-28 w-[956px] rounded-2xl bg-lime-400"></div>
-      <div class="absolute top-[13px] left-[707px] h-20 w-60 rounded-xl" style="background-color: #2d1b8f;"></div>
-      <div class="absolute top-[22px] left-[39px] w-[563px] justify-center font-['Geologica'] text-5xl leading-[62.50px] font-normal text-[#2d1b8f]">{{ event.nama_event }}</div>
-      <div class="absolute top-[22px] left-[775px] w-24 justify-center font-['Geologica'] text-5xl leading-[62.50px] font-semibold text-white">{{ event.skor_home }} - {{ event.skor_away }}</div>
+    <div data-property-1="Frame 5098" class="absolute top-[152px] left-[102px] h-28 w-[1200px] overflow-hidden">
+      <div class="absolute top-0 left-0 h-28 w-[1200px] rounded-2xl bg-lime-400"></div>
+      <div class="absolute top-[13px] right-[50px] h-20 w-60 rounded-xl" style="background-color: #2d1b8f;"></div>
+      <div class="absolute top-[22px] left-[39px] w-[1000px] justify-center font-['Geologica'] text-4xl leading-[62.50px] font-normal text-[#2d1b8f]">{{ event.nama_event }}</div>
+      <div class="absolute top-[22px] right-[120px] w-24 justify-center font-['Geologica'] text-5xl leading-[62.50px] font-semibold text-white">{{ event.skor_home }} - {{ event.skor_away }}</div>
     </div>
   </div>
   <footer class="bg-lime-400 py-3 text-center font-bold text-indigo-900 fixed bottom-0 left-0 w-full">
