@@ -3,6 +3,8 @@ from .models import Club, ClubRanking
 from .forms import ClubForm, ClubRankingForm
 from authentication.views import admin_only
 from django.contrib.auth.decorators import login_required
+from comments.models import Comments
+from comments.forms import CommentForm
 
 
 def club_list(request):
@@ -17,10 +19,20 @@ def club_list(request):
 def club_detail(request, pk):
     club = get_object_or_404(Club, pk=pk)
     rankings = club.rankings.all().order_by('-musim')
+    # Ambil semua komentar yang terkait dengan event ini
+    comments = Comments.objects.filter(
+        content_type__model='club',
+        object_id=club.id
+    ).order_by('-tanggal')
+
+    # Siapkan form komentar baru
+    form = CommentForm()
     context = {
         'club': club,
         'rankings': rankings,
         'base_title': f'Detail {club.nama}',
+        'comments': comments,
+        'form': form,
     }
     return render(request, 'clubs/detail.html', context)
 

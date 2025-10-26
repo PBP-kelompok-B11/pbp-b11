@@ -174,17 +174,20 @@
 
     <!-- Tombol / Aksi -->
     <div class="mt-4">
-        <button
-            id="btn-add-comment"
-            class="w-[500px] h-14 bg-white text-indigo-900 text-xl font-normal font-['Geologica'] rounded-full shadow-md hover:bg-gray-100 transition-all duration-200"
-        >
-            Add Comment
-        </button>
+    <button
+        type="button"
+        id="openCommentsBtn"
+        class="w-[500px] h-14 bg-white text-indigo-900 text-xl font-normal font-['Geologica'] 
+               rounded-full shadow-md hover:bg-gray-100 transition-all duration-200
+               flex items-center justify-center">
+        Add Comment
+    </button>
     </div>
 </div>
 
     <p>DEBUG Player ID: {{ player_id }}</p>
 </div>
+{% include 'comments/playerlist.html' %}
 
 <script>
 const PLAYER_ID = "{{ player_id }}";
@@ -272,6 +275,7 @@ function toggleDropdown(id) {
     element.classList.toggle('animate-fadeIn');
 }
 
+document.getElementById('openCommentsBtn').addEventListener('click', openCommentsModal);
 
 </script>
 

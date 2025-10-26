@@ -61,13 +61,24 @@
       {% endif %}
     </div>
 
-    <!-- Tombol Kembali -->
-    <div class="pt-4 text-right">
-      <a href="{% url 'ibeth_clubs:club_list' %}"
-         class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 transition text-white">
+    <div class="pt-4 flex justify-between items-center">
+    
+    <button id="openCommentsBtn"
+            type="button" 
+            class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 transition text-white cursor-pointer">
+        View Comments
+    </button>
+    
+    <a href="{% url 'ibeth_clubs:club_list' %}"
+       class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 transition text-white">
         ← Return to club list
-      </a>
+    </a>
     </div>
   </div>
 </div>
+{% include 'comments/clublist.html' %}
+
+<script>
+  document.getElementById('openCommentsBtn').addEventListener('click', openCommentsModal);
+</script>
 {% endblock %}
