@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -145,11 +146,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-if DEBUG:
-    STATICFILES_DIRS = [BASE_DIR / 'static']
-else:
-    STATIC_ROOT = str(BASE_DIR / 'static')  # harus str() supaya collectstatic jalan
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # wajib untuk collectstatic
+
+# Folder tempat kamu taruh file static (CSS, JS, img)
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Folder hasil collectstatic → WAJIB TERPISAH!
+# STATIC_ROOT = BASE_DIR / 'staticfiles'  # BUKAN 'static'!
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 
 # Default primary key field type

@@ -20,9 +20,10 @@ from comments.models import Comments
 from comments.forms import CommentForm
 @csrf_exempt
 @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def add_player_ajax(request):
-    print("DEBUG - User:", request.user)
-    print("DEBUG - Authenticated:", request.user.is_authenticated)
+    if request.method != "POST":
+        return JsonResponse({'message': 'Invalid method'}, status=405)
 
     nama = request.POST.get("nama")
     negara = request.POST.get("negara")
@@ -30,25 +31,27 @@ def add_player_ajax(request):
     tinggi = request.POST.get("tinggi")
     berat = request.POST.get("berat")
     posisi = request.POST.get("posisi")
-    thumbnail= request.POST.get("thumbnail")
+    thumbnail = request.POST.get("thumbnail")
 
     if not all([nama, negara, usia, tinggi, berat, posisi, thumbnail]):
-        return HttpResponse(b"Missing fields", status=400)
+        return JsonResponse({'message': 'Missing fields'}, status=400)
 
-    new_player = Player(
-        nama=nama,
-        negara=negara,
-        usia=usia,
-        tinggi=tinggi,
-        berat=berat,
-        posisi=posisi,
-        thumbnail=thumbnail,
-        user=request.user 
-    )
-    new_player.save()
+    try:
+        new_player = Player(
+            nama=nama,
+            negara=negara,
+            usia=int(usia),
+            tinggi=float(tinggi),
+            berat=float(berat),
+            posisi=posisi,
+            thumbnail=thumbnail,
+            user=request.user
+        )
+        new_player.save()
+        return JsonResponse({'message': 'CREATED'})
+    except Exception as e:
+        return JsonResponse({'message': str(e)}, status=500)
 
-
-    return JsonResponse({'message': 'CREATED'})
 
 def show_json_player(request):
     player_list = Player.objects.all()

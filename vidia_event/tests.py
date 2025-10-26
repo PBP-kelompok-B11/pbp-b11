@@ -8,13 +8,17 @@ class EventModelTest(TestCase):
     def test_create_event(self):
         event = Event.objects.create(
             nama_event="Turnamen Sepakbola",
-            tipe=Event.TURNAMEN,
             lokasi="Jakarta",
-            tanggal_mulai=date(2025, 11, 1),
-            tanggal_selesai=date(2025, 11, 5)
+            tanggal=date(2025, 11, 1),
+            tim_home="Persija",
+            tim_away="Persib",
+            skor_home=2,
+            skor_away=1
         )
         self.assertEqual(str(event), "Turnamen Sepakbola")
-        self.assertEqual(event.tipe, Event.TURNAMEN)
+        self.assertEqual(event.tim_home, "Persija")
+        self.assertEqual(event.skor_home, 2)
+
 
 class EventViewsTest(TestCase):
     def setUp(self):
@@ -25,10 +29,12 @@ class EventViewsTest(TestCase):
         # buat sample event
         self.event = Event.objects.create(
             nama_event="Liga Nasional",
-            tipe=Event.LIGA,
             lokasi="Bandung",
-            tanggal_mulai=date(2025, 10, 1),
-            tanggal_selesai=date(2025, 10, 10)
+            tanggal=date(2025, 10, 1),
+            tim_home="Arema",
+            tim_away="Persebaya",
+            skor_home=3,
+            skor_away=2
         )
 
     def test_event_list_view(self):
@@ -44,11 +50,13 @@ class EventViewsTest(TestCase):
     def test_event_create_view_admin(self):
         self.client.login(username='admin', password='adminpass')
         response = self.client.post(reverse('vidia_event:event_create'), {
-            'event': 'Turnamen U-20',
-            'tipe': Event.TURNAMEN,
+            'nama_event': 'Turnamen U-20',
             'lokasi': 'Surabaya',
-            'start_date': '2025-12-01',
-            'end_date': '2025-12-05'
+            'tanggal': '2025-12-01',
+            'tim_home': 'PSM Makassar',
+            'tim_away': 'Persib',
+            'skor_home': 1,
+            'skor_away': 1
         })
         self.assertRedirects(response, reverse('vidia_event:event_list'))
         self.assertTrue(Event.objects.filter(nama_event='Turnamen U-20').exists())
@@ -56,22 +64,27 @@ class EventViewsTest(TestCase):
     def test_event_create_view_non_admin(self):
         self.client.login(username='user', password='userpass')
         response = self.client.post(reverse('vidia_event:event_create'), {
-            'event': 'Turnamen U-18',
-            'tipe': Event.TURNAMEN,
+            'nama_event': 'Turnamen U-18',
             'lokasi': 'Medan',
-            'start_date': '2025-11-01',
-            'end_date': '2025-11-05'
+            'tanggal': '2025-11-01',
+            'tim_home': 'Persija',
+            'tim_away': 'Bali United',
+            'skor_home': 0,
+            'skor_away': 3
         })
-        self.assertEqual(response.status_code, 403)  # admin_only harusnya blokir
+        # kalau view kamu pakai decorator @user_passes_test atau @staff_member_required
+        self.assertEqual(response.status_code, 403)
 
     def test_event_update_view(self):
         self.client.login(username='admin', password='adminpass')
         response = self.client.post(reverse('vidia_event:event_update', args=[self.event.pk]), {
-            'event': 'Liga Nasional Updated',
-            'tipe': Event.LIGA,
+            'nama_event': 'Liga Nasional Updated',
             'lokasi': 'Jakarta',
-            'start_date': '2025-10-02',
-            'end_date': '2025-10-12'
+            'tanggal': '2025-10-02',
+            'tim_home': 'Arema',
+            'tim_away': 'Persebaya',
+            'skor_home': 4,
+            'skor_away': 2
         })
         self.assertRedirects(response, reverse('vidia_event:event_detail', args=[self.event.pk]))
         self.event.refresh_from_db()
