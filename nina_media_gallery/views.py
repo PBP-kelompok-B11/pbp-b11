@@ -1,14 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponse
-from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.decorators import login_required
 from nina_media_gallery.forms import MediaForm
 from nina_media_gallery.models import Media
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 
 # Create your views here.
-def is_admin(user):
-    return user.is_authenticated and user.is_staff
 
 def gallery_list(request):
     media_list = Media.objects.all()
@@ -44,6 +42,7 @@ def gallery_details(request, id):
         'next_media': next_media,
     }
     return render(request, 'media_detail.html', context)
+    
 def get_gallery_items(request):
     media = Media.objects.all().values('deskripsi', 'media_file')
     data = [
@@ -54,8 +53,7 @@ def get_gallery_items(request):
         for item in media
     ]
     return JsonResponse(data, safe=False)
-
-# @user_passes_test(is_admin)
+    
 @login_required(login_url='/login/')
 def gallery_upload(request):
     if request.method == "POST":
