@@ -884,22 +884,34 @@
             }
         }
 
+        // Setup double-click untuk video: single click -> details, double click -> player
         document.querySelectorAll('.gallery-item').forEach(function(item){
             const cat = (item.dataset.category || '').toLowerCase();
             const thumb = item.querySelector('.thumbnail-container');
             if (!thumb) return;
 
             if (cat === 'video') {
-                thumb.addEventListener('click', function(evt){
-                    evt.preventDefault();
-                    const src = item.dataset.videoSrc;
-                    const poster = item.dataset.poster || '';
-                    if (!src) {
-                        showToast('❌ Sumber video tidak ditemukan untuk media ini', 'error');
-                        return;
-                    }
-                    openPlayerModal(src, poster);
-                });
+                // Gunakan play button overlay untuk membuka player
+                const playOverlay = item.querySelector('.play-overlay');
+                if (playOverlay) {
+                    // Buat play overlay clickable
+                    playOverlay.style.pointerEvents = 'auto';
+                    playOverlay.style.cursor = 'pointer';
+                    
+                    playOverlay.addEventListener('click', function(evt){
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        
+                        const src = item.dataset.videoSrc;
+                        const poster = item.dataset.poster || '';
+                        if (!src) {
+                            showToast('❌ Sumber video tidak ditemukan untuk media ini', 'error');
+                            return;
+                        }
+                        openPlayerModal(src, poster);
+                    });
+                }
+                // Thumbnail tetap bisa diklik untuk ke details page
             }
         });
 
