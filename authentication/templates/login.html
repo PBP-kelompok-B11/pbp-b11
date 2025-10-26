@@ -1,117 +1,107 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Login| Beyond90{% endblock %}
+{% block title %}Login | Beyond90{% endblock %}
 
 {% block content %}
-  <!-- MAIN WRAPPER -->
-  <div class="relative w-[1920px] h-[1080px] bg-indigo-900 overflow-hidden">
+<link href="https://fonts.googleapis.com/css2?family=League+Gothic&family=Geologica:wght@400;600&display=swap" rel="stylesheet">
 
-    <!-- FOOTER -->
-    <div class="absolute bottom-0 left-0 w-full h-32 bg-lime-400"></div>
+<div class="relative min-h-screen bg-indigo-900 flex flex-col items-center justify-center overflow-hidden">
 
-    <!-- BACKGROUND DECOR -->
-    <div class="absolute top-[125px] left-0 w-full h-[949px] overflow-hidden">
-      <div class="absolute left-[335px] top-[175px] text-right text-white text-[300px] font-[League_Gothic]">BEYOND</div>
-      <div class="absolute left-[833px] top-[379px] w-64 h-56 bg-white"></div>
-      <div class="absolute left-[643px] top-[142px] w-64 h-80 rotate-[24deg] outline outline-[20px] outline-offset-[-10px] outline-lime-400"></div>
-      <div class="absolute left-[1339px] top-[492px] w-56 h-36 rotate-180">
-        <div class="absolute left-[10px] top-[-9px] w-56 h-36 rotate-[4deg] outline outline-[15px] outline-offset-[-7px] outline-lime-400"></div>
-      </div>
+  <div class="absolute inset-0 overflow-hidden">
+    <div class="absolute text-white font-[League_Gothic] text-[22vw] md:text-[10vw] opacity-10 left-1/2 -translate-x-1/2 top-[5%] select-none tracking-widest">
+      BEYOND
     </div>
-
-    <!-- DARK OVERLAY -->
-    <div class="absolute inset-0 bg-black/40"></div>
-
-    <!-- LOGIN BOX -->
-    <div class="absolute left-[408px] top-[120px] w-[1075px] h-[800px] bg-indigo-900 rounded-[20px] flex flex-col items-center justify-center overflow-hidden shadow-lg">
-      <h1 class="text-[120px] font-[League_Gothic] text-white mb-16">LOGIN</h1>
-
-      <form id="loginForm" method="POST" class="w-[80%] max-w-[700px]">
-        {% csrf_token %}
-
-        <!-- Username -->
-        <div class="mb-8">
-          <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Username</label>
-          <input type="text" name="username" required
-                 class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6 focus:outline-none focus:ring-2 focus:ring-lime-300">
-        </div>
-
-        <!-- Password -->
-        <div class="mb-8">
-          <label class="block text-lime-400 text-2xl font-[Geologica] mb-2">Password</label>
-          <input type="password" name="password" required
-                 class="w-full h-14 bg-indigo-900 border-2 border-lime-400 rounded-[30px] text-white text-xl px-6 focus:outline-none focus:ring-2 focus:ring-lime-300">
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit"
-                class="w-full bg-lime-400 text-indigo-900 text-2xl font-[Geologica] py-3 rounded-[36px] hover:scale-105 transition-transform">
-          Login
-        </button>
-
-        <!-- Register Link -->
-        <p class="mt-8 text-center text-lime-400 text-lg font-[Geologica]">
-          Belum punya akun?
-          <a href="{% url 'authentication:register_view' %}"
-             class="underline hover:text-lime-300 transition-colors duration-200">
-            Register di sini
-          </a>
-        </p>
-      </form>
-    </div>
+    <div class="hidden md:block absolute left-[10%] top-[20%] w-40 h-40 rotate-[24deg] outline outline-[6px] outline-offset-[-3px] outline-lime-400"></div>
+    <div class="hidden md:block absolute right-[10%] bottom-[25%] w-36 h-24 rotate-180 outline outline-[5px] outline-offset-[-2px] outline-lime-400"></div>
   </div>
 
-  <!-- AJAX LOGIN SCRIPT -->
-  <script>
-  document.querySelector("#loginForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const form = e.target;
-      const formData = new FormData(form);
+  <div class="absolute inset-0 bg-black/40"></div>
 
-      try {
-          const response = await fetch("{% url 'authentication:login_view' %}", {
-              method: "POST",
-              headers: {
-                  "X-Requested-With": "XMLHttpRequest",
-                  "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
-              },
-              body: formData
-          });
+  <div class="relative w-[85%] max-w-[600px] bg-indigo-900/90 backdrop-blur-md rounded-xl p-6 md:p-8 flex flex-col items-center shadow-xl border border-lime-400/30 z-10">
+    <h1 class="text-[14vw] md:text-[70px] font-[League_Gothic] text-white mb-6 tracking-wider leading-none">LOGIN</h1>
 
-          const data = await response.json();
+    <form id="loginForm" method="POST" class="w-full">
+      {% csrf_token %}
 
-          if (data.success) {
-              Swal.fire({
-                  icon: 'success',
-                  title: 'Login Berhasil 🎉',
-                  text: data.message,
-                  confirmButtonColor: '#84cc16',
-                  background: '#1e1b4b',
-                  color: '#fff',
-              }).then(() => {
-                  window.location.href = data.redirect_url;
-              });
-          } else {
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Login Gagal 😢',
-                  text: data.message,
-                  confirmButtonColor: '#84cc16',
-                  background: '#1e1b4b',
-                  color: '#fff',
-              });
-          }
-      } catch (error) {
-          Swal.fire({
-              icon: 'error',
-              title: 'Oops!',
-              text: 'Terjadi kesalahan. Coba lagi nanti.',
-              confirmButtonColor: '#84cc16',
-              background: '#1e1b4b',
-              color: '#fff',
-          });
-      }
-  });
-  </script>
+      <div class="mb-5">
+        <label class="block text-lime-400 text-base md:text-lg font-[Geologica] mb-1">Username</label>
+        <input type="text" name="username" required
+               class="w-full h-11 bg-indigo-900 border-2 border-lime-400 rounded-full text-white px-5 text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-lime-300">
+      </div>
+
+      <div class="mb-5">
+        <label class="block text-lime-400 text-base md:text-lg font-[Geologica] mb-1">Password</label>
+        <input type="password" name="password" required
+               class="w-full h-11 bg-indigo-900 border-2 border-lime-400 rounded-full text-white px-5 text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-lime-300">
+      </div>
+
+      <button type="submit"
+              class="w-full bg-lime-400 text-indigo-900 text-lg md:text-xl font-[Geologica] py-2.5 rounded-full hover:scale-105 transition-transform duration-200">
+        Login
+      </button>
+
+      <p class="mt-5 text-center text-lime-400 text-sm md:text-base font-[Geologica]">
+        Belum punya akun?
+        <a href="{% url 'authentication:register_view' %}" class="underline hover:text-lime-300 transition-colors duration-200">
+          Register di sini
+        </a>
+      </p>
+    </form>
+  </div>
+
+  <div class="absolute bottom-0 left-0 w-full h-14 md:h-16 bg-lime-400"></div>
+</div>
+
+<script>
+document.querySelector("#loginForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+
+  try {
+    const response = await fetch("{% url 'authentication:login_view' %}", {
+      method: "POST",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+      },
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Login Berhasil 🎉',
+        text: data.message,
+        confirmButtonColor: '#84cc16',
+        background: '#1e1b4b',
+        color: '#fff',
+      }).then(() => {
+        window.location.href = data.redirect_url;
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Gagal',
+        text: data.message,
+        confirmButtonColor: '#84cc16',
+        background: '#1e1b4b',
+        color: '#fff',
+      });
+    }
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops!',
+      text: 'Terjadi kesalahan. Coba lagi nanti.',
+      confirmButtonColor: '#84cc16',
+      background: '#1e1b4b',
+      color: '#fff',
+    });
+  }
+});
+</script>
 {% endblock %}
