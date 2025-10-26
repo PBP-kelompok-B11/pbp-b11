@@ -80,7 +80,7 @@ def search_players(request):
             'posisi': p.posisi,
             'negara': p.negara,
             'usia': getattr(p, 'usia', None),
-            'detail_url': reverse('rafi_player:player_detail', args=[str(p.id)]))}
+            'detail_url': reverse('rafi_player:player_detail', args=[str(p.id)])}
             for p in results
         ]
         return JsonResponse({'query': query, 'results': data, 'jenis': 'pemain'})
