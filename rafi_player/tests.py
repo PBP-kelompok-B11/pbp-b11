@@ -464,4 +464,4 @@ class PlayerViewsExtraCoverageTest(TestCase):
         data = response.json()
         self.assertEqual(data['status'], 'error')
 
-    
+    #tes
