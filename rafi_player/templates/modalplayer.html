@@ -160,6 +160,7 @@
       try {
           const response = await fetch(endpoint, {
               method: "POST",
+              credentials: "include", // <--- penting: kirim cookie login
               headers: { 'X-CSRFToken': '{{ csrf_token }}' },
               body: formData
           });

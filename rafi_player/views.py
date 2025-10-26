@@ -19,9 +19,10 @@ from authentication.views import admin_only
 
 @csrf_exempt
 @login_required(login_url='/login/')
-@login_required
-@admin_only
 def add_player_ajax(request):
+    print("DEBUG - User:", request.user)
+    print("DEBUG - Authenticated:", request.user.is_authenticated)
+
     nama = request.POST.get("nama")
     negara = request.POST.get("negara")
     usia = request.POST.get("usia")
@@ -105,17 +106,7 @@ def player_list(request):
     players = Player.objects.all()
     return render(request, 'player_list.html', {'players': players})
 
-def player_create(request):
-    if request.method == 'POST':
-        form = PlayerForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('rafi_player:player_list')
-    else:
-        form = PlayerForm()
-    return render(request, 'player_form.html', {'form': form})
-
-@admin_only
+@login_required(login_url='/login/')
 def edit_player_ajax(request, pk):
     if request.method == 'POST':
         player = get_object_or_404(Player, pk=pk)
@@ -131,7 +122,7 @@ def edit_player_ajax(request, pk):
     return JsonResponse({'status': 'error', 'message': 'Invalid method'})
 
 @require_POST
-@admin_only
+@login_required(login_url='/login/')    
 def delete_player(request, player_id):
     player = get_object_or_404(Player, pk=player_id)
     player.delete()

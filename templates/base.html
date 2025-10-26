@@ -10,9 +10,16 @@
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
-<body>
+<body class="min-h-screen flex flex-col"></body>
     {% include 'navbar.html' %}
-    {% block content %}{% endblock content %}
+    {% include 'modalplayer.html' %}
+    {% include 'modal.html' %}
+    
+
+    {% block content %} 
+
+    {% endblock content %}
+
     {% include 'toast.html' %}
 
     <!--  -->
