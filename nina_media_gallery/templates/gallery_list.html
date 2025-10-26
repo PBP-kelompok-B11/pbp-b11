@@ -729,64 +729,65 @@
 
     // Fungsi edit media - hanya bisa dipanggil jika user login
     function editMedia(mediaId) {
-        if (!isAuthenticated) {
-            showToast('⚠️ Anda harus login terlebih dahulu!', 'error');
-            return;
-        }
-        
-        // 1. Ambil data media dari DOM
-        const mediaEl = document.querySelector(`[data-id="${mediaId}"]`);
-        if (!mediaEl) return;
+      if (!isAuthenticated) {
+          showToast('⚠️ Anda harus login terlebih dahulu!', 'error');
+          return;
+      }
+      
+      // 1. Ambil data media dari DOM
+      const mediaEl = document.querySelector(`[data-id="${mediaId}"]`);
+      if (!mediaEl) return;
+  
+      const deskripsi = mediaEl.querySelector('.media-description').innerText;
+      const categoryValue = (mediaEl.dataset.category || '').toLowerCase();
+      const thumbnail = mediaEl.querySelector('img') ? mediaEl.querySelector('img').src : '';
+  
+      // 2. Tampilkan modal edit
+      const modal = document.getElementById('editModal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      const content = modal.querySelector('.modal-content');
+      content.classList.add('show');
+  
+      // 3. Isi form dengan data media
+      const editForm = modal.querySelector('#editForm');    // <-- renamed
+      editForm.querySelector('#editMediaId').value = mediaId;
+      editForm.querySelector('#editDeskripsi').value = deskripsi;
+      editForm.querySelector('#editCategory').value = categoryValue;
+      editForm.querySelector('#editThumbnail').value = thumbnail;
+  
+      // 4. Submit handler untuk update media
+      editForm.onsubmit = function(e) {
+          e.preventDefault();
+  
+          const formData = new FormData(this);
+  
+          fetch(`{% url 'nina_media_gallery:gallery_update' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', mediaId), {
+              method: 'POST',
+              headers: {
+                  'X-CSRFToken': getCookie('csrftoken')
+              },
+              body: formData
+          })
+          .then(res => {
+              return res.json().catch(() => ({ status: res.ok ? 'success' : 'error' }));
+          })
+          .then(data => {
+              if (data.status === 'success') {
+                  showToast('✅ Media berhasil diupdate!', 'success');
+                  closeEditModal();
+                  window.location.reload(); 
+              } else {
+                  showToast('❌ ' + (data.message || 'Update gagal!'), 'error');
+              }
+          })
+          .catch(err => {
+              console.error(err);
+              showToast('❌ Terjadi kesalahan saat update', 'error');
+          });
+      };
+  }
 
-        const deskripsi = mediaEl.querySelector('.media-description').innerText;
-        const categoryValue = (mediaEl.dataset.category || '').toLowerCase();
-        const thumbnail = mediaEl.querySelector('img') ? mediaEl.querySelector('img').src : '';
-
-        // 2. Tampilkan modal edit
-        const modal = document.getElementById('editModal');
-        if (!modal) return;
-        modal.classList.remove('hidden');
-        const content = modal.querySelector('.modal-content');
-        content.classList.add('show');
-
-        // 3. Isi form dengan data media
-        const form = modal.querySelector('#editForm');
-        form.querySelector('#editMediaId').value = mediaId;
-        form.querySelector('#editDeskripsi').value = deskripsi;
-        form.querySelector('#editCategory').value = categoryValue;
-        form.querySelector('#editThumbnail').value = thumbnail;
-
-        // 4. Submit handler untuk update media
-        form.onsubmit = function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(this);
-
-            fetch(`{% url 'nina_media_gallery:gallery_update' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', mediaId), {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: formData
-            })
-            .then(res => {
-                return res.json().catch(() => ({ status: res.ok ? 'success' : 'error' }));
-            })
-            .then(data => {
-                if (data.status === 'success') {
-                    showToast('✅ Media berhasil diupdate!', 'success');
-                    closeEditModal();
-                    window.location.reload(); 
-                } else {
-                    showToast('❌ ' + (data.message || 'Update gagal!'), 'error');
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                showToast('❌ Terjadi kesalahan saat update', 'error');
-            });
-        };
-    }
 
     function closeEditModal() {
         const modal = document.getElementById('editModal');
