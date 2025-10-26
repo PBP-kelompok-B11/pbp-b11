@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Club, ClubRanking
 from .forms import ClubForm, ClubRankingForm
-from authentication.views import admin_only
 from django.contrib.auth.decorators import login_required
 from comments.models import Comments
 from comments.forms import CommentForm
@@ -18,14 +17,12 @@ def club_list(request):
 
 def club_detail(request, pk):
     club = get_object_or_404(Club, pk=pk)
-    rankings = club.rankings.all().order_by('-musim')
-    # Ambil semua komentar yang terkait dengan event ini
+    rankings = ClubRanking.objects.filter(club=club).order_by('-musim')
     comments = Comments.objects.filter(
         content_type__model='club',
         object_id=club.id
     ).order_by('-tanggal')
 
-    # Siapkan form komentar baru
     form = CommentForm()
     context = {
         'club': club,
@@ -35,6 +32,7 @@ def club_detail(request, pk):
         'form': form,
     }
     return render(request, 'clubs/detail.html', context)
+
 
 @login_required(login_url='/login/')
 def club_create(request):
@@ -48,10 +46,11 @@ def club_create(request):
 
     context = {
         'form': form,
-        'title': 'Tambah Klub',
-        'base_title': 'Tambah Klub Baru',
+        'is_edit': False,
+        'club': None,  
     }
     return render(request, 'clubs/form.html', context)
+
 
 @login_required(login_url='/login/')
 def club_update(request, pk):
@@ -59,17 +58,18 @@ def club_update(request, pk):
     if request.method == 'POST':
         form = ClubForm(request.POST, instance=club)
         if form.is_valid():
-            club = form.save()
+            form.save()
             return redirect('ibeth_clubs:club_detail', pk=club.pk)
     else:
         form = ClubForm(instance=club)
 
     context = {
         'form': form,
-        'title': f'Edit Klub: {club.nama}',
-        'base_title': f'Edit Klub - {club.nama}',
+        'club': club,
+        'is_edit': True,
     }
     return render(request, 'clubs/form.html', context)
+
 
 @login_required(login_url='/login/')
 def club_delete(request, pk):
@@ -77,13 +77,12 @@ def club_delete(request, pk):
     if request.method == 'POST':
         club.delete()
         return redirect('ibeth_clubs:club_list')
+
     context = {
         'club': club,
         'base_title': f'Hapus Klub {club.nama}',
     }
     return render(request, 'clubs/club_confirm_delete.html', context)
-
-
 
 def ranking_list(request):
     rankings = ClubRanking.objects.select_related('club').order_by('club__nama', 'peringkat')
@@ -92,6 +91,7 @@ def ranking_list(request):
         'base_title': 'Daftar Ranking Klub',
     }
     return render(request, 'clubs/ranking.html', context)
+
 
 @login_required(login_url='/login/')
 def club_ranking_create(request, club_pk):
@@ -113,6 +113,7 @@ def club_ranking_create(request, club_pk):
     }
     return render(request, 'clubs/form.html', context)
 
+
 @login_required(login_url='/login/')
 def club_ranking_update(request, pk):
     ranking = get_object_or_404(ClubRanking, pk=pk)
@@ -130,6 +131,7 @@ def club_ranking_update(request, pk):
         'base_title': f'Edit Ranking - {ranking.club.nama}',
     }
     return render(request, 'clubs/form.html', context)
+
 
 @login_required(login_url='/login/')
 def club_ranking_delete(request, pk):

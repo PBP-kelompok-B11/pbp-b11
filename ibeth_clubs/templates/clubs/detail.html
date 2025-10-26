@@ -27,7 +27,6 @@
     <div class="bg-white/5 p-6 rounded-2xl shadow-inner">
       <div class="flex justify-between items-center flex-wrap gap-3">
         <h2 class="text-2xl font-semibold text-white">Club Rankings</h2>
-        
       </div>
 
       {% if rankings %}
@@ -57,25 +56,26 @@
           </table>
         </div>
       {% else %}
-        <p class="mt-4 text-white/70">This club's ranking is in the range of 1-98.</p>
+
       {% endif %}
     </div>
 
+    <!-- Tombol Navigasi -->
     <div class="pt-4 flex justify-between items-center">
-    
-    <button id="openCommentsBtn"
-            type="button" 
-            class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 transition text-white cursor-pointer">
-        View Comments
-    </button>
-    
-    <a href="{% url 'ibeth_clubs:club_list' %}"
-       class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 transition text-white">
-        ← Return to club list
-    </a>
+      <button id="openCommentsBtn"
+              type="button" 
+              class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 transition text-white cursor-pointer">
+          View Comments
+      </button>
+
+      <a href="{% url 'ibeth_clubs:club_list' %}"
+         class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 transition text-white">
+          ← Return to club list
+      </a>
     </div>
   </div>
 </div>
+
 {% include 'comments/clublist.html' %}
 
 <script>

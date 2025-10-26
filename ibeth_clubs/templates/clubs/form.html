@@ -4,10 +4,12 @@
 {% block content %}
 <div class="min-h-screen bg-indigo-900 text-white pt-28 relative overflow-hidden">
 
+  <!-- Background Text -->
   <div class="absolute text-[160px] font-bold text-white opacity-10 left-[-40px] top-[90px] select-none pointer-events-none">
     CLUB
   </div>
 
+  <!-- Decorative SVG -->
   <div class="absolute left-[-10px] top-[180px] w-[220px] h-[380px]">
     <svg viewBox="0 0 444 517" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
       <path d="M403.493 320.269C325.455 558.021 117.482 533.718 86.0948 436.53C56.6724 345.426 149.839 278.662 212.786 274.763C272.671 271.053 282.789 322.371 231.247 339.316C124.051 374.558 -75.0639 213.756 -7.92073 3.03597M403.493 320.269L325.1 360.136M403.493 320.269L433.788 397.871" 
@@ -16,10 +18,14 @@
   </div>
 
   <div class="flex items-center justify-center py-10 relative z-10">
-    <form action="{% url 'ibeth_clubs:club_create' %}" method="POST" enctype="multipart/form-data"
-          class="relative bg-indigo-900/80 backdrop-blur-lg rounded-3xl shadow-lg p-8 w-[750px] border border-white/10">
+    <form 
+      action="{% if is_edit %}{% url 'ibeth_clubs:club_update' club.id %}{% else %}{% url 'ibeth_clubs:club_create' %}{% endif %}" 
+      method="POST" enctype="multipart/form-data"
+      class="relative bg-indigo-900/80 backdrop-blur-lg rounded-3xl shadow-lg p-8 w-[750px] border border-white/10"
+    >
       {% csrf_token %}
       
+      <!-- Back Button -->
       <a href="{% url 'ibeth_clubs:club_list' %}" class="absolute left-6 top-14 w-[40px] h-[50px] block hover:opacity-80 transition">
         <svg width="40" height="50" viewBox="0 0 50 64" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M32.8851 2.00525L3.99023 23.5169L32.8851 48.5052M38.7072 13.3043L27.7291 23.5169L38.7072 32.969" stroke="#B0FE08" stroke-width="4"/>
@@ -28,43 +34,43 @@
       <div class="absolute left-[70px] top-[60px] text-lime-400 text-3xl font-['Geologica'] leading-10">Back</div>
 
       <h1 class="left-[100px] top-[100px] text-white text-8xl font-['League_Gothic'] mt-20 mb-0 tracking-wide">
-        ADD CLUB
+        {% if is_edit %}EDIT CLUB{% else %}ADD CLUB{% endif %}
       </h1>
 
       <div class="mb-6">
         <label for="nama" class="block text-lime-400 text-xl font-['Geologica'] mb-2">Club Name</label>
-        <input type="text" id="nama" name="nama" placeholder="Manchester United"
+        <input type="text" id="nama" name="nama" value="{{ club.nama|default:'' }}"
                class="w-full h-11 bg-indigo-900 text-white placeholder-gray-400 rounded-[24px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
       </div>
 
       <div class="mb-6">
         <label for="negara" class="block text-lime-400 text-xl font-['Geologica'] mb-2">Country</label>
-        <input type="text" id="negara" name="negara" placeholder="England"
+        <input type="text" id="negara" name="negara" value="{{ club.negara|default:'' }}"
                class="w-full h-11 bg-indigo-900 text-white placeholder-gray-400 rounded-[24px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
       </div>
 
       <div class="mb-6">
         <label for="stadion" class="block text-lime-400 text-xl font-['Geologica'] mb-2">Stadium</label>
-        <input type="text" id="stadion" name="stadion" placeholder="Old Trafford"
+        <input type="text" id="stadion" name="stadion" value="{{ club.stadion|default:'' }}"
                class="w-full h-11 bg-indigo-900 text-white placeholder-gray-400 rounded-[24px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
       </div>
 
       <div class="mb-6">
         <label for="tahun_berdiri" class="block text-lime-400 text-xl font-['Geologica'] mb-2">Year Founded</label>
-        <input type="text" id="tahun_berdiri" name="tahun_berdiri" placeholder="1878"
+        <input type="text" id="tahun_berdiri" name="tahun_berdiri" value="{{ club.tahun_berdiri|default:'' }}"
                class="w-full h-11 bg-indigo-900 text-white placeholder-gray-400 rounded-[24px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
       </div>
 
       <div class="mb-10">
         <label for="url_gambar" class="block text-lime-400 text-xl font-['Geologica'] mb-2">Club Image URL</label>
-        <input type="url" id="url_gambar" name="url_gambar" placeholder="https://example.com/club-logo.jpg"
+        <input type="url" id="url_gambar" name="url_gambar" value="{{ club.url_gambar|default:'' }}"
                class="w-full h-11 bg-indigo-900 text-white placeholder-gray-400 rounded-[24px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400">
       </div>
 
       <div class="flex justify-center">
         <button type="submit"
                 class="w-48 h-11 bg-lime-400 rounded-[30px] text-indigo-900 text-xl font-['Geologica'] leading-8 hover:bg-lime-300 transition">
-          Submit
+          {% if is_edit %}Update{% else %}Add{% endif %}
         </button>
       </div>
     </form>
