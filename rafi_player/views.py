@@ -107,17 +107,6 @@ def player_list(request):
     return render(request, 'player_list.html', {'players': players})
 
 @login_required(login_url='/login/')
-def player_create(request):
-    if request.method == 'POST':
-        form = PlayerForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('rafi_player:player_list')
-    else:
-        form = PlayerForm()
-    return render(request, 'player_form.html', {'form': form})
-
-@login_required(login_url='/login/')
 def edit_player_ajax(request, pk):
     if request.method == 'POST':
         player = get_object_or_404(Player, pk=pk)
