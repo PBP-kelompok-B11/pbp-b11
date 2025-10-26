@@ -1,11 +1,11 @@
+# events/views.py
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 from .models import Event
 from .forms import EventForm
-from django.core.paginator import Paginator
-from authentication.views import admin_only
-from django.contrib.auth.decorators import login_required
 
 
 # =========================
@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 
 def event_list(request):
     """Menampilkan daftar semua event sepak bola."""
-    events = Event.objects.all().order_by('-tanggal_selesai')
+    events = Event.objects.all().order_by('-tanggal')
     paginator = Paginator(events, 5)  # tampilkan 5 per halaman
 
     page_number = request.GET.get('page')
@@ -24,77 +24,64 @@ def event_list(request):
 
 
 def event_detail(request, pk):
-    """Menampilkan detail event tertentu beserta partisipannya."""
+    """Menampilkan detail event tertentu."""
     event = get_object_or_404(Event, pk=pk)
     return render(request, 'event_detail.html', {
         'event': event,
     })
 
+
 @login_required(login_url='/login/')
 def event_create(request):
+    """Membuat event baru."""
     if request.method == 'POST':
-        event_name = request.POST.get('event')
-        type_name = request.POST.get('tipe')
-        location = request.POST.get('lokasi')
-        start_date = request.POST.get('start_date')
-        end_date = request.POST.get('end_date')
+        form = EventForm(request.POST)
+        if form.is_valid():
+            event = form.save(commit=False)
+            event.created_by = request.user
+            event.save()
+            return redirect('vidia_event:event_list')
+    else:
+        form = EventForm()
 
-        # --- cari event berdasarkan nama ---
-        event = Event.objects.filter(nama_event__iexact=event_name).first()
-        if not event:
-            # Kalau event belum ada, buat baru
-            event = Event.objects.create(
-                nama_event=event_name,
-                tipe=type_name,
-                lokasi=location,
-                tanggal_mulai=start_date,
-                tanggal_selesai=end_date,
-                created_by=request.user
-            )
+    return render(request, 'event_create.html', {'form': form})
 
-        # setelah semua berhasil disimpan
-        return redirect('vidia_event:event_list')  # ubah ke halaman list event kamu
-
-    # kalau GET request
-    return render(request, 'event_create.html')
 
 @login_required(login_url='/login/')
 def event_update(request, pk):
+    """Mengedit event yang sudah ada."""
     event = get_object_or_404(Event, pk=pk)
 
-    # Cek permission: hanya creator atau staff/admin
+    # hanya creator atau admin yang boleh edit
     if not (request.user == event.created_by or request.user.is_staff):
         return HttpResponseForbidden("Anda tidak punya akses untuk mengedit event ini.")
 
     if request.method == 'POST':
-        event.nama_event = request.POST.get('event')
-        event.tipe = request.POST.get('tipe')
-        event.lokasi = request.POST.get('lokasi')
+        form = EventForm(request.POST, instance=event)
+        if form.is_valid():
+            form.save()
+            return redirect('vidia_event:event_detail', pk=event.pk)
+    else:
+        form = EventForm(instance=event)
 
-        start_date_str = request.POST.get('start_date')
-        end_date_str = request.POST.get('end_date')
-
-        if start_date_str:
-            event.tanggal_mulai = start_date_str
-        if end_date_str:
-            event.tanggal_selesai = end_date_str
-
-        event.save()
-        return redirect('vidia_event:event_detail', pk=event.pk)
-
-    context = {
+    return render(request, 'event_create.html', {
+        'form': form,
         'is_update': True,
         'event': event,
-        'start_date': event.tanggal_mulai.strftime('%Y-%m-%d') if event.tanggal_mulai else '',
-        'end_date': event.tanggal_selesai.strftime('%Y-%m-%d') if event.tanggal_selesai else '',
-    }
-    return render(request, 'event_create.html', context)
+    })
+
 
 @login_required(login_url='/login/')
 def event_delete(request, pk):
     """Menghapus event."""
     event = get_object_or_404(Event, pk=pk)
+
+    # hanya creator atau admin yang boleh hapus
+    if not (request.user == event.created_by or request.user.is_staff):
+        return HttpResponseForbidden("Anda tidak punya akses untuk menghapus event ini.")
+
     if request.method == 'POST':
         event.delete()
         return redirect('vidia_event:event_list')
+
     return render(request, 'event_delete.html', {'event': event})

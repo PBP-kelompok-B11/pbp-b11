@@ -13,21 +13,25 @@
   </div>
 
   <div class="relative h-full w-full overflow-hidden">
-    <!-- Tipe -->
-    <div class="absolute top-[338px] left-[111px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Tipe</div>
-    <div class="absolute top-[395px] left-[112px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.get_tipe_display }}</div>
-
     <!-- Lokasi -->
-    <div class="absolute top-[338px] left-[321px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Lokasi</div>
-    <div class="absolute top-[395px] left-[322px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.lokasi }}</div>
+    <div class="absolute top-[338px] left-[111px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Lokasi</div>
+    <div class="absolute top-[395px] left-[112px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.Lokasi }}</div>
 
-    <!-- Tanggal Mulai -->
-    <div class="absolute top-[338px] left-[541px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Tanggal Mulai</div>
-    <div class="absolute top-[395px] left-[542px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tanggal_mulai }}</div>
+    <!-- Tim Home -->
+    <div class="absolute top-[338px] left-[321px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Team Home</div>
+    <div class="absolute top-[395px] left-[322px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tim_home }}</div>
 
-    <!-- Tanggal Selesai -->
-    <div class="absolute top-[338px] left-[841px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Tanggal Selesai</div>
-    <div class="absolute top-[395px] left-[842px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tanggal_selesai }}</div>
+    <!-- Tim Away -->
+    <div class="absolute top-[338px] left-[531px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Team Away</div>
+    <div class="absolute top-[395px] left-[532px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tim_away }}</div>
+
+    <!-- Tanggal -->
+    <div class="absolute top-[338px] left-[741px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Tanggal</div>
+    <div class="absolute top-[395px] left-[742px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.tanggal }}</div>
+    <!-- Created by  -->
+    <div class="absolute top-[338px] left-[951px] w-96 justify-center font-['Geologica'] text-4xl leading-[60px] font-bold text-lime-400">Created by</div>
+    <div class="absolute top-[395px] left-[952px] h-9 w-48 justify-center font-['Geologica'] text-xl leading-normal font-normal text-white">{{ event.created_by }}</div>
+
 
     <!-- Tombol Edit & Delete -->
     {% if user.is_authenticated and user == event.created_by or user.is_staff %}
@@ -64,7 +68,7 @@
       <div class="absolute top-0 left-0 h-28 w-[956px] rounded-2xl bg-lime-400"></div>
       <div class="absolute top-[13px] left-[707px] h-20 w-60 rounded-xl" style="background-color: #2d1b8f;"></div>
       <div class="absolute top-[22px] left-[39px] w-[563px] justify-center font-['Geologica'] text-5xl leading-[62.50px] font-normal text-[#2d1b8f]">{{ event.nama_event }}</div>
-      <div class="absolute top-[22px] left-[775px] w-24 justify-center font-['Geologica'] text-5xl leading-[62.50px] font-semibold text-white">0 - 1</div>
+      <div class="absolute top-[22px] left-[775px] w-24 justify-center font-['Geologica'] text-5xl leading-[62.50px] font-semibold text-white">{{ event.skor_home }} - {{ event.skor_away }}</div>
     </div>
   </div>
   <footer class="bg-lime-400 py-3 text-center font-bold text-indigo-900 fixed bottom-0 left-0 w-full">
