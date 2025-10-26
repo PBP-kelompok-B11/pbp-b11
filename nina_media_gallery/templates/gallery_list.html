@@ -504,30 +504,57 @@
     </div>
 
     <div class="gallery-container">
-        {% for media in gallery_items %}
-        <div class="gallery-item" 
-            data-id="{{ media.id }}" 
-            data-category="{{ media.category }}">
+        <div class="gallery-grid">
+            {% for media in media_list %}
+            <div class="gallery-item"
+                 data-id="{{ media.id }}"
+                 data-category="{{ media.category }}"
+                 {% if media.file %}data-video-src="{{ media.file.url }}"{% elif media.video %}data-video-src="{{ media.video.url }}"{% elif media.video_url %}data-video-src="{{ media.video_url }}"{% elif media.url %}data-video-src="{{ media.url }}"{% endif %}
+                 data-poster="{% if media.thumbnail %}{{ media.thumbnail }}{% endif %}">
+                
+                <a href="{% url 'nina_media_gallery:gallery_details' media.id %}" class="thumbnail-container">
+                    {% if media.thumbnail %}
+                        <img src="{{ media.thumbnail }}" 
+                             alt="{{ media.deskripsi }}"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <svg class="thumbnail-placeholder" style="display:none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                        </svg>
+                    {% else %}
+                        <svg class="thumbnail-placeholder" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                        </svg>
+                    {% endif %}
+                    <div class="play-overlay" aria-hidden="true">▶</div>
+                </a>
 
-            <div class="thumbnail-container">
-                {% if media.thumbnail %}
-                    <img src="{{ media.thumbnail.url }}" alt="thumbnail" class="thumbnail">
-                {% else %}
-                    <img src="{% static 'default.jpg' %}" class="thumbnail">
-                {% endif %}
-
-                {% if media.category == 'video' %}
-                    <div class="play-overlay">▶</div>
-                {% endif %}
+                <div class="media-info">
+                    <div class="media-header">
+                        <p class="media-description">{{ media.deskripsi }}</p>
+                        <div class="media-views">
+                            👁️ {{ media.viewers }}
+                        </div>
+                    </div>
+                    
+                    <div class="media-meta">
+                        <span class="category-badge" data-value="{{ media.category }}">{{ media.get_category_display }}</span>
+                        {% if user.is_authenticated %}
+                            <div class="action-buttons">
+                                <button type="button" onclick="editMedia('{{media.id}}')" class="edit-btn">Edit</button>
+                                <button type="button" onclick="confirmDelete('{{media.id}}')" class="delete-btn">Delete</button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-
-            <div class="media-info">
-                <p>{{ media.deskripsi|truncatechars:50 }}</p>
-                <p class="timestamp">{{ media.created_at|date:"d M Y" }}</p>
+            {% empty %}
+            <div class="empty-state" style="grid-column: 1 / -1;">
+                <h3>Belum Ada Media</h3>
+                <p>{% if user.is_authenticated %}Klik tombol "+ Add Media" untuk mengupload media pertama Anda{% else %}Login untuk mengupload media{% endif %}</p>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-</div>
+    </div>
     
     {% if user.is_authenticated %}
     <div id="deleteModal" class="delete-modal hidden">
@@ -858,15 +885,34 @@
         }
 
         // Setup double-click untuk video: single click -> details, double click -> player
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tangkap semua card/gallery item
-            document.querySelectorAll('.gallery-item').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    const mediaId = this.getAttribute('data-id');
-                    // Paksa pindah ke halaman detail Django
-                    window.location.href = `/gallery/details/${mediaId}/`;
-                });
-            });
+        document.querySelectorAll('.gallery-item').forEach(function(item){
+            const cat = (item.dataset.category || '').toLowerCase();
+            const thumb = item.querySelector('.thumbnail-container');
+            if (!thumb) return;
+
+            if (cat === 'video') {
+                // Gunakan play button overlay untuk membuka player
+                const playOverlay = item.querySelector('.play-overlay');
+                if (playOverlay) {
+                    // Buat play overlay clickable
+                    playOverlay.style.pointerEvents = 'auto';
+                    playOverlay.style.cursor = 'pointer';
+                    
+                    playOverlay.addEventListener('click', function(evt){
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        
+                        const src = item.dataset.videoSrc;
+                        const poster = item.dataset.poster || '';
+                        if (!src) {
+                            showToast('❌ Sumber video tidak ditemukan untuk media ini', 'error');
+                            return;
+                        }
+                        openPlayerModal(src, poster);
+                    });
+                }
+                // Thumbnail tetap bisa diklik untuk ke details page
+            }
         });
 
         const playerModal = document.getElementById('playerModal');
