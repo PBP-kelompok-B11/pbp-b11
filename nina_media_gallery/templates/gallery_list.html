@@ -546,8 +546,12 @@
                     <div class="media-meta">
                         <span class="category-badge" data-value="{{ media.category }}">{{ media.get_category_display }}</span>
                         <div class="action-buttons">
+                          {% if user.is_authenticated %}
                             <button type="button" onclick= "editMedia('{{media.id}}')" class="edit-btn">Edit</button>
                             <button type="button" onclick= "confirmDelete('{{media.id}}')" class="delete-btn">Delete</button>
+                          {% else %}
+                            <a type="button" href="{% url 'authentication:login_view %}
+                          {% endif %}
                         </div>
                     </div>
                 </div>
