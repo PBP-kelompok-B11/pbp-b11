@@ -8,11 +8,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='player',
-            name='user',
-            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, to='auth.User'),
-        ),
+
         migrations.AddField(
             model_name='player',
             name='thumbnail',
