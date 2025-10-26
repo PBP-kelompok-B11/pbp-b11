@@ -98,8 +98,3 @@ def event_delete(request, pk):
         event.delete()
         return redirect('vidia_event:event_list')
     return render(request, 'event_delete.html', {'event': event})
-
-
-# =========================
-# PARTICIPATION CRUD VIEWS
-# =========================

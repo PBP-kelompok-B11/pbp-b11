@@ -148,12 +148,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # wajib untuk collectstatic
 
 # Folder tempat kamu taruh file static (CSS, JS, img)
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Folder hasil collectstatic → WAJIB TERPISAH!
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # BUKAN 'static'!
+# STATIC_ROOT = BASE_DIR / 'staticfiles'  # BUKAN 'static'!
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
