@@ -501,7 +501,10 @@
 <div class="gallery-page">
     <div class="top-bar">
         <a href="{% url 'authentication:home_view' %}" class="back-button">← Back</a>
-        <button onclick="openModal()" class="add-button">+ Add Media</button>
+        <!-- Tombol Add Media hanya muncul jika user sudah login -->
+        {% if user.is_authenticated %}
+            <button onclick="openModal()" class="add-button">+ Add Media</button>
+        {% endif %}
     </div>
 
     <!-- Gallery Container -->
@@ -545,14 +548,13 @@
                     <!-- Kategori dan Action Buttons -->
                     <div class="media-meta">
                         <span class="category-badge" data-value="{{ media.category }}">{{ media.get_category_display }}</span>
-                        <div class="action-buttons">
-                          {% if user.is_authenticated %}
-                            <button type="button" onclick= "editMedia('{{media.id}}')" class="edit-btn">Edit</button>
-                            <button type="button" onclick= "confirmDelete('{{media.id}}')" class="delete-btn">Delete</button>
-                          {% else %}
-                            <a type="button" href="{% url 'authentication:login_view %}
-                          {% endif %}
-                        </div>
+                        <!-- Action buttons hanya muncul jika user sudah login -->
+                        {% if user.is_authenticated %}
+                            <div class="action-buttons">
+                                <button type="button" onclick="editMedia('{{media.id}}')" class="edit-btn">Edit</button>
+                                <button type="button" onclick="confirmDelete('{{media.id}}')" class="delete-btn">Delete</button>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -560,13 +562,14 @@
             <!-- Empty State -->
             <div class="empty-state" style="grid-column: 1 / -1;">
                 <h3>Belum Ada Media</h3>
-                <p>Klik tombol "+ Add Media" untuk mengupload media pertama Anda</p>
+                <p>{% if user.is_authenticated %}Klik tombol "+ Add Media" untuk mengupload media pertama Anda{% endif %}</p>
             </div>
             {% endfor %}
         </div>
     </div>
     
-    <!-- Delete Confirmation Modal -->
+    <!-- Delete Confirmation Modal - Hanya render jika user login -->
+    {% if user.is_authenticated %}
     <div id="deleteModal" class="delete-modal hidden">
         <div class="delete-modal-content">
             <h3>Konfirmasi Hapus</h3>
@@ -581,7 +584,7 @@
     <div id="editModal" class="modal hidden">
         <div class="modal-content">
             <button type="button" onclick="closeEditModal()" class="absolute top-4 right-6 text-white hover:text-gray-300 text-3xl">&times;</button>
-            <h1 class="text-5xl font-bold mb-8 tracking-wide">Edit Media</h1>
+            <h1 class="text-5xl font-bold mb-8 tracking-wide">Edit</h1>
             <form id="editForm" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="media_id" id="editMediaId">
@@ -610,24 +613,12 @@
         </div>
     </div>
 
-    <!-- Player Modal (video) -->
-    <div id="playerModal" class="modal hidden" aria-hidden="true">
-        <div class="modal-content" role="dialog" aria-modal="true" aria-label="Video player" style="max-width: 900px;">
-            <button type="button" onclick="closePlayerModal()" class="absolute top-4 right-6 text-white hover:text-gray-300 text-3xl">&times;</button>
-            <div style="width:100%;">
-                <video id="playerVideo" controls style="width:100%; max-height:70vh; background:#000;" playsinline>
-                    Sorry, your browser doesn't support embedded videos.
-                </video>
-            </div>
-        </div>
-    </div>
-
     <!-- Modal Upload -->
     <div id="modal" class="modal hidden">
         <div class="modal-content">
             <button type="button" onclick="closeModal()" class="absolute top-4 right-6 text-white hover:text-gray-300 text-3xl" style="position: absolute; top: 16px; right: 24px; font-size: 30px;">&times;</button>
             
-            <h1 class="text-5xl font-bold mb-8 tracking-wide">Upload Media</h1>
+            <h1 class="text-5xl font-bold mb-8 tracking-wide">+ Add Media</h1>
     
             <form id="uploadForm" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -667,17 +658,38 @@
             </form>
         </div>
     </div>
+    {% endif %}
+
+    <!-- Player Modal (video) - Tersedia untuk semua user -->
+    <div id="playerModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-label="Video player" style="max-width: 900px;">
+            <button type="button" onclick="closePlayerModal()" class="absolute top-4 right-6 text-white hover:text-gray-300 text-3xl">&times;</button>
+            <div style="width:100%;">
+                <video id="playerVideo" controls style="width:100%; max-height:70vh; background:#000;" playsinline>
+                    Sorry, your browser doesn't support embedded videos.
+                </video>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- Toast Container -->
 <div id="toastContainer"></div>
     
 
 <script>
+    // Cek apakah user sudah login (dari template Django)
+    const isAuthenticated = document.body.dataset.auth === "True";
+
     let mediaToDelete = null;
 
-    // Fungsi untuk modal upload
+    // Fungsi untuk modal upload - hanya bisa dipanggil jika user login
     function openModal() {
+        if (!isAuthenticated) {
+            showToast('⚠️ Anda harus login terlebih dahulu!', 'error');
+            return;
+        }
         const modal = document.getElementById('modal');
+        if (!modal) return;
         const content = modal.querySelector('.modal-content');
         modal.classList.remove('hidden');
         setTimeout(() => {
@@ -687,6 +699,7 @@
 
     function closeModal() {
         const modal = document.getElementById('modal');
+        if (!modal) return;
         const content = modal.querySelector('.modal-content');
         content.classList.remove('show');
         setTimeout(() => {
@@ -694,8 +707,12 @@
         }, 300);
     }
 
-    // Fungsi untuk modal delete
+    // Fungsi untuk modal delete - hanya bisa dipanggil jika user login
     function confirmDelete(mediaId) {
+        if (!isAuthenticated) {
+            showToast('⚠️ Anda harus login terlebih dahulu!', 'error');
+            return;
+        }
         mediaToDelete = mediaId;
         const deleteModal = document.getElementById('deleteModal');
         if (deleteModal) {
@@ -705,43 +722,233 @@
 
     function closeDeleteModal() {
         const deleteModal = document.getElementById('deleteModal');
+        if (!deleteModal) return;
         deleteModal.classList.add('hidden');
         mediaToDelete = null;
     }
 
+    // Fungsi edit media - hanya bisa dipanggil jika user login
+    function editMedia(mediaId) {
+        if (!isAuthenticated) {
+            showToast('⚠️ Anda harus login terlebih dahulu!', 'error');
+            return;
+        }
+        
+        // 1. Ambil data media dari DOM
+        const mediaEl = document.querySelector(`[data-id="${mediaId}"]`);
+        if (!mediaEl) return;
+
+        const deskripsi = mediaEl.querySelector('.media-description').innerText;
+        const categoryValue = (mediaEl.dataset.category || '').toLowerCase();
+        const thumbnail = mediaEl.querySelector('img') ? mediaEl.querySelector('img').src : '';
+
+        // 2. Tampilkan modal edit
+        const modal = document.getElementById('editModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        const content = modal.querySelector('.modal-content');
+        content.classList.add('show');
+
+        // 3. Isi form dengan data media
+        const form = modal.querySelector('#editForm');
+        form.querySelector('#editMediaId').value = mediaId;
+        form.querySelector('#editDeskripsi').value = deskripsi;
+        form.querySelector('#editCategory').value = categoryValue;
+        form.querySelector('#editThumbnail').value = thumbnail;
+
+        // 4. Submit handler untuk update media
+        form.onsubmit = function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch(`{% url 'nina_media_gallery:gallery_update' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', mediaId), {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: formData
+            })
+            .then(res => {
+                return res.json().catch(() => ({ status: res.ok ? 'success' : 'error' }));
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    showToast('✅ Media berhasil diupdate!', 'success');
+                    closeEditModal();
+                    window.location.reload(); 
+                } else {
+                    showToast('❌ ' + (data.message || 'Update gagal!'), 'error');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showToast('❌ Terjadi kesalahan saat update', 'error');
+            });
+        };
+    }
+
+    function closeEditModal() {
+        const modal = document.getElementById('editModal');
+        if (!modal) return;
+        const content = modal.querySelector('.modal-content');
+        content.classList.remove('show');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    // Fungsi delete media
+    function deleteMedia(mediaId) {
+        if (!isAuthenticated) {
+            showToast('⚠️ Anda harus login terlebih dahulu!', 'error');
+            return;
+        }
+        
+        const deleteUrl = `{% url 'nina_media_gallery:gallery_delete' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', mediaId);
+        
+        fetch(deleteUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (response.status === 204) {
+                return { status: 'success' };
+            }
+            return response.json().catch(() => ({ status: 'success' }));
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                showToast('✅ Media berhasil dihapus!', 'success');
+                closeDeleteModal();
+
+                // Hapus elemen dari DOM langsung
+                const el = document.querySelector(`[data-id="${mediaId}"]`);
+                if (el) {
+                    el.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+                    el.style.opacity = '0';
+                    el.style.transform = 'scale(0.96)';
+                    setTimeout(() => el.remove(), 260);
+                } else {
+                    setTimeout(() => window.location.reload(), 700);
+                }
+            } else {
+                showToast('❌ ' + (data.message || 'Gagal menghapus media!'), 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('❌ Terjadi kesalahan!', 'error');
+        });
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
-    
-        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-        if (confirmDeleteBtn) {
-            confirmDeleteBtn.addEventListener('click', function() {
-                if (mediaToDelete) {
-                    deleteMedia(mediaToDelete);
-                }
-            });
-        }
+        // Setup event listeners hanya jika user sudah login
+        if (isAuthenticated) {
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            if (confirmDeleteBtn) {
+                confirmDeleteBtn.addEventListener('click', function() {
+                    if (mediaToDelete) {
+                        deleteMedia(mediaToDelete);
+                    }
+                });
+            }
 
-        // Close modal delete ketika klik di luar
-        const deleteModal = document.getElementById('deleteModal');
-        if (deleteModal) {
-            deleteModal.addEventListener('click', function(e) {
-                if (e.target === deleteModal) {
-                    closeDeleteModal();
-                }
-            });
-        }
+            // Close modal delete ketika klik di luar
+            const deleteModal = document.getElementById('deleteModal');
+            if (deleteModal) {
+                deleteModal.addEventListener('click', function(e) {
+                    if (e.target === deleteModal) {
+                        closeDeleteModal();
+                    }
+                });
+            }
 
-        // Close modal upload ketika klik di luar
-        const modal = document.getElementById('modal');
-        if (modal) {
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    closeModal();
-                }
-            });
+            // Close modal upload ketika klik di luar
+            const modal = document.getElementById('modal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeModal();
+                    }
+                });
+            }
+
+            // Close modal edit ketika klik di luar
+            const editModal = document.getElementById('editModal');
+            if (editModal) {
+                editModal.addEventListener('click', function(e) {
+                    if (e.target === editModal) {
+                        closeEditModal();
+                    }
+                });
+            }
+
+            // Form upload handling
+            const uploadForm = document.getElementById("uploadForm");
+            if (uploadForm) {
+                uploadForm.addEventListener("submit", function(e) {
+                    e.preventDefault();
+
+                    const deskripsi = this.querySelector('[name="deskripsi"]');
+                    const category = this.querySelector('[name="category"]');
+                    const thumbnail = this.querySelector('[name="thumbnail"]');
+                    
+                    let valid = true;
+                    
+                    if (!deskripsi.value.trim()) {
+                        valid = false;
+                        deskripsi.classList.add("border-red-500");
+                    } else {
+                        deskripsi.classList.remove("border-red-500");
+                    }
+                    
+                    if (!category.value) {
+                        valid = false;
+                        category.classList.add("border-red-500");
+                    } else {
+                        category.classList.remove("border-red-500");
+                    }
+                    
+                    thumbnail.classList.remove("border-red-500");
+
+                    if (!valid) {
+                        showToast("⚠️ Mohon isi deskripsi dan pilih kategori!", "error");
+                        return;
+                    }
+
+                    let formData = new FormData(this);
+                    
+                    fetch("{% url 'nina_media_gallery:gallery_upload' %}", {
+                        method: "POST",
+                        headers: { "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === "success") {
+                            showToast("✅ Upload berhasil!", "success");
+                            setTimeout(() => {
+                                closeModal();
+                                window.location.reload();
+                            }, 1500);
+                        } else {
+                            showToast("❌ " + (data.message || "Upload gagal!"), "error");
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                        showToast("❌ Terjadi kesalahan server!", "error");
+                    });
+                });
+            }
         }
 
         // Setup player behavior: klik thumbnail untuk video -> buka player modal
+        // Ini tersedia untuk semua user (tidak perlu login untuk menonton)
         document.querySelectorAll('.gallery-item').forEach(function(item){
             const cat = (item.dataset.category || '').toLowerCase();
             const thumb = item.querySelector('.thumbnail-container');
@@ -773,13 +980,12 @@
         }
     });
 
-    // Player modal functions
+    // Player modal functions (tersedia untuk semua user)
     function openPlayerModal(src, poster = '') {
         const modal = document.getElementById('playerModal');
         const video = document.getElementById('playerVideo');
         if (!video || !modal) return;
 
-        // set src and poster (poster improves UX)
         video.src = src;
         if (poster) {
             video.setAttribute('poster', poster);
@@ -789,9 +995,11 @@
         video.load();
 
         modal.classList.remove('hidden');
-        setTimeout(()=> modal.querySelector('.modal-content').classList.add('show'), 10);
+        setTimeout(()=> {
+            const content = modal.querySelector('.modal-content');
+            if (content) content.classList.add('show');
+        }, 10);
 
-        // Try play (may be blocked by autoplay policy)
         video.play().catch(()=>{ /* ignore play block */ });
     }
 
@@ -803,176 +1011,10 @@
         video.removeAttribute('src');
         video.load();
 
-        modal.querySelector('.modal-content').classList.remove('show');
+        const content = modal.querySelector('.modal-content');
+        if (content) content.classList.remove('show');
         setTimeout(()=> modal.classList.add('hidden'), 250);
     }
-
-    function editMedia(mediaId) {
-        // 1. Ambil data media dari DOM
-        const mediaEl = document.querySelector(`[data-id="${mediaId}"]`);
-        if (!mediaEl) return;
-
-        const deskripsi = mediaEl.querySelector('.media-description').innerText;
-        // Ambil category langsung dari dataset, bukan dari teks tampil
-        const categoryValue = (mediaEl.dataset.category || '').toLowerCase();
-        const thumbnail = mediaEl.querySelector('img') ? mediaEl.querySelector('img').src : '';
-
-        // 2. Tampilkan modal edit
-        const modal = document.getElementById('editModal');
-        modal.classList.remove('hidden');
-        const content = modal.querySelector('.modal-content');
-        content.classList.add('show');
-
-        // 3. Isi form dengan data media
-        const form = modal.querySelector('#editForm');
-        form.querySelector('#editMediaId').value = mediaId;
-        form.querySelector('#editDeskripsi').value = deskripsi;
-        // isi select category dengan value yg benar ('foto' / 'video')
-        form.querySelector('#editCategory').value = categoryValue;
-        form.querySelector('#editThumbnail').value = thumbnail;
-
-        // 4. Submit handler untuk update media
-        form.onsubmit = function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(this);
-
-            fetch(`{% url 'nina_media_gallery:gallery_update' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', mediaId), {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: formData
-            })
-            .then(res => {
-                // Jika response bukan JSON (mis. redirect), coba parse aman
-                return res.json().catch(() => ({ status: res.ok ? 'success' : 'error' }));
-            })
-            .then(data => {
-                if (data.status === 'success') {
-                    showToast('✅ Media berhasil diupdate!', 'success');
-                    closeEditModal();
-                    window.location.reload(); 
-                } else {
-                    showToast('❌ ' + (data.message || 'Update gagal!'), 'error');
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                showToast('❌ Terjadi kesalahan saat update', 'error');
-            });
-        };
-    }
-
-    function closeEditModal() {
-        const modal = document.getElementById('editModal');
-        const content = modal.querySelector('.modal-content');
-        content.classList.remove('show');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-        }, 300);
-    }
-
-    // Fungsi delete media
-    function deleteMedia(mediaId) {
-        
-        const deleteUrl = `{% url 'nina_media_gallery:gallery_delete' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', mediaId);
-        
-        fetch(deleteUrl, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => {
-            // Jika server mengembalikan 204 No Content, jangan panggil response.json()
-            if (response.status === 204) {
-                return { status: 'success' };
-            }
-            // Jika server mengirim JSON
-            return response.json().catch(() => ({ status: 'success' })); // fallback jika body kosong
-        })
-        .then(data => {
-            if (data.status === 'success') {
-                showToast('✅ Media berhasil dihapus!', 'success');
-                closeDeleteModal();
-
-                // Hapus elemen dari DOM langsung
-                const el = document.querySelector(`[data-id="${mediaId}"]`);
-                if (el) {
-                    el.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
-                    el.style.opacity = '0';
-                    el.style.transform = 'scale(0.96)';
-                    setTimeout(() => el.remove(), 260);
-                } else {
-                    // fallback reload jika elemen tidak ditemukan
-                    setTimeout(() => window.location.reload(), 700);
-                }
-            } else {
-                showToast('❌ ' + (data.message || 'Gagal menghapus media!'), 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('❌ Terjadi kesalahan!', 'error');
-        });
-    }
-    // Form upload handling
-    document.getElementById("uploadForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-
-        const deskripsi = this.querySelector('[name="deskripsi"]');
-        const category = this.querySelector('[name="category"]');
-        const thumbnail = this.querySelector('[name="thumbnail"]');
-        
-        let valid = true;
-        
-        if (!deskripsi.value.trim()) {
-            valid = false;
-            deskripsi.classList.add("border-red-500");
-        } else {
-            deskripsi.classList.remove("border-red-500");
-        }
-        
-        if (!category.value) {
-            valid = false;
-            category.classList.add("border-red-500");
-        } else {
-            category.classList.remove("border-red-500");
-        }
-        
-        thumbnail.classList.remove("border-red-500");
-
-        if (!valid) {
-            showToast("⚠️ Mohon isi deskripsi dan pilih kategori!", "error");
-            return;
-        }
-
-        let formData = new FormData(this);
-        
-        fetch("{% url 'nina_media_gallery:gallery_upload' %}", {
-            method: "POST",
-            headers: { "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                showToast("✅ Upload berhasil!", "success");
-                setTimeout(() => {
-                    closeModal();
-                    window.location.reload();
-                }, 1500);
-            } else {
-                showToast("❌ " + (data.message || "Upload gagal!"), "error");
-            }
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-            showToast("❌ Terjadi kesalahan server!", "error");
-        });
-    });
 
     // Fungsi toast notification
     function showToast(message, type = "success") {
@@ -1006,6 +1048,7 @@
 
     // Test untuk memastikan JavaScript berjalan
     console.log('Gallery page JavaScript loaded successfully');
+    console.log('User authenticated:', isAuthenticated);
 
    // Ambil CSRF token dari cookie (Django)
    function getCookie(name) {
