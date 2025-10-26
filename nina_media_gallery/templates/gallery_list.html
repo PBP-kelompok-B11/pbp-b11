@@ -162,7 +162,7 @@
         font-size: 48px;
         color: rgba(255,255,255,0.95);
         background: linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.25));
-        pointer-events: none; /* click handled by container */
+        pointer-events: none;
         text-shadow: 0 4px 16px rgba(0,0,0,0.6);
     }
     .gallery-item[data-category="video"] .play-overlay{
@@ -386,7 +386,7 @@
         }
     }
 
-    /* Delete Confirmation Modal (scoped hidden) */
+    /* Delete Confirmation Modal */
     .delete-modal {
         position: fixed;
         top: 0;
@@ -458,7 +458,7 @@
         background-color: #dc2626;
     }
 
-    /* Modal Upload (scoped hidden) */
+    /* Modal Upload */
     .modal {
         position: fixed;
         top: 0;
@@ -486,37 +486,32 @@
         transform: scale(0.9);
         opacity: 0;
         transition: all 0.3s ease;
+        position: relative;
     }
 
     .modal-content.show {
         transform: scale(1);
         opacity: 1;
     }
-
-    .hidden {
-       
-    }
 </style>
 
 <div class="gallery-page">
     <div class="top-bar">
         <a href="{% url 'authentication:home_view' %}" class="back-button">← Back</a>
-        <!-- Tombol Add Media hanya muncul jika user sudah login -->
         {% if user.is_authenticated %}
             <button onclick="openModal()" class="add-button">+ Add Media</button>
         {% endif %}
     </div>
 
-    <!-- Gallery Container -->
     <div class="gallery-container">
         <div class="gallery-grid">
             {% for media in media_list %}
             <div class="gallery-item"
                  data-id="{{ media.id }}"
                  data-category="{{ media.category }}"
-                 {% if media.file %} data-video-src="{{ media.file.url }}"{% elif media.video %} data-video-src="{{ media.video.url }}"{% elif media.video_url %} data-video-src="{{ media.video_url }}"{% elif media.url %} data-video-src="{{ media.url }}"{% endif %}
+                 {% if media.file %}data-video-src="{{ media.file.url }}"{% elif media.video %}data-video-src="{{ media.video.url }}"{% elif media.video_url %}data-video-src="{{ media.video_url }}"{% elif media.url %}data-video-src="{{ media.url }}"{% endif %}
                  data-poster="{% if media.thumbnail %}{{ media.thumbnail }}{% endif %}">
-                <!-- Thumbnail Link -->
+                
                 <a href="{% url 'nina_media_gallery:gallery_details' media.id %}" class="thumbnail-container">
                     {% if media.thumbnail %}
                         <img src="{{ media.thumbnail }}" 
@@ -530,14 +525,10 @@
                             <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
                         </svg>
                     {% endif %}
-
-                    {# overlay play hanya untuk video #}
                     <div class="play-overlay" aria-hidden="true">▶</div>
                 </a>
 
-                <!-- Media Info -->
                 <div class="media-info">
-                    <!-- Deskripsi di kiri, viewer di kanan -->
                     <div class="media-header">
                         <p class="media-description">{{ media.deskripsi }}</p>
                         <div class="media-views">
@@ -545,10 +536,8 @@
                         </div>
                     </div>
                     
-                    <!-- Kategori dan Action Buttons -->
                     <div class="media-meta">
                         <span class="category-badge" data-value="{{ media.category }}">{{ media.get_category_display }}</span>
-                        <!-- Action buttons hanya muncul jika user sudah login -->
                         {% if user.is_authenticated %}
                             <div class="action-buttons">
                                 <button type="button" onclick="editMedia('{{media.id}}')" class="edit-btn">Edit</button>
@@ -559,16 +548,14 @@
                 </div>
             </div>
             {% empty %}
-            <!-- Empty State -->
             <div class="empty-state" style="grid-column: 1 / -1;">
                 <h3>Belum Ada Media</h3>
-                <p>{% if user.is_authenticated %}Klik tombol "+ Add Media" untuk mengupload media pertama Anda{% endif %}</p>
+                <p>{% if user.is_authenticated %}Klik tombol "+ Add Media" untuk mengupload media pertama Anda{% else %}Login untuk mengupload media{% endif %}</p>
             </div>
             {% endfor %}
         </div>
     </div>
     
-    <!-- Delete Confirmation Modal - Hanya render jika user login -->
     {% if user.is_authenticated %}
     <div id="deleteModal" class="delete-modal hidden">
         <div class="delete-modal-content">
@@ -583,58 +570,54 @@
     
     <div id="editModal" class="modal hidden">
         <div class="modal-content">
-            <button type="button" onclick="closeEditModal()" class="absolute top-4 right-6 text-white hover:text-gray-300 text-3xl">&times;</button>
-            <h1 class="text-5xl font-bold mb-8 tracking-wide">Edit</h1>
+            <button type="button" onclick="closeEditModal()" style="position: absolute; top: 16px; right: 24px; background: none; border: none; color: white; font-size: 30px; cursor: pointer; line-height: 1;">&times;</button>
+            <h1 style="font-size: 3rem; font-weight: bold; margin-bottom: 2rem; letter-spacing: 0.05em;">Edit Media</h1>
             <form id="editForm" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="media_id" id="editMediaId">
-                <div class="space-y-6">
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <div>
-                        <label class="block text-white mb-2 font-medium">Deskripsi</label>
-                        <textarea name="deskripsi" id="editDeskripsi" required class="w-full px-4 py-3 rounded-lg bg-indigo-900 border border-white text-white focus:outline-none focus:border-lime-400" rows="3"></textarea>
+                        <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Deskripsi</label>
+                        <textarea name="deskripsi" id="editDeskripsi" required style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; background-color: #312e81; border: 1px solid white; color: white; outline: none;" rows="3"></textarea>
                     </div>
                     <div>
-                        <label class="block text-white mb-2 font-medium">Kategori</label>
-                        <select name="category" id="editCategory" required class="w-full px-4 py-3 rounded-full bg-indigo-800 border border-white text-white focus:outline-none focus:border-lime-400">
+                        <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Kategori</label>
+                        <select name="category" id="editCategory" required style="width: 100%; padding: 0.75rem 1rem; border-radius: 9999px; background-color: #4338ca; border: 1px solid white; color: white; outline: none;">
                             <option value="">Pilih Kategori</option>
                             <option value="foto">Photo</option>
                             <option value="video">Video</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-white mb-2 font-medium">Thumbnail URL</label>
-                        <input type="url" name="thumbnail" id="editThumbnail" class="w-full px-4 py-3 rounded-full bg-indigo-900 border border-white text-white focus:outline-none focus:border-lime-400">
+                        <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Thumbnail URL</label>
+                        <input type="url" name="thumbnail" id="editThumbnail" style="width: 100%; padding: 0.75rem 1rem; border-radius: 9999px; background-color: #312e81; border: 1px solid white; color: white; outline: none;">
                     </div>
                 </div>
-                <div class="text-center mt-10">
-                    <button type="submit" class="px-10 py-3 bg-lime-400 text-indigo-900 font-semibold rounded-full hover:bg-lime-300 transition">Save Changes</button>
+                <div style="text-align: center; margin-top: 2.5rem;">
+                    <button type="submit" style="padding: 0.75rem 2.5rem; background-color: #c4ff00; color: #1a0b5e; font-weight: 600; border-radius: 9999px; border: none; cursor: pointer; transition: background-color 0.3s;">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Upload -->
     <div id="modal" class="modal hidden">
         <div class="modal-content">
-            <button type="button" onclick="closeModal()" class="absolute top-4 right-6 text-white hover:text-gray-300 text-3xl" style="position: absolute; top: 16px; right: 24px; font-size: 30px;">&times;</button>
+            <button type="button" onclick="closeModal()" style="position: absolute; top: 16px; right: 24px; background: none; border: none; color: white; font-size: 30px; cursor: pointer; line-height: 1;">&times;</button>
             
-            <h1 class="text-5xl font-bold mb-8 tracking-wide">+ Add Media</h1>
+            <h1 style="font-size: 3rem; font-weight: bold; margin-bottom: 2rem; letter-spacing: 0.05em;">Upload Media</h1>
     
             <form id="uploadForm" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
     
-                <div class="space-y-6">
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <div>
-                        <label class="block text-white mb-2 font-medium">Deskripsi</label>
-                        <textarea name="deskripsi" required
-                            class="w-full px-4 py-3 rounded-lg bg-indigo-900 border border-white text-white focus:outline-none focus:border-lime-400" 
-                            placeholder="Masukkan deskripsi media" rows="3"></textarea>
+                        <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Deskripsi</label>
+                        <textarea name="deskripsi" required style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; background-color: #312e81; border: 1px solid white; color: white; outline: none;" placeholder="Masukkan deskripsi media" rows="3"></textarea>
                     </div>
     
                     <div>
-                        <label class="block text-white mb-2 font-medium">Kategori</label>
-                        <select name="category" id="category" required
-                            class="w-full px-4 py-3 rounded-full bg-indigo-800 border border-white text-white focus:outline-none focus:border-lime-400">
+                        <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Kategori</label>
+                        <select name="category" id="category" required style="width: 100%; padding: 0.75rem 1rem; border-radius: 9999px; background-color: #4338ca; border: 1px solid white; color: white; outline: none;">
                             <option value="">Pilih Kategori</option>
                             <option value="foto">Photo</option>
                             <option value="video">Video</option>
@@ -642,28 +625,22 @@
                     </div>
     
                     <div>
-                        <label class="block text-white mb-2 font-medium">Thumbnail URL</label>
-                        <input type="url" name="thumbnail" 
-                            class="w-full px-4 py-3 rounded-full bg-indigo-900 border border-white text-white focus:outline-none focus:border-lime-400"
-                            placeholder="https://example.com/image.jpg">
+                        <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Thumbnail URL</label>
+                        <input type="url" name="thumbnail" style="width: 100%; padding: 0.75rem 1rem; border-radius: 9999px; background-color: #312e81; border: 1px solid white; color: white; outline: none;" placeholder="https://example.com/image.jpg">
                     </div>
                 </div>
     
-                <div class="text-center mt-10">
-                    <button type="submit"
-                        class="px-10 py-3 bg-lime-400 text-indigo-900 font-semibold rounded-full hover:bg-lime-300 transition">
-                        Submit
-                    </button>
+                <div style="text-align: center; margin-top: 2.5rem;">
+                    <button type="submit" style="padding: 0.75rem 2.5rem; background-color: #c4ff00; color: #1a0b5e; font-weight: 600; border-radius: 9999px; border: none; cursor: pointer; transition: background-color 0.3s;">Submit</button>
                 </div>
             </form>
         </div>
     </div>
     {% endif %}
 
-    <!-- Player Modal (video) - Tersedia untuk semua user -->
     <div id="playerModal" class="modal hidden" aria-hidden="true">
         <div class="modal-content" role="dialog" aria-modal="true" aria-label="Video player" style="max-width: 900px;">
-            <button type="button" onclick="closePlayerModal()" class="absolute top-4 right-6 text-white hover:text-gray-300 text-3xl">&times;</button>
+            <button type="button" onclick="closePlayerModal()" style="position: absolute; top: 16px; right: 24px; background: none; border: none; color: white; font-size: 30px; cursor: pointer; line-height: 1;">&times;</button>
             <div style="width:100%;">
                 <video id="playerVideo" controls style="width:100%; max-height:70vh; background:#000;" playsinline>
                     Sorry, your browser doesn't support embedded videos.
@@ -672,17 +649,13 @@
         </div>
     </div>
 </div>
-<!-- Toast Container -->
+
 <div id="toastContainer"></div>
-    
 
 <script>
-    // Cek apakah user sudah login (dari template Django)
-    const isAuthenticated = document.body.dataset.auth === "True";
-
+    const isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
     let mediaToDelete = null;
 
-    // Fungsi untuk modal upload - hanya bisa dipanggil jika user login
     function openModal() {
         if (!isAuthenticated) {
             showToast('⚠️ Anda harus login terlebih dahulu!', 'error');
@@ -692,9 +665,7 @@
         if (!modal) return;
         const content = modal.querySelector('.modal-content');
         modal.classList.remove('hidden');
-        setTimeout(() => {
-            content.classList.add('show');
-        }, 10);
+        setTimeout(() => content.classList.add('show'), 10);
     }
 
     function closeModal() {
@@ -702,12 +673,9 @@
         if (!modal) return;
         const content = modal.querySelector('.modal-content');
         content.classList.remove('show');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-        }, 300);
+        setTimeout(() => modal.classList.add('hidden'), 300);
     }
 
-    // Fungsi untuk modal delete - hanya bisa dipanggil jika user login
     function confirmDelete(mediaId) {
         if (!isAuthenticated) {
             showToast('⚠️ Anda harus login terlebih dahulu!', 'error');
@@ -715,9 +683,7 @@
         }
         mediaToDelete = mediaId;
         const deleteModal = document.getElementById('deleteModal');
-        if (deleteModal) {
-            deleteModal.classList.remove('hidden');
-       }
+        if (deleteModal) deleteModal.classList.remove('hidden');
     }
 
     function closeDeleteModal() {
@@ -727,79 +693,65 @@
         mediaToDelete = null;
     }
 
-    // Fungsi edit media - hanya bisa dipanggil jika user login
     function editMedia(mediaId) {
-      if (!isAuthenticated) {
-          showToast('⚠️ Anda harus login terlebih dahulu!', 'error');
-          return;
-      }
-      
-      // 1. Ambil data media dari DOM
-      const mediaEl = document.querySelector(`[data-id="${mediaId}"]`);
-      if (!mediaEl) return;
-  
-      const deskripsi = mediaEl.querySelector('.media-description').innerText;
-      const categoryValue = (mediaEl.dataset.category || '').toLowerCase();
-      const thumbnail = mediaEl.querySelector('img') ? mediaEl.querySelector('img').src : '';
-  
-      // 2. Tampilkan modal edit
-      const modal = document.getElementById('editModal');
-      if (!modal) return;
-      modal.classList.remove('hidden');
-      const content = modal.querySelector('.modal-content');
-      content.classList.add('show');
-  
-      // 3. Isi form dengan data media
-      const editForm = modal.querySelector('#editForm');    // <-- renamed
-      editForm.querySelector('#editMediaId').value = mediaId;
-      editForm.querySelector('#editDeskripsi').value = deskripsi;
-      editForm.querySelector('#editCategory').value = categoryValue;
-      editForm.querySelector('#editThumbnail').value = thumbnail;
-  
-      // 4. Submit handler untuk update media
-      editForm.onsubmit = function(e) {
-          e.preventDefault();
-  
-          const formData = new FormData(this);
-  
-          fetch(`{% url 'nina_media_gallery:gallery_update' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', mediaId), {
-              method: 'POST',
-              headers: {
-                  'X-CSRFToken': getCookie('csrftoken')
-              },
-              body: formData
-          })
-          .then(res => {
-              return res.json().catch(() => ({ status: res.ok ? 'success' : 'error' }));
-          })
-          .then(data => {
-              if (data.status === 'success') {
-                  showToast('✅ Media berhasil diupdate!', 'success');
-                  closeEditModal();
-                  window.location.reload(); 
-              } else {
-                  showToast('❌ ' + (data.message || 'Update gagal!'), 'error');
-              }
-          })
-          .catch(err => {
-              console.error(err);
-              showToast('❌ Terjadi kesalahan saat update', 'error');
-          });
-      };
-  }
+        if (!isAuthenticated) {
+            showToast('⚠️ Anda harus login terlebih dahulu!', 'error');
+            return;
+        }
+        
+        const mediaEl = document.querySelector(`[data-id="${mediaId}"]`);
+        if (!mediaEl) return;
 
+        const deskripsi = mediaEl.querySelector('.media-description').innerText;
+        const categoryValue = (mediaEl.dataset.category || '').toLowerCase();
+        const thumbnail = mediaEl.querySelector('img') ? mediaEl.querySelector('img').src : '';
+
+        const modal = document.getElementById('editModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        const content = modal.querySelector('.modal-content');
+        content.classList.add('show');
+
+        const form = modal.querySelector('#editForm');
+        form.querySelector('#editMediaId').value = mediaId;
+        form.querySelector('#editDeskripsi').value = deskripsi;
+        form.querySelector('#editCategory').value = categoryValue;
+        form.querySelector('#editThumbnail').value = thumbnail;
+
+        form.onsubmit = function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch(`{% url 'nina_media_gallery:gallery_update' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', mediaId), {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                body: formData
+            })
+            .then(res => res.json().catch(() => ({ status: res.ok ? 'success' : 'error' })))
+            .then(data => {
+                if (data.status === 'success') {
+                    showToast('✅ Media berhasil diupdate!', 'success');
+                    closeEditModal();
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast('❌ ' + (data.message || 'Update gagal!'), 'error');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showToast('❌ Terjadi kesalahan saat update', 'error');
+            });
+        };
+    }
 
     function closeEditModal() {
         const modal = document.getElementById('editModal');
         if (!modal) return;
         const content = modal.querySelector('.modal-content');
         content.classList.remove('show');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-        }, 300);
+        setTimeout(() => modal.classList.add('hidden'), 300);
     }
 
-    // Fungsi delete media
     function deleteMedia(mediaId) {
         if (!isAuthenticated) {
             showToast('⚠️ Anda harus login terlebih dahulu!', 'error');
@@ -816,9 +768,7 @@
             },
         })
         .then(response => {
-            if (response.status === 204) {
-                return { status: 'success' };
-            }
+            if (response.status === 204) return { status: 'success' };
             return response.json().catch(() => ({ status: 'success' }));
         })
         .then(data => {
@@ -826,7 +776,6 @@
                 showToast('✅ Media berhasil dihapus!', 'success');
                 closeDeleteModal();
 
-                // Hapus elemen dari DOM langsung
                 const el = document.querySelector(`[data-id="${mediaId}"]`);
                 if (el) {
                     el.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
@@ -847,48 +796,35 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Setup event listeners hanya jika user sudah login
         if (isAuthenticated) {
             const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
             if (confirmDeleteBtn) {
                 confirmDeleteBtn.addEventListener('click', function() {
-                    if (mediaToDelete) {
-                        deleteMedia(mediaToDelete);
-                    }
+                    if (mediaToDelete) deleteMedia(mediaToDelete);
                 });
             }
 
-            // Close modal delete ketika klik di luar
             const deleteModal = document.getElementById('deleteModal');
             if (deleteModal) {
                 deleteModal.addEventListener('click', function(e) {
-                    if (e.target === deleteModal) {
-                        closeDeleteModal();
-                    }
+                    if (e.target === deleteModal) closeDeleteModal();
                 });
             }
 
-            // Close modal upload ketika klik di luar
             const modal = document.getElementById('modal');
             if (modal) {
                 modal.addEventListener('click', function(e) {
-                    if (e.target === modal) {
-                        closeModal();
-                    }
+                    if (e.target === modal) closeModal();
                 });
             }
 
-            // Close modal edit ketika klik di luar
             const editModal = document.getElementById('editModal');
             if (editModal) {
                 editModal.addEventListener('click', function(e) {
-                    if (e.target === editModal) {
-                        closeEditModal();
-                    }
+                    if (e.target === editModal) closeEditModal();
                 });
             }
 
-            // Form upload handling
             const uploadForm = document.getElementById("uploadForm");
             if (uploadForm) {
                 uploadForm.addEventListener("submit", function(e) {
@@ -902,19 +838,19 @@
                     
                     if (!deskripsi.value.trim()) {
                         valid = false;
-                        deskripsi.classList.add("border-red-500");
+                        deskripsi.style.borderColor = '#ef4444';
                     } else {
-                        deskripsi.classList.remove("border-red-500");
+                        deskripsi.style.borderColor = 'white';
                     }
                     
                     if (!category.value) {
                         valid = false;
-                        category.classList.add("border-red-500");
+                        category.style.borderColor = '#ef4444';
                     } else {
-                        category.classList.remove("border-red-500");
+                        category.style.borderColor = 'white';
                     }
                     
-                    thumbnail.classList.remove("border-red-500");
+                    thumbnail.style.borderColor = 'white';
 
                     if (!valid) {
                         showToast("⚠️ Mohon isi deskripsi dan pilih kategori!", "error");
@@ -948,8 +884,6 @@
             }
         }
 
-        // Setup player behavior: klik thumbnail untuk video -> buka player modal
-        // Ini tersedia untuk semua user (tidak perlu login untuk menonton)
         document.querySelectorAll('.gallery-item').forEach(function(item){
             const cat = (item.dataset.category || '').toLowerCase();
             const thumb = item.querySelector('.thumbnail-container');
@@ -957,7 +891,7 @@
 
             if (cat === 'video') {
                 thumb.addEventListener('click', function(evt){
-                    evt.preventDefault(); // jangan navigasi ke details
+                    evt.preventDefault();
                     const src = item.dataset.videoSrc;
                     const poster = item.dataset.poster || '';
                     if (!src) {
@@ -967,21 +901,16 @@
                     openPlayerModal(src, poster);
                 });
             }
-            // untuk foto: biarkan link default ke detail
         });
 
-        // Close player modal ketika klik di luar content
         const playerModal = document.getElementById('playerModal');
         if (playerModal) {
             playerModal.addEventListener('click', function(e){
-                if (e.target === playerModal) {
-                    closePlayerModal();
-                }
+                if (e.target === playerModal) closePlayerModal();
             });
         }
     });
 
-    // Player modal functions (tersedia untuk semua user)
     function openPlayerModal(src, poster = '') {
         const modal = document.getElementById('playerModal');
         const video = document.getElementById('playerVideo');
@@ -1017,7 +946,6 @@
         setTimeout(()=> modal.classList.add('hidden'), 250);
     }
 
-    // Fungsi toast notification
     function showToast(message, type = "success") {
         const container = document.getElementById("toastContainer");
         
@@ -1027,7 +955,6 @@
         }
 
         const toast = document.createElement("div");
-        
         const icon = type === "success" ? "✅" : "❌";
         
         toast.className = `toast-notification toast-${type} toast-enter`;
@@ -1040,19 +967,15 @@
             toast.classList.add("toast-exit");
             
             setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.remove();
-                }
+                if (toast.parentNode) toast.remove();
             }, 300);
         }, 3000);
     }
 
-    // Test untuk memastikan JavaScript berjalan
     console.log('Gallery page JavaScript loaded successfully');
     console.log('User authenticated:', isAuthenticated);
 
-   // Ambil CSRF token dari cookie (Django)
-   function getCookie(name) {
+    function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
             const cookies = document.cookie.split(';');
