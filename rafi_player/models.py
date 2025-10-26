@@ -10,18 +10,6 @@ from datetime import date
 import uuid
 
 class Player(models.Model):
-    POSITION_CHOICES = [
-        ("GK", "GK (Penjaga Gawang)"),
-        ("DF", "DF (Bek)"),
-        ("DFFW", "DFFW (Bek / Penyerang)"),
-        ("DFMF", "DFMF (Bek / Gelandang)"),
-        ("MF", "MF (Gelandang)"),
-        ("MFDF", "MFDF (Gelandang / Bek)"),
-        ("MFFW", "MFFW (Gelandang / Penyerang)"),
-        ("FW", "FW (Penyerang)"),
-        ("FWDF", "FWDF (Penyerang / Bek)"),
-        ("FWMF", "FWMF (Penyerang / Gelandang)"),
-    ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -30,8 +18,8 @@ class Player(models.Model):
     usia = models.PositiveIntegerField()
     tinggi = models.FloatField()
     berat = models.FloatField()
-    posisi = models.CharField(max_length=5, choices=POSITION_CHOICES)
-    thumbnail = models.URLField(blank=True, null=True)
+    posisi = models.CharField(max_length=50)
+    thumbnail = models.URLField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return self.nama
@@ -55,7 +43,7 @@ class SeasonStats(models.Model):
     pertandingan = models.IntegerField()
     gol = models.IntegerField()
     assist = models.IntegerField()
-    kartu = models.IntegerField(blank=True, null=True)
+    kartu = models.IntegerField()
 
     def __str__(self):
         return f"{self.player.nama} - {self.musim}"
