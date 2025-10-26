@@ -19,7 +19,6 @@ class Command(BaseCommand):
                 nama = row['Squad'].strip()
                 negara = row['Country'].strip()
 
-                # Contoh default stadion & tahun_berdiri karena CSV tidak punya info ini
                 stadion = 'Unknown Stadium'
                 tahun_berdiri = 1900
 
