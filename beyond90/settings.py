@@ -152,12 +152,11 @@ USE_TZ = True
 #     STATIC_ROOT = str(BASE_DIR / 'static')  # harus str() supaya collectstatic jalan
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # wajib untuk collectstatic
 
 # Untuk development
 if DEBUG:
     STATICFILES_DIRS = [BASE_DIR / 'static']
-else:
-    STATIC_ROOT = BASE_DIR / 'staticfiles'  # <== ini wajib untuk collectstatic
 
 
 # Default primary key field type
