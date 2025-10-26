@@ -6,6 +6,20 @@ from .models import Comments
 from .forms import CommentForm
 from rafi_player.models import Player
 from vidia_event.models import Event
+from django.contrib.contenttypes.models import ContentType
+from django.template.loader import render_to_string
+from django.http import JsonResponse
+
+def refresh_comments(request, model_name, object_id):
+    """Mengembalikan daftar komentar terbaru dalam bentuk HTML (untuk AJAX)."""
+    content_type = ContentType.objects.get(model=model_name)
+    comments = Comments.objects.filter(
+        content_type=content_type,
+        object_id=object_id
+    ).order_by('-tanggal')
+
+    html = render_to_string('comments/_comment_items.html', {'comments': comments})
+    return JsonResponse({'html': html})
 
 def add_comment_to_event(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
@@ -21,11 +35,16 @@ def add_comment_to_event(request, event_id):
         form = CommentForm()
     return render(request, 'comments/form.html', {'form': form, 'form_action': request.path})
 
-def comment_list(request, player_id):
-    player = get_object_or_404(Player, id=player_id)
-    comments = Comments.objects.filter(player=player).order_by('-tanggal')
-    return render(request, 'comments/list.html', {'player': player, 'comments': comments})
+def comment_list(request, app_label, model_name, object_id):
 
+    content_type = get_object_or_404(ContentType, app_label=app_label, model=model_name)
+    comments = Comments.objects.filter(content_type=content_type, object_id=object_id).order_by('-tanggal')
+
+    return render(request, 'comments/list.html', {
+        'comments': comments,
+        'model_name': model_name,
+        'object_id': object_id,
+    })
 
 @login_required
 def comment_add(request, model_name, object_id):
@@ -46,19 +65,20 @@ def comment_add(request, model_name, object_id):
 
 
 @login_required
-def comment_update(request, comment_id):
+def edit_comment(request, comment_id):
     comment = get_object_or_404(Comments, id=comment_id, user=request.user)
-
     if request.method == 'POST':
-        comment.isi_komentar = request.POST.get('isi_komentar')
-        comment.save()
-        return redirect(request.META.get('HTTP_REFERER', '/'))
-
-    return render(request, 'comments/form.html', {'comment': comment})
-
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('vidia_event:event_detail', pk=comment.content_object.id)
+    else:
+        form = CommentForm(instance=comment)
+    return render(request, 'comments/form.html', {'form': form})
 
 @login_required
-def comment_delete(request, comment_id):
+def delete_comment(request, comment_id):
     comment = get_object_or_404(Comments, id=comment_id, user=request.user)
+    event_id = comment.content_object.id
     comment.delete()
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+    return redirect('vidia_event:event_detail', pk=event_id)

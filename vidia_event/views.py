@@ -5,6 +5,8 @@ from .forms import EventForm
 from django.core.paginator import Paginator
 from authentication.views import admin_only
 from django.contrib.auth.decorators import login_required
+from comments.models import Comments
+from comments.forms import CommentForm
 
 
 # =========================
@@ -25,8 +27,19 @@ def event_list(request):
 def event_detail(request, pk):
     """Menampilkan detail event tertentu beserta partisipannya."""
     event = get_object_or_404(Event, pk=pk)
+    # Ambil semua komentar yang terkait dengan event ini
+    comments = Comments.objects.filter(
+        content_type__model='event',
+        object_id=event.id
+    ).order_by('-tanggal')
+
+    # Siapkan form komentar baru
+    form = CommentForm()
+
     return render(request, 'event_detail.html', {
         'event': event,
+        'comments': comments,
+        'form': form,
     })
 
 @login_required(login_url='/login/')

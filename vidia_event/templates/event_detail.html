@@ -46,15 +46,14 @@
       </div>
     {% endif %}
 
-    <!-- Add Comment -->
-    <div id="addCommentBtn"
-     class="absolute top-[660px] left-[102px] h-14 w-[705px] overflow-hidden cursor-pointer"
-     data-url="{% url 'comments:add_comment_to_event' event.id %}">
-    <div class="absolute top-[3px] left-[5px] h-12 w-[695px] rounded-2xl bg-white"></div>
-    <div class="absolute top-[11px] left-[279px] h-9 w-36 justify-center font-['Geologica'] text-xl leading-normal font-normal text-indigo-900">
-      Add Comment
+    <!-- View Comments -->
+    <div id="openCommentsBtn"
+      class="absolute top-[505px] left-[102px] h-14 w-[705px] overflow-hidden cursor-pointer">
+      <div class="absolute top-[3px] left-[5px] h-12 w-[685px] rounded-2xl bg-white"></div>
+      <div class="absolute top-[11px] left-[255px] h-9 w-52 justify-center font-['Geologica'] text-xl leading-normal font-normal text-indigo-900">
+        View Comments
+      </div>
     </div>
-  </div>
 
 
     <!-- Header Event -->
@@ -66,13 +65,9 @@
     </div>
   </div>
 </div>
-{% include 'comments/form.html' %}
+{% include 'comments/list.html' %}
 
 <script>
-  const addCommentBtn = document.getElementById('addCommentBtn');
-  addCommentBtn.addEventListener('click', function() {
-      const url = this.dataset.url;
-      openCommentModal(url); // fungsi ini ada di form.html
-  });
+  document.getElementById('openCommentsBtn').addEventListener('click', openCommentsModal);
 </script>
 {% endblock %}
