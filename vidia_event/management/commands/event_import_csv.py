@@ -14,7 +14,10 @@ class Command(BaseCommand):
 
         # Read CSV safely — auto-detect separator
         df = pd.read_csv(csv_path, quotechar='"')
-        last_col_name = df.columns[-1]  
+        df.columns = df.columns.str.strip()  # 🟢 Add this line
+        last_col_name = df.columns[-1]
+        print("Last column name:", repr(last_col_name))
+
         imported = 0
 
         for _, row in df.iterrows():
