@@ -1,4 +1,4 @@
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Event
 from .forms import EventForm
@@ -104,3 +104,20 @@ def event_delete(request, pk):
         event.delete()
         return redirect('vidia_event:event_list')
     return render(request, 'event_delete.html', {'event': event})
+
+
+def show_event_json(request):
+    """Mengembalikan daftar semua event dalam format JSON."""
+    
+    # 1. Ambil semua objek Event dari database, diurutkan berdasarkan tanggal
+    data_event = Event.objects.all().order_by('-tanggal')
+    
+    # 2. Serialisasi QuerySet menjadi format JSON
+    # 'python' format sering digunakan untuk memproses data internal, 
+    # tetapi untuk output API, kita gunakan format 'json'.
+    data = serializers.serialize('json', data_event)
+    
+    # 3. Kembalikan respons JSON mentah (raw JSON string)
+    # JsonResponse memerlukan dict, jadi kita kembalikan string JSON
+    # menggunakan 'data' sebagai string JSON yang valid.
+    return JsonResponse(data, safe=False)

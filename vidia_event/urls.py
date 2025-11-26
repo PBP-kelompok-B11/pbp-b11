@@ -11,4 +11,5 @@ urlpatterns = [
     path('<int:pk>/', views.event_detail, name='event_detail'),        # detail event
     path('<int:pk>/edit/', views.event_update, name='event_update'),   # edit event
     path('<int:pk>/delete/', views.event_delete, name='event_delete'), # hapus event
+    path('json/', views.show_event_json, name='show_event_json'), # daftar event dalam json
 ]
