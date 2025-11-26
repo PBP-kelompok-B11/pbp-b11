@@ -18,9 +18,10 @@ from django.contrib.auth.decorators import login_required
 from authentication.views import admin_only
 from comments.models import Comments
 from comments.forms import CommentForm
+
 @csrf_exempt
 @login_required(login_url='/login/')
-@login_required(login_url='/login/')
+@admin_only
 def add_player_ajax(request):
     if request.method != "POST":
         return JsonResponse({'message': 'Invalid method'}, status=405)
@@ -120,6 +121,7 @@ def player_list(request):
     return render(request, 'player_list.html', {'players': players})
 
 @login_required(login_url='/login/')
+@admin_only
 def edit_player_ajax(request, pk):
     if request.method == 'POST':
         player = get_object_or_404(Player, pk=pk)
@@ -135,7 +137,8 @@ def edit_player_ajax(request, pk):
     return JsonResponse({'status': 'error', 'message': 'Invalid method'})
 
 @require_POST
-@login_required(login_url='/login/')    
+@login_required(login_url='/login/')  
+@admin_only  
 def delete_player(request, player_id):
     player = get_object_or_404(Player, pk=player_id)
     player.delete()

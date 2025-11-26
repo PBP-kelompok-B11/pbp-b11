@@ -499,7 +499,9 @@
     <div class="top-bar">
         <a href="{% url 'authentication:home_view' %}" class="back-button">← Back</a>
         {% if user.is_authenticated %}
-            <button onclick="openModal()" class="add-button">+ Add Media</button>
+            {% if request.user.is_superuser or request.user.userprofile.role == 'admin' %}
+                <button onclick="openModal()" class="add-button">+ Add Media</button>
+            {% endif %}
         {% endif %}
     </div>
 
@@ -539,10 +541,12 @@
                     <div class="media-meta">
                         <span class="category-badge" data-value="{{ media.category }}">{{ media.get_category_display }}</span>
                         {% if user.is_authenticated %}
-                            <div class="action-buttons">
-                                <button type="button" onclick="editMedia('{{media.id}}')" class="edit-btn">Edit</button>
-                                <button type="button" onclick="confirmDelete('{{media.id}}')" class="delete-btn">Delete</button>
-                            </div>
+                            {% if request.user.is_superuser or requesy.user.userprofile.role == 'admin' %}
+                                <div class="action-buttons">
+                                    <button type="button" onclick="editMedia('{{media.id}}')" class="edit-btn">Edit</button>
+                                    <button type="button" onclick="confirmDelete('{{media.id}}')" class="delete-btn">Delete</button>
+                                </div>
+                            {% endif %}
                         {% endif %}
                     </div>
                 </div>
@@ -550,92 +554,101 @@
             {% empty %}
             <div class="empty-state" style="grid-column: 1 / -1;">
                 <h3>Belum Ada Media</h3>
-                <p>{% if user.is_authenticated %}Klik tombol "+ Add Media" untuk mengupload media pertama Anda{% else %}Login untuk mengupload media{% endif %}</p>
+                <p>{% if user.is_authenticated %}
+                        {% if request.user.is_superuser or request.user.userprofile.role  == 'admin'  %}
+                            Klik tombol "+ Add Media" untuk mengupload media pertama Anda
+                        {% endif %}
+                    {% else %}
+                        Sorry! There are no medias yet 😓
+                    {% endif %}</p>
             </div>
             {% endfor %}
         </div>
     </div>
     
     {% if user.is_authenticated %}
-    <div id="deleteModal" class="delete-modal hidden">
-        <div class="delete-modal-content">
-            <h3>Konfirmasi Hapus</h3>
-            <p>Apakah Anda yakin ingin menghapus media ini? Tindakan ini tidak dapat dibatalkan.</p>
-            <div class="delete-modal-buttons">
-                <button type="button" onclick="closeDeleteModal()" class="cancel-btn">Batal</button>
-                <button type="button" id="confirmDeleteBtn" class="confirm-delete-btn">Hapus</button>
-            </div>
-        </div>
-    </div>
-    
-    <div id="editModal" class="modal hidden">
-        <div class="modal-content">
-            <button type="button" onclick="closeEditModal()" style="position: absolute; top: 16px; right: 24px; background: none; border: none; color: white; font-size: 30px; cursor: pointer; line-height: 1;">&times;</button>
-            <h1 style="font-size: 3rem; font-weight: bold; margin-bottom: 2rem; letter-spacing: 0.05em;">Edit Media</h1>
-            <form id="editForm" method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="media_id" id="editMediaId">
-                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                    <div>
-                        <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Deskripsi</label>
-                        <textarea name="deskripsi" id="editDeskripsi" required style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; background-color: #312e81; border: 1px solid white; color: white; outline: none;" rows="3"></textarea>
-                    </div>
-                    <div>
-                        <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Kategori</label>
-                        <select name="category" id="editCategory" required style="width: 100%; padding: 0.75rem 1rem; border-radius: 9999px; background-color: #4338ca; border: 1px solid white; color: white; outline: none;">
-                            <option value="">Pilih Kategori</option>
-                            <option value="foto">Photo</option>
-                            <option value="video">Video</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Thumbnail URL</label>
-                        <input type="url" name="thumbnail" id="editThumbnail" style="width: 100%; padding: 0.75rem 1rem; border-radius: 9999px; background-color: #312e81; border: 1px solid white; color: white; outline: none;">
-                    </div>
-                </div>
-                <div style="text-align: center; margin-top: 2.5rem;">
-                    <button type="submit" style="padding: 0.75rem 2.5rem; background-color: #c4ff00; color: #1a0b5e; font-weight: 600; border-radius: 9999px; border: none; cursor: pointer; transition: background-color 0.3s;">Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
+        {% if request.user.is_superuser or request.user.userprofile.role == 'admin' %}
 
-    <div id="modal" class="modal hidden">
-        <div class="modal-content">
-            <button type="button" onclick="closeModal()" style="position: absolute; top: 16px; right: 24px; background: none; border: none; color: white; font-size: 30px; cursor: pointer; line-height: 1;">&times;</button>
+            <div id="deleteModal" class="delete-modal hidden">
+                <div class="delete-modal-content">
+                    <h3>Konfirmasi Hapus</h3>
+                    <p>Apakah Anda yakin ingin menghapus media ini? Tindakan ini tidak dapat dibatalkan.</p>
+                    <div class="delete-modal-buttons">
+                        <button type="button" onclick="closeDeleteModal()" class="cancel-btn">Batal</button>
+                        <button type="button" id="confirmDeleteBtn" class="confirm-delete-btn">Hapus</button>
+                    </div>
+                </div>
+            </div>
             
-            <h1 style="font-size: 3rem; font-weight: bold; margin-bottom: 2rem; letter-spacing: 0.05em;">Upload Media</h1>
-    
-            <form id="uploadForm" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-    
-                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                    <div>
-                        <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Deskripsi</label>
-                        <textarea name="deskripsi" required style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; background-color: #312e81; border: 1px solid white; color: white; outline: none;" placeholder="Masukkan deskripsi media" rows="3"></textarea>
-                    </div>
-    
-                    <div>
-                        <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Kategori</label>
-                        <select name="category" id="category" required style="width: 100%; padding: 0.75rem 1rem; border-radius: 9999px; background-color: #4338ca; border: 1px solid white; color: white; outline: none;">
-                            <option value="">Pilih Kategori</option>
-                            <option value="foto">Photo</option>
-                            <option value="video">Video</option>
-                        </select>
-                    </div>
-    
-                    <div>
-                        <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Thumbnail URL</label>
-                        <input type="url" name="thumbnail" style="width: 100%; padding: 0.75rem 1rem; border-radius: 9999px; background-color: #312e81; border: 1px solid white; color: white; outline: none;" placeholder="https://example.com/image.jpg">
-                    </div>
+            <div id="editModal" class="modal hidden">
+                <div class="modal-content">
+                    <button type="button" onclick="closeEditModal()" style="position: absolute; top: 16px; right: 24px; background: none; border: none; color: white; font-size: 30px; cursor: pointer; line-height: 1;">&times;</button>
+                    <h1 style="font-size: 3rem; font-weight: bold; margin-bottom: 2rem; letter-spacing: 0.05em;">Edit Media</h1>
+                    <form id="editForm" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="media_id" id="editMediaId">
+                        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            <div>
+                                <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Deskripsi</label>
+                                <textarea name="deskripsi" id="editDeskripsi" required style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; background-color: #312e81; border: 1px solid white; color: white; outline: none;" rows="3"></textarea>
+                            </div>
+                            <div>
+                                <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Kategori</label>
+                                <select name="category" id="editCategory" required style="width: 100%; padding: 0.75rem 1rem; border-radius: 9999px; background-color: #4338ca; border: 1px solid white; color: white; outline: none;">
+                                    <option value="">Pilih Kategori</option>
+                                    <option value="foto">Photo</option>
+                                    <option value="video">Video</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Thumbnail URL</label>
+                                <input type="url" name="thumbnail" id="editThumbnail" style="width: 100%; padding: 0.75rem 1rem; border-radius: 9999px; background-color: #312e81; border: 1px solid white; color: white; outline: none;">
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 2.5rem;">
+                            <button type="submit" style="padding: 0.75rem 2.5rem; background-color: #c4ff00; color: #1a0b5e; font-weight: 600; border-radius: 9999px; border: none; cursor: pointer; transition: background-color 0.3s;">Save Changes</button>
+                        </div>
+                    </form>
                 </div>
-    
-                <div style="text-align: center; margin-top: 2.5rem;">
-                    <button type="submit" style="padding: 0.75rem 2.5rem; background-color: #c4ff00; color: #1a0b5e; font-weight: 600; border-radius: 9999px; border: none; cursor: pointer; transition: background-color 0.3s;">Submit</button>
+            </div>
+
+            <div id="modal" class="modal hidden">
+                <div class="modal-content">
+                    <button type="button" onclick="closeModal()" style="position: absolute; top: 16px; right: 24px; background: none; border: none; color: white; font-size: 30px; cursor: pointer; line-height: 1;">&times;</button>
+                    
+                    <h1 style="font-size: 3rem; font-weight: bold; margin-bottom: 2rem; letter-spacing: 0.05em;">Upload Media</h1>
+            
+                    <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+            
+                        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            <div>
+                                <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Deskripsi</label>
+                                <textarea name="deskripsi" required style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; background-color: #312e81; border: 1px solid white; color: white; outline: none;" placeholder="Masukkan deskripsi media" rows="3"></textarea>
+                            </div>
+            
+                            <div>
+                                <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Kategori</label>
+                                <select name="category" id="category" required style="width: 100%; padding: 0.75rem 1rem; border-radius: 9999px; background-color: #4338ca; border: 1px solid white; color: white; outline: none;">
+                                    <option value="">Pilih Kategori</option>
+                                    <option value="foto">Photo</option>
+                                    <option value="video">Video</option>
+                                </select>
+                            </div>
+            
+                            <div>
+                                <label style="display: block; color: white; margin-bottom: 0.5rem; font-weight: 500;">Thumbnail URL</label>
+                                <input type="url" name="thumbnail" style="width: 100%; padding: 0.75rem 1rem; border-radius: 9999px; background-color: #312e81; border: 1px solid white; color: white; outline: none;" placeholder="https://example.com/image.jpg">
+                            </div>
+                        </div>
+            
+                        <div style="text-align: center; margin-top: 2.5rem;">
+                            <button type="submit" style="padding: 0.75rem 2.5rem; background-color: #c4ff00; color: #1a0b5e; font-weight: 600; border-radius: 9999px; border: none; cursor: pointer; transition: background-color 0.3s;">Submit</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div>
-    </div>
+            </div>
+        {% endif %}
     {% endif %}
 
     <div id="playerModal" class="modal hidden" aria-hidden="true">
@@ -655,6 +668,7 @@
 <script>
     const isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
     let mediaToDelete = null;
+
 
     function openModal() {
         if (!isAuthenticated) {

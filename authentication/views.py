@@ -3,13 +3,23 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from .models import UserProfile
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.http import HttpResponseForbidden
 
 # cuma admin (staff/superuser) yang boleh
+def check_is_admin(user):
+    if user.is_superuser:
+        return True
+    
+    if hasattr(user, 'userprofile') and user.userprofile.role == 'admin':
+        return True
+    
+    return False
+
 def admin_only(view_func):
-    return user_passes_test(lambda u: u.is_staff or u.is_superuser)(view_func)
+    decorated_view_funct = user_passes_test(check_is_admin, login_url='authentication:login_view')(view_func)
+    return decorated_view_funct
 
 def register_view(request):
     if request.user.is_authenticated:
