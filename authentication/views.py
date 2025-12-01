@@ -35,6 +35,7 @@ def register_view(request):
         alamat = request.POST.get('alamat')
         umur = request.POST.get('umur')
         nomor_handphone = request.POST.get('nomor_handphone')
+        role = request.POST.get('role')
 
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             if password != confirm_password:
@@ -52,7 +53,8 @@ def register_view(request):
                 user=user,
                 alamat=alamat,
                 umur=umur,
-                nomor_handphone=nomor_handphone
+                nomor_handphone=nomor_handphone,
+                role=role,
             )
 
             return JsonResponse({
@@ -78,7 +80,8 @@ def register_view(request):
             user=user,
             alamat=alamat,
             umur=umur,
-            nomor_handphone=nomor_handphone
+            nomor_handphone=nomor_handphone,
+            role=role,
         )
 
         messages.success(request, "Akun berhasil dibuat! Silakan login.")

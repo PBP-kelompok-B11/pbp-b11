@@ -541,7 +541,7 @@
                     <div class="media-meta">
                         <span class="category-badge" data-value="{{ media.category }}">{{ media.get_category_display }}</span>
                         {% if user.is_authenticated %}
-                            {% if request.user.is_superuser or requesy.user.userprofile.role == 'admin' %}
+                            {% if request.user.is_superuser or request.user.userprofile.role == 'admin' %}
                                 <div class="action-buttons">
                                     <button type="button" onclick="editMedia('{{media.id}}')" class="edit-btn">Edit</button>
                                     <button type="button" onclick="confirmDelete('{{media.id}}')" class="delete-btn">Delete</button>
