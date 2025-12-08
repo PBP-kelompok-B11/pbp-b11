@@ -5,6 +5,8 @@ from nina_media_gallery.forms import MediaForm
 from nina_media_gallery.models import Media
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
+import traceback
+from authentication.views import admin_only
 
 # Create your views here.
 
@@ -55,6 +57,7 @@ def get_gallery_items(request):
     return JsonResponse(data, safe=False)
     
 @login_required(login_url='/login/')
+@admin_only
 def gallery_upload(request):
     if request.method == "POST":
         # Handle AJAX upload
@@ -77,7 +80,6 @@ def gallery_upload(request):
                     }
                 }, status=201)
             except Exception as e:
-                import traceback
                 print(f"Save Error: {str(e)}")
                 print(traceback.format_exc())
                 return JsonResponse({
@@ -102,6 +104,7 @@ def gallery_upload(request):
         return render(request, 'upload.html', context)
     
 @login_required(login_url='/login/') 
+@admin_only
 def gallery_update(request, id):
     if request.method == 'POST':
         media = Media.objects.get(pk=id)
@@ -121,6 +124,7 @@ def gallery_update(request, id):
     return JsonResponse({"status": "error", "message": "Invalid request"})
 
 @login_required(login_url='/login/')
+@admin_only
 def gallery_delete(request, id):
     media = get_object_or_404(Media, pk=id)
     media.delete()

@@ -71,11 +71,13 @@
 
   <!-- Tombol Add Competition -->
   {% if user.is_authenticated %}
-    <a href="{% url 'vidia_event:event_create' %}" class="absolute top-[417px] left-[100px] h-12 w-60 cursor-pointer z-50">
-      <div class="relative h-full w-full overflow-hidden rounded-[36px] bg-lime-400 transition hover:bg-lime-300 flex items-center justify-center">
-        <span class="font-['Geologica'] text-2xl leading-10 font-normal text-[#2d1b8f]">Add Competition</span>
-      </div>
-    </a>
+    {% if user.is_superuser or request.user.userprofile.role == 'admin' %}
+      <a href="{% url 'vidia_event:event_create' %}" class="absolute top-[417px] left-[100px] h-12 w-60 cursor-pointer z-50">
+        <div class="relative h-full w-full overflow-hidden rounded-[36px] bg-lime-400 transition hover:bg-lime-300 flex items-center justify-center">
+          <span class="font-['Geologica'] text-2xl leading-10 font-normal text-[#2d1b8f]">Add Competition</span>
+        </div>
+      </a>
+    {% endif %}
   {% else %}
     <a href="{% url 'authentication:login_view' %}" class="absolute top-[417px] left-[100px] h-12 w-60 cursor-pointer z-50">
       <div class="relative h-full w-full overflow-hidden rounded-[36px] bg-lime-400 transition hover:bg-lime-300 flex items-center justify-center">

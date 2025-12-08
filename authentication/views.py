@@ -3,14 +3,26 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from .models import UserProfile
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.http import HttpResponseForbidden
+from django.views.decorators.csrf import csrf_exempt
 
 # cuma admin (staff/superuser) yang boleh
-def admin_only(view_func):
-    return user_passes_test(lambda u: u.is_staff or u.is_superuser)(view_func)
+def check_is_admin(user):
+    if user.is_superuser:
+        return True
+    
+    if hasattr(user, 'userprofile') and user.userprofile.role == 'admin':
+        return True
+    
+    return False
 
+def admin_only(view_func):
+    decorated_view_funct = user_passes_test(check_is_admin, login_url='authentication:login_view')(view_func)
+    return decorated_view_funct
+
+@csrf_exempt
 def register_view(request):
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -25,6 +37,7 @@ def register_view(request):
         alamat = request.POST.get('alamat')
         umur = request.POST.get('umur')
         nomor_handphone = request.POST.get('nomor_handphone')
+        role = request.POST.get('role')
 
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             if password != confirm_password:
@@ -42,7 +55,8 @@ def register_view(request):
                 user=user,
                 alamat=alamat,
                 umur=umur,
-                nomor_handphone=nomor_handphone
+                nomor_handphone=nomor_handphone,
+                role=role,
             )
 
             return JsonResponse({
@@ -68,7 +82,8 @@ def register_view(request):
             user=user,
             alamat=alamat,
             umur=umur,
-            nomor_handphone=nomor_handphone
+            nomor_handphone=nomor_handphone,
+            role=role,
         )
 
         messages.success(request, "Akun berhasil dibuat! Silakan login.")
@@ -76,6 +91,7 @@ def register_view(request):
 
     return render(request, 'register.html')
 
+@csrf_exempt
 def login_view(request):
     # Kalau udah login, langsung ke home
     if request.user.is_authenticated:
@@ -118,6 +134,7 @@ def login_view(request):
 
 
 @login_required
+@csrf_exempt
 def logout_view(request):
     logout(request)
     messages.success(request, "Kamu berhasil logout.")

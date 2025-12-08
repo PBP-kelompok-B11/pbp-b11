@@ -40,6 +40,7 @@ def event_detail(request, pk):
 
 
 @login_required(login_url='/login/')
+@admin_only
 def event_create(request):
     if request.method == 'POST':
         location = request.POST.get('lokasi')
@@ -69,6 +70,7 @@ def event_create(request):
 
 
 @login_required(login_url='/login/')
+@admin_only
 def event_update(request, pk):
     event = get_object_or_404(Event, pk=pk)
 
@@ -102,6 +104,7 @@ def event_update(request, pk):
 
 
 @login_required(login_url='/login/')
+@admin_only
 def event_delete(request, pk):
     event = get_object_or_404(Event, pk=pk)
     if request.method == 'POST':

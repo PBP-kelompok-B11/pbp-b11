@@ -4,7 +4,7 @@ from .forms import ClubForm, ClubRankingForm
 from django.contrib.auth.decorators import login_required
 from comments.models import Comments
 from comments.forms import CommentForm
-
+from authentication.views import admin_only
 
 def club_list(request):
     clubs = Club.objects.all().order_by('nama')
@@ -35,6 +35,7 @@ def club_detail(request, pk):
 
 
 @login_required(login_url='/login/')
+@admin_only
 def club_create(request):
     if request.method == 'POST':
         form = ClubForm(request.POST)
@@ -53,6 +54,7 @@ def club_create(request):
 
 
 @login_required(login_url='/login/')
+@admin_only
 def club_update(request, pk):
     club = get_object_or_404(Club, pk=pk)
     if request.method == 'POST':
@@ -72,6 +74,7 @@ def club_update(request, pk):
 
 
 @login_required(login_url='/login/')
+@admin_only
 def club_delete(request, pk):
     club = get_object_or_404(Club, pk=pk)
     if request.method == 'POST':
@@ -94,6 +97,7 @@ def ranking_list(request):
 
 
 @login_required(login_url='/login/')
+@admin_only
 def club_ranking_create(request, club_pk):
     club = get_object_or_404(Club, pk=club_pk)
     if request.method == 'POST':
@@ -115,6 +119,7 @@ def club_ranking_create(request, club_pk):
 
 
 @login_required(login_url='/login/')
+@admin_only
 def club_ranking_update(request, pk):
     ranking = get_object_or_404(ClubRanking, pk=pk)
     if request.method == 'POST':
@@ -134,6 +139,7 @@ def club_ranking_update(request, pk):
 
 
 @login_required(login_url='/login/')
+@admin_only
 def club_ranking_delete(request, pk):
     ranking = get_object_or_404(ClubRanking, pk=pk)
     club_pk = ranking.club.pk

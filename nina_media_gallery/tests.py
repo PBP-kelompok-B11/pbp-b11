@@ -1,10 +1,16 @@
 from django.test import TestCase, Client
 from django.urls import reverse
+from django.contrib.auth.models import User
+from authentication.models import UserProfile
 from nina_media_gallery.models import Media
 
 class GalleryViewsTest(TestCase):
     def setUp(self):
         self.client = Client()
+        self.admin_user = User.object.create_user(username='admin_test', password='password')
+        UserProfile.objects.create(user=self.admin_user, role='admin')
+        self.client.force_login(self.admin_user)
+        
         self.media1 = Media.objects.create(
             deskripsi="Foto Pantai",
             category="foto",
