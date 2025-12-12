@@ -2,12 +2,13 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 from comments.models import Comments
 from django.contrib.auth.models import User
+from datetime import date
 
 class Event(models.Model):
     
     nama_event = models.CharField(max_length=100)  # Name of the event (e.g., Premier League)
     lokasi = models.CharField(max_length=100)
-    tanggal = models.DateField(null=True, blank=True)  # single date for the match
+    tanggal = models.DateField(default=date.today)
 
     # New fields based on spreadsheet
     tim_home = models.CharField(max_length=100, null=True, blank=True)
