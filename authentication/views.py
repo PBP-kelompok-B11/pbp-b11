@@ -6,6 +6,8 @@ from django.contrib import messages
 from .models import UserProfile
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.http import HttpResponseForbidden
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 
 # cuma admin (staff/superuser) yang boleh
 def check_is_admin(user):
@@ -138,3 +140,15 @@ def logout_view(request):
 
 def home_view(request):
     return render(request, 'home.html')
+
+@login_required
+def api_check_role(request):
+    user = request.user
+
+    role = "user"
+    if user.is_superuser:
+        role = "admin"
+    elif hasattr(user, 'userprofile'):
+        role = user.userprofile.role
+
+    return JsonResponse({"role": role})

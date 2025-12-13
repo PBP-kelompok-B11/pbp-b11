@@ -2,7 +2,6 @@ import csv
 from django.core.management.base import BaseCommand
 from ibeth_clubs.models import Club, ClubRanking
 
-
 class Command(BaseCommand):
     help = "Import clubs and rankings (with stadium & image URL) from a CSV file"
 
@@ -56,4 +55,4 @@ class Command(BaseCommand):
                 )
                 self.stdout.write(f'Ranking updated: {nama} - {musim} ({peringkat})')
 
-        self.stdout.write(self.style.SUCCESS('✅ CSV import finished successfully!'))
+        self.stdout.write(self.style.SUCCESS('CSV import finished successfully!'))

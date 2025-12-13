@@ -5,6 +5,12 @@ from django.contrib.auth.decorators import login_required
 from comments.models import Comments
 from comments.forms import CommentForm
 from authentication.views import admin_only
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import ClubSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import ClubSerializer, ClubRankingSerializer
 
 def club_list(request):
     clubs = Club.objects.all().order_by('nama')
@@ -152,3 +158,63 @@ def club_ranking_delete(request, pk):
         'base_title': f'Hapus Ranking {ranking.club.nama}',
     }
     return render(request, 'clubs/ranking_confirm_delete.html', context)
+
+@api_view(['GET'])
+def api_club_list(request):
+    clubs = Club.objects.all().order_by('nama')
+    serializer = ClubSerializer(clubs, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET', 'POST'])
+def api_club_list_create(request):
+    if request.method == 'GET':
+        clubs = Club.objects.all()
+        serializer = ClubSerializer(clubs, many=True)
+        return Response(serializer.data)
+
+    if request.method == 'POST':
+        serializer = ClubSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def api_club_detail(request, pk):
+    try:
+        club = Club.objects.get(pk=pk)
+    except Club.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+
+    # GET detail
+    if request.method == 'GET':
+        serializer = ClubSerializer(club)
+        return Response(serializer.data)
+
+    # PUT update
+    if request.method == 'PUT':
+        serializer = ClubSerializer(club, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    # DELETE remove
+    if request.method == 'DELETE':
+        club.delete()
+        return Response(status=204)
+    
+@api_view(['POST'])
+def api_create_ranking(request, club_pk):
+    try:
+        club = Club.objects.get(pk=club_pk)
+    except Club.DoesNotExist:
+        return Response({'error': 'Club not found'}, status=404)
+
+    serializer = ClubRankingSerializer(data=request.data)
+    if serializer.is_valid():
+        ranking = serializer.save(club=club)
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)
+

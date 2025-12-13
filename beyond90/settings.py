@@ -34,6 +34,8 @@ ALLOWED_HOSTS = [ "a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "https://a-sheriqa-beyo
 CSRF_TRUSTED_ORIGINS = [
     "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", 
     "http://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", 
+    'http://localhost:*',
+    'http://127.0.0.1:*',
 ]
 
 INSTALLED_APPS = [
@@ -50,6 +52,8 @@ INSTALLED_APPS = [
     'comments',
     'vidia_event',
     'search',
+    'rest_framework',
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -61,7 +65,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'beyond90.urls'
 
