@@ -28,8 +28,17 @@ SECRET_KEY = 'django-insecure-z%xc3%tvv@ylnf5rfw=!s426oop%&4euso*i0nfi%8@-*tb^-)
 # SECURITY WARNING: don't run with debug turned on in production!
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 DEBUG = True
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
+
 #nambah perubahan
-ALLOWED_HOSTS = [ "a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "http://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = [ "a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "http://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "localhost", "127.0.0.1", "10.0.2.2"]
+
 #tes sesuatu
 CSRF_TRUSTED_ORIGINS = [
     "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", 
@@ -65,7 +74,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True

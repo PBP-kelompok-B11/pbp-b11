@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.http import HttpResponseForbidden
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 # cuma admin (staff/superuser) yang boleh
 def check_is_admin(user):
@@ -23,6 +24,7 @@ def admin_only(view_func):
     decorated_view_funct = user_passes_test(check_is_admin, login_url='authentication:login_view')(view_func)
     return decorated_view_funct
 
+@csrf_exempt
 def register_view(request):
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -91,6 +93,7 @@ def register_view(request):
 
     return render(request, 'register.html')
 
+@csrf_exempt
 def login_view(request):
     # Kalau udah login, langsung ke home
     if request.user.is_authenticated:
@@ -133,6 +136,7 @@ def login_view(request):
 
 
 @login_required
+@csrf_exempt
 def logout_view(request):
     logout(request)
     messages.success(request, "Kamu berhasil logout.")
