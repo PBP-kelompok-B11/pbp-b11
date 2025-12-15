@@ -7,6 +7,8 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 import traceback
 from authentication.views import admin_only
+from django.core import serializers
+import requests
 
 # Create your views here.
 
@@ -129,3 +131,66 @@ def gallery_delete(request, id):
     media = get_object_or_404(Media, pk=id)
     media.delete()
     return HttpResponseRedirect(reverse('nina_media_gallery:gallery_list'))
+
+def show_xml(request):
+    media_list = Media.objects.all()
+    xml_data = serializers.serialize("xml", media_list)
+    return HttpResponse(xml_data, content_type="application/xml")
+
+def show_json(request):
+    media_list = Media.objects.all()
+    data = [
+        {
+            'id': str(media.id),
+            'deskripsi': media.deskripsi,
+            'category': media.category,
+            'thumbnail': media.thumbnail,
+            'created_at': media.created_at,
+            'viewers': media.viewers
+        }
+        for media in media_list
+    ]
+
+    return JsonResponse(data, safe=False)
+
+def show_xml_by_id(request, media_id):
+    try:
+        media_item = Media.objects.filter(pk=media_id)
+        xml_data = serializers.serialize("xml", media_item)
+        return HttpResponse(xml_data, content_type="application/xml")
+    except Media.DoesNotExist:
+        return HttpResponse(status=404)
+    
+def show_json_by_id(request, media_id):
+    try:
+        media = Media.objects.select_related('user').get(pk=media_id)
+        data = {
+            'id': str(media.id),
+            'deskripsi': media.deskripsi,
+            'category': media.category,
+            'thumbnail': media.thumbnail,
+            'created_at': media.created_at,
+            'viewers': media.viewers
+        }
+        return JsonResponse(data)
+    except Media.DoesNotExist:
+        return JsonResponse({'detail': 'Not found'}, status=404)
+
+def proxy_image(request):
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
+    
+    try:
+        # Fetch image from external source
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        
+        # Return the image with proper content type
+        return HttpResponse(
+            response.content,
+            content_type=response.headers.get('Content-Type', 'image/jpeg')
+        )
+    except requests.RequestException as e:
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+

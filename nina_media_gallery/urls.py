@@ -10,4 +10,9 @@ urlpatterns = [
     path('<uuid:id>/update/', views.gallery_update, name='gallery_update'),
     path('<uuid:id>/delete/', views.gallery_delete, name='gallery_delete'),
     path('<uuid:id>/', views.gallery_details, name='gallery_details'),
+    path('xml/', views.show_xml, name='show_xml'),
+    path('json/', views.show_json, name='show_json'),
+    path('xml/<str:product_id>/', views.show_xml_by_id, name='show_xml_by_id'),
+    path('json/<str:product_id>/', views.show_json_by_id, name='show_json_by_id'),
+    path('proxy-image/', views.proxy_image, name='proxy_image'),
 ]
