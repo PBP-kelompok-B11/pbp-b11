@@ -1,50 +1,23 @@
-# events/models.py
 from django.db import models
-from rafi_player.models import Player
-from ibeth_clubs.models import Club
+from django.contrib.contenttypes.fields import GenericRelation
+from comments.models import Comments
+from django.contrib.auth.models import User
+from datetime import date
 
 class Event(models.Model):
-    LIGA = 'liga'
-    TURNAMEN = 'turnamen'
-    PERTANDINGAN = 'pertandingan'
-    TIPE_CHOICES = [
-        (LIGA, 'Liga'),
-        (TURNAMEN, 'Turnamen'),
-        (PERTANDINGAN, 'Pertandingan'),
-    ]
-
-    nama_event = models.CharField(max_length=100)
-    tipe = models.CharField(max_length=20, choices=TIPE_CHOICES)
-    lokasi = models.CharField(max_length=100)
-    tanggal_mulai = models.DateField()
-    tanggal_selesai = models.DateField()
-
-    def __str__(self):
-        return self.nama_event
-
-
-class EventParticipation(models.Model):
-    PERAN_CHOICES = [
-        ('pemain', 'Pemain'),
-        ('kapten', 'Kapten'),
-        ('klub', 'Klub'),
-    ]
-
-    HASIL_CHOICES = [
-        ('menang', 'Menang'),
-        ('kalah', 'Kalah'),
-        ('juara', 'Juara'),
-    ]
     
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    player = models.ForeignKey(Player, on_delete=models.SET_NULL, null=True, blank=True)
-    club = models.ForeignKey(Club, on_delete=models.SET_NULL, null=True, blank=True)
-    peran = models.CharField(max_length=20, choices=PERAN_CHOICES)
-    hasil = models.CharField(max_length=20, choices=HASIL_CHOICES)
+    nama_event = models.CharField(max_length=100)  # Name of the event (e.g., Premier League)
+    lokasi = models.CharField(max_length=100)
+    tanggal = models.DateField(default=date.today)
+
+    # New fields based on spreadsheet
+    tim_home = models.CharField(max_length=100, null=True, blank=True)
+    tim_away = models.CharField(max_length=100, null=True, blank=True)
+    skor_home = models.PositiveIntegerField(null=True, blank=True)
+    skor_away = models.PositiveIntegerField(null=True, blank=True)
+
+    comments = GenericRelation(Comments)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        if self.player:
-            return f"{self.player.name} - {self.event.nama_event}"
-        elif self.club:
-            return f"{self.club.name} - {self.event.nama_event}"
-        return f"{self.event.nama_event}"
+        return f"{self.tim_home} vs {self.tim_away} ({self.nama_event})"

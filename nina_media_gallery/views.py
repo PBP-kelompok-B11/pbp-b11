@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponse
-from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.decorators import login_required
 from nina_media_gallery.forms import MediaForm
 from nina_media_gallery.models import Media
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
+import traceback
+from authentication.views import admin_only
 
 # Create your views here.
-def is_admin(user):
-    return user.is_authenticated and user.is_staff
 
 def gallery_list(request):
     media_list = Media.objects.all()
@@ -44,25 +44,26 @@ def gallery_details(request, id):
         'next_media': next_media,
     }
     return render(request, 'media_detail.html', context)
+    
 def get_gallery_items(request):
-   def get_gallery_items(request):
     media = Media.objects.all().values('deskripsi', 'media_file')
     data = [
         {
             "deskripsi": item['deskripsi'],
-            "image_url": "/media/" + item['media_file']  # Sesuaikan MEDIA_URL
+            "image_url": "/media/" + item['media_file']  
         }
         for item in media
     ]
     return JsonResponse(data, safe=False)
-
-# @user_passes_test(is_admin)
+    
+@login_required(login_url='/login/')
+@admin_only
 def gallery_upload(request):
     if request.method == "POST":
         # Handle AJAX upload
         form = MediaForm(request.POST)
         
-        # Debug: Print POST data
+        
         print("POST data:", request.POST)
         
         if form.is_valid():
@@ -79,7 +80,6 @@ def gallery_upload(request):
                     }
                 }, status=201)
             except Exception as e:
-                import traceback
                 print(f"Save Error: {str(e)}")
                 print(traceback.format_exc())
                 return JsonResponse({
@@ -103,6 +103,8 @@ def gallery_upload(request):
         }
         return render(request, 'upload.html', context)
     
+@login_required(login_url='/login/') 
+@admin_only
 def gallery_update(request, id):
     if request.method == 'POST':
         media = Media.objects.get(pk=id)
@@ -121,6 +123,8 @@ def gallery_update(request, id):
         })
     return JsonResponse({"status": "error", "message": "Invalid request"})
 
+@login_required(login_url='/login/')
+@admin_only
 def gallery_delete(request, id):
     media = get_object_or_404(Media, pk=id)
     media.delete()

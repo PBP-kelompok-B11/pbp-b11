@@ -41,7 +41,7 @@ class AuthenticationTests(TestCase):
 
     def test_register_duplicate_username(self):
         response = self.client.post(self.register_url, {
-            'username': 'testuser',  # sudah ada
+            'username': 'testuser',  
             'email': 'duplicate@example.com',
             'password': '123456',
             'confirm_password': '123456'

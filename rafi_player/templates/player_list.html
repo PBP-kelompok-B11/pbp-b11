@@ -3,22 +3,8 @@
 {% block content %}
 <head>
   
-
 </head>
 <body>
-  <!-- <header>
-    <div class="logo">
-      <span class="logo-circle">PBP</span>
-      <span class="logo-number">11</span>
-    </div>
-    <nav>
-      <a href="#">Player</a>
-      <a href="#">Club</a>
-      <a href="#">Competition</a>
-      <a href="#">Home</a>
-    </nav>
-    <button class="login-btn">Login</button>
-  </header> -->
 
   <main>
     <section class="player-section">
@@ -30,57 +16,70 @@
             </div>
             
             <!-- tombol tetap di atas -->
-            <button onclick="showModal()" class="add-btn">Add Player</button>
+            {% if user.is_authenticated %}
+                {% if request.user.is_superuser or request.user.userprofile.role == 'admin' %}
 
-            <div class="filter-buttons">
-            <button id="filter-all" class="add-btn">Show All</button>
-            <button id="filter-my" class="add-btn">Show My</button>
-            </div>
+                    <button onclick="showPlayerModal()" class="add-btn">Add Player</button>
+
+                    <div class="flex space-x-2 mb-6">
+                        <button id="filter-all" class="add-btn">Show All</button>
+                        <button id="filter-my" class="add-btn">Show My</button>
+                    </div>  
+                {% endif %}
+                <div class="mt-15 mb-6 flex items-center space-x-2">
+                    <select id="positionFilter" class="px-3 py-2 rounded-full bg-lime-400 text-black border-none outline-none shadow-sm">
+                        <option value="all">Semua Posisi</option>
+                        <option value="GK">GK (Penjaga Gawang)</option>
+                        <option value="DF">DF (Bek)</option>
+                        <option value="DFFW">DFFW (Bek / Penyerang)</option>
+                        <option value="DFMF">DFMF (Bek / Gelandang)</option>
+                        <option value="MF">MF (Gelandang)</option>
+                        <option value="MFDF">MFDF (Gelandang / Bek)</option>
+                        <option value="MFFW">MFFW (Gelandang / Penyerang)</option>
+                        <option value="FW">FW (Penyerang)</option>
+                        <option value="FWDF">FWDF (Penyerang / Bek)</option>
+                        <option value="FWMF">FWMF (Penyerang / Gelandang)</option>
+                    </select>
+                </div>
+            {% else %}
+                <!-- Jika belum login -->
+                <a href="{% url 'authentication:login_view' %}" 
+                class="add-btn">
+                    Add Player
+                </a>
+            {% endif %}
 
             <!-- judul dan deskripsi -->
            
+
         </div>
 
-        <div id="loading" class="rounded-lg border border-gray-200 p-12 text-center hidden mt-10">
-        <svg class="animate-spin h-8 w-8 text-green-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-        </svg>
-        <p class="text-gray-600 mt-3">Loading players...</p>
-        </div>
-
-        <!-- Error State -->
-        <div id="error" class="hidden bg-red-100 text-red-700 p-4 rounded mt-10">
-            Error loading players!
-        </div>
-
-        <!-- Empty State -->
-        <div id="empty" class="hidden text-gray-600 mt-10 text-center">
-            No players found.
-        </div>
-
+        
         <div class="player-grid-wrapper mt-20">
-            <div id=grid class="player-grid">
-            <!-- 16 contoh card -->
-            <!-- <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div>
-            <div class="player-card"></div> -->
+            <div id="grid" class="player-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-96 relative">
+                
+                <!-- TULISAN "No players found" DI DALAM GRID -->
+                <div id="empty" class="hidden col-span-full flex items-center justify-center text-gray-500 text-lg font-medium h-96">
+                    No players found.
+                </div>
+
+                <div id="loading" class="hidden col-span-full flex flex-col items-center justify-center h-96">
+                    <svg class="animate-spin h-12 w-12 text-green-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                    <p class="text-gray-400 text-lg font-medium">Loading players...</p>
+                </div>
+
+                        <!-- Error State -->
+                <div id="error" class="hidden bg-red-100 text-red-700 p-4 rounded mt-10">
+                    Error loading players!
+                </div>
+
             </div>
         </div>
 
+        
     </section>
   </main>
 
@@ -90,7 +89,12 @@
 <script>
     console.log("JS Loaded");
     const PLAYER_API_ENDPOINT = "{% url 'rafi_player:show_json_player' %}";
-    const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+    // const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+    let CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}" || null;
+
+    console.log("Current user ID:", CURRENT_USER_ID);
+    console.log("Tipe data CURRENT_USER_ID:", typeof CURRENT_USER_ID);
 
     // DOM Elements
     const loadingSpinner = document.getElementById('loading');
@@ -119,15 +123,35 @@
 
     // Show/hide page sections
     function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
-    loadingSpinner.classList.toggle('hidden', !showLoading);
-    errorMessage.classList.toggle('hidden', !showError);
-    emptyStateDisplay.classList.toggle('hidden', !showEmpty);
-    playerGridContainer.classList.toggle('hidden', !showGrid);
-    
-    // Add grid classes when showing grid
-    if (showGrid) {
-        playerGridContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
-    }
+        // Sembunyikan semua dulu
+        loadingSpinner.classList.add('hidden');
+        errorMessage.classList.add('hidden');
+
+        // Kosongkan grid
+        playerGridContainer.innerHTML = '';
+
+        if (showLoading) {
+            // Tampilkan loading DI DALAM grid
+            loadingSpinner.classList.remove('hidden');
+            playerGridContainer.appendChild(loadingSpinner);
+        } else if (showError) {
+            errorMessage.classList.remove('hidden');
+            playerGridContainer.appendChild(errorMessage);
+        } else if (showEmpty || (showGrid && allPlayerData.length === 0)) { 
+            const empty = document.createElement('div');
+            empty.className = 'col-span-full flex flex-col items-center justify-center text-gray-500 h-96';
+            empty.innerHTML = `
+                <svg class="w-16 h-16 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="text-lg font-medium">No players found.</p>
+                <p class="text-sm mt-1">Try changing the filter.</p>
+            `;
+            playerGridContainer.appendChild(empty);
+        }
+
+        // Pastikan grid terlihat
+        playerGridContainer.classList.remove('hidden');
     }
 
     // Get readable category name
@@ -144,12 +168,6 @@
 
     function buildPlayerCardElement(player) {
 
-        // card.addEventListener('click', () => {
-        //     // URL-nya disesuaikan dengan path Django kamu
-            
-        //     // atau kalau kamu pakai url pattern bernama:
-        //     // window.location.href = `{% url 'rafi_player:player_detail' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', player.id);
-        // });
 
         const card = document.createElement('div');
         card.classList.add('player-card');
@@ -160,10 +178,17 @@
         card.style.backgroundColor = '#222'; // fallback kalau thumbnail null
 
         card.addEventListener('click', () => {
-            const detailUrl = `{% url 'rafi_player:player_detail' '00000000-0000-0000-0000-000000000000' %}`
-                .replace('00000000-0000-0000-0000-000000000000', player.id);
-            window.location.href = detailUrl;
+            if (!CURRENT_USER_ID) {
+                // User belum login, redirect ke login
+                window.location.href = "{% url 'authentication:login_view' %}?next=" + encodeURIComponent(window.location.pathname);
+            } else {
+                // User sudah login, redirect ke detail player
+                const detailUrl = `{% url 'rafi_player:player_detail' '00000000-0000-0000-0000-000000000000' %}`
+                    .replace('00000000-0000-0000-0000-000000000000', player.id);
+                window.location.href = detailUrl;
+            }
         });
+
 
         // --- Thumbnail gambar ---
         const img = document.createElement('img');
@@ -194,8 +219,6 @@
         return card;
     }
 
-
-        //////////////
     function renderAllPlayerCards(playerItems) {
         playerGridContainer.innerHTML = '';
         playerItems.forEach(playerItem => {
@@ -205,19 +228,37 @@
     }
 
     // Filter and display player
-    function filterAndDisplayPlayer() {
-    updateFilterButtonsAppearance();
-    
-    const filteredPlayer = activeFilter === 'all' 
-        ? allPlayerData 
-        : allPlayerData.filter(player => Number(player.user_id) === Number(CURRENT_USER_ID));
-    
-    if (filteredPlayer.length === 0) {
-        displayPageSection({ showEmpty: true });
-    } else {
-        renderAllPlayerCards(filteredPlayer);
-        displayPageSection({ showGrid: true });
+    const positionFilterDropdown = document.getElementById('positionFilter');
+    let activePositionFilter = 'all';
+
+    if (positionFilterDropdown) {
+        positionFilterDropdown.addEventListener('change', (e) => {
+            activePositionFilter = e.target.value;
+            filterAndDisplayPlayer();
+        });
     }
+
+    function filterAndDisplayPlayer() {
+        updateFilterButtonsAppearance();
+
+        let filteredPlayer = allPlayerData;
+
+        // Filter "my" players
+        if (activeFilter === 'my') {
+            filteredPlayer = filteredPlayer.filter(player => Number(player.user_id) === Number(CURRENT_USER_ID));
+        }
+
+        // Filter berdasarkan posisi
+        if (activePositionFilter !== 'all') {
+            filteredPlayer = filteredPlayer.filter(player => player.posisi === activePositionFilter);
+        }
+
+        if (filteredPlayer.length === 0) {
+            displayPageSection({ showEmpty: true });
+        } else {
+            displayPageSection({ showGrid: true });
+            renderAllPlayerCards(filteredPlayer);
+        }
     }
 
     // Fetch player data from server
@@ -238,6 +279,10 @@
         allPlayerData = playerData || [];
 
          console.log("Data dari server:", playerData); // <--- ini penting
+         console.log("Semua players:", allPlayerData);
+        allPlayerData.forEach(player => {
+            console.log(`Player ${player.nama} - user_id: ${player.user_id}`);
+        });
 
         
         filterAndDisplayPlayer();
@@ -262,19 +307,25 @@
 
     // Initialize page
     function initializePlayerPage() {
-    showAllPlayerButton.addEventListener('click', handleShowAllPlayerClick);
-    showMyPlayerButton.addEventListener('click', handleShowMyPlayerClick);
-    
-    fetchPlayerFromServer();
+    if (showAllPlayerButton) {
+        showAllPlayerButton.addEventListener('click', handleShowAllPlayerClick);
     }
+    if (showMyPlayerButton) {
+        showMyPlayerButton.addEventListener('click', handleShowMyPlayerClick);
+    }
+
+    fetchPlayerFromServer();
+}
+
 
     // Start application
     initializePlayerPage();
 
 
     document.addEventListener('playerAdded', function() {
-        // Refresh data without page reload
         fetchPlayerFromServer();
     });
+
+    
 </script>
 {% endblock content %}

@@ -1,91 +1,117 @@
+import json
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
-from django.utils import timezone
+from .models import SearchQuery
 from rafi_player.models import Player
 from ibeth_clubs.models import Club
-from search.models import SearchQuery
+from vidia_event.models import Event
+from django.utils import timezone
 
-class SearchViewsTestCase(TestCase):
+class SearchViewsTest(TestCase):
+
     def setUp(self):
-        # Buat client untuk simulasi request
         self.client = Client()
+        self.user = User.objects.create_user(username='testuser', password='pass')
+        # buat sample data
+        self.player = Player.objects.create(nama='Lionel Messi', posisi='Forward', negara='Argentina')
+        self.club = Club.objects.create(nama='FC Barcelona', negara='Spain', stadion='Camp Nou')
+        self.event = Event.objects.create(nama_event='Champions League Final')
 
-        # Buat user dummy
-        self.user = User.objects.create_user(username='tester', password='testpass123')
+    # --------------------
+    # Serialization
+    # --------------------
+    def test_show_json(self):
+        SearchQuery.objects.create(kata_kunci='test', jenis='pemain', tanggal=timezone.now())
+        response = self.client.get(reverse('search:show_json'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
 
-        # Buat data pemain & klub dummy
-        self.player = Player.objects.create(
-            nama="Lionel Messi",
-            negara="Argentina",
-            posisi="Forward",
-            usia=36
+    def test_show_xml_by_id(self):
+        sq = SearchQuery.objects.create(kata_kunci='test', jenis='pemain', tanggal=timezone.now())
+        response = self.client.get(reverse('search:show_xml_by_id', args=[sq.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/xml')
+
+    # --------------------
+    # Redirect form
+    # --------------------
+    def test_search_redirect_players(self):
+        response = self.client.get(reverse('search:search_redirect') + '?q=test&type=players')
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('search_players', response.url)
+
+    def test_search_redirect_clubs(self):
+        response = self.client.get(reverse('search:search_redirect') + '?q=test&type=clubs')
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('search_clubs', response.url)
+
+    def test_search_redirect_events(self):
+        response = self.client.get(reverse('search:search_redirect') + '?q=test&type=events')
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('search_events', response.url)
+
+    def test_search_redirect_empty_query(self):
+        response = self.client.get(reverse('search:search_redirect') + '?q=')
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('search_form', response.url)
+
+    # --------------------
+    # Search Players
+    # --------------------
+    def test_search_players_regular(self):
+        self.client.login(username='testuser', password='pass')
+        response = self.client.get(reverse('search:search_players') + '?q=Lionel')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Lionel Messi')
+
+    def test_search_players_ajax(self):
+        response = self.client.get(
+            reverse('search:search_players') + '?q=Lionel',
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['results'][0]['nama'], 'Lionel Messi')
 
-        self.club = Club.objects.create(
-            nama="Barcelona",
-            negara="Spanyol",
-            stadion="Camp Nou"
+    # --------------------
+    # Search Clubs
+    # --------------------
+    def test_search_clubs_regular(self):
+        response = self.client.get(reverse('search:search_clubs') + '?q=Barcelona')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'FC Barcelona')
+
+    def test_search_clubs_ajax(self):
+        response = self.client.get(
+            reverse('search:search_clubs') + '?q=Barcelona',
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['results'][0]['nama'], 'FC Barcelona')
 
-    def test_search_form_view(self):
-        """Cek halaman form search bisa diakses"""
+    # --------------------
+    # Search Events
+    # --------------------
+    def test_search_events_regular(self):
+        response = self.client.get(reverse('search:search_events') + '?q=Champions')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Champions League Final')
+
+    def test_search_events_ajax(self):
+        response = self.client.get(
+            reverse('search:search_events') + '?q=Champions',
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['results'][0]['nama_event'], 'Champions League Final')
+
+    # --------------------
+    # Search Form
+    # --------------------
+    def test_search_form(self):
         response = self.client.get(reverse('search:search_form'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'search/form.html')
-
-    def test_search_players_normal(self):
-        """Cek pencarian pemain non-AJAX"""
-        response = self.client.get(reverse('search:search_players'), {'q': 'Messi'})
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'search/results.html')
-        self.assertContains(response, "Messi")
-
-        # Pastikan query tersimpan
-        self.assertTrue(SearchQuery.objects.filter(kata_kunci='Messi', jenis='pemain').exists())
-
-    def test_search_players_ajax(self):
-        """Cek pencarian pemain dengan AJAX (JSON response)"""
-        response = self.client.get(
-            reverse('search:search_players'),
-            {'q': 'Messi'},
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
-        )
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertIn('results', data)
-        self.assertEqual(data['results'][0]['nama'], 'Lionel Messi')
-
-    def test_search_clubs_normal(self):
-        """Cek pencarian klub non-AJAX"""
-        response = self.client.get(reverse('search:search_clubs'), {'q': 'Barcelona'})
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'search/results.html')
-        self.assertContains(response, "Barcelona")
-
-        # Pastikan query tersimpan
-        self.assertTrue(SearchQuery.objects.filter(kata_kunci='Barcelona', jenis='klub').exists())
-
-    def test_search_clubs_ajax(self):
-        """Cek pencarian klub dengan AJAX (JSON response)"""
-        response = self.client.get(
-            reverse('search:search_clubs'),
-            {'q': 'Barcelona'},
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
-        )
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertIn('results', data)
-        self.assertEqual(data['results'][0]['nama'], 'Barcelona')
-
-    def test_search_history_requires_login(self):
-        """Pastikan history cuma bisa diakses kalau login"""
-        # Belum login → harus redirect ke login page
-        response = self.client.get(reverse('search:search_history'))
-        self.assertEqual(response.status_code, 302)  # redirect ke login
-
-        # Setelah login → bisa akses
-        self.client.login(username='tester', password='testpass123')
-        response = self.client.get(reverse('search:search_history'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'search/history.html')

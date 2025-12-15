@@ -1,45 +1,99 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block content %}
-<head>
-  <meta charset="UTF-8">
-  <title>Daftar Event Sepak Bola</title>
-  <style>
-    body { font-family: Arial; background: #f2f5f9; margin: 0; padding: 20px; }
-    h1 { color: #222; }
-    a.button { background: #007bff; color: white; padding: 8px 12px; text-decoration: none; border-radius: 6px; }
-    a.button:hover { background: #0056b3; }
-    .card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    .event-title { font-size: 18px; font-weight: bold; color: #333; }
-    .event-date { color: #666; font-size: 14px; }
-    .event-info { font-size: 14px; color: #777; margin-bottom: 5px; }
-    .topbar { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
-  </style>
-</head>
 
-<body>
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <h1>🏆 Daftar Event Sepak Bola</h1>
-    <a href="{% url 'vidia_event:event_create' %}" class="button">+ Tambah Event</a>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar { width: 10px; }
+  .scrollbar-custom::-webkit-scrollbar-track { background: #2d1b8f; border-radius: 8px; }
+  .scrollbar-custom::-webkit-scrollbar-thumb { background-color: #B0FE08; border-radius: 8px; border: 2px solid #2d1b8f; }
+  .scrollbar-custom { scrollbar-width: thin; scrollbar-color: #B0FE08 #2d1b8f; }
+</style>
+
+<div class="relative w-screen h-screen overflow-hidden" style="background-color: #2d1b8f;">
+
+  <!-- Judul -->
+  <div class="absolute top-[175px] left-[100px] h-36 w-[574px] font-['League_Gothic'] text-8xl font-normal text-white">
+    COMPETITION
   </div>
 
-  <br>
+  <!-- Area utama (kanan) -->
+  <div class="absolute top-[84px] left-[500px] h-[606px] w-[900px]">
+    <!-- Background boxes -->
+    <div class="absolute top-[50px] left-[-1px] h-[540px] w-[901px] rounded-[38px] bg-white"></div>
+    <div class="absolute top-[64px] left-[17px] h-[500px] w-[868px] rounded-3xl" style="background-color: #2d1b8f;"></div>
 
-  <!--tempat AJAX hasil filter -->
-  <div id="eventContainer">
-    {% for event in events %}
-      <div class="card">
-        <div class="event-title">{{ event.nama_event }}</div>
-        <div class="event-date">{{ event.tanggal_mulai }} — {{ event.tanggal_selesai }}</div>
-        <div class="event-info">{{ event.lokasi }} • {{ event.tipe }}</div>
-        <a href="{% url 'vidia_event:event_detail' event.id %}" class="button">Detail</a>
+    <!-- Container utama (non-scrollable) -->
+    <div class="absolute top-[75px] left-[17px] w-[868px] h-[500px] rounded-3xl p-2 relative z-20" style="background-color: #2d1b8f;">
+      {% if page_obj %}
+        {% for event in page_obj %}
+          <a href="{% url 'vidia_event:event_detail' event.pk %}" class="block relative h-24 w-full mb-1 group transition">
+            <div class="absolute top-0 left-0 h-[80px] w-full rounded-2xl bg-lime-400 group-hover:bg-lime-300 transition"></div>
+            <div class="absolute top-[10px] left-[39px] font-['Geologica'] text-4xl leading-[62.5px] font-normal text-[#2d1b8f]">
+              {{ event.nama_event }}
+            </div>
+          </a>
+        {% endfor %}
+      {% else %}
+        <p class="text-center text-gray-400 mt-60">No competitions yet.</p>
+      {% endif %}
+
+<!-- Tombol navigasi halaman -->
+<div class="flex justify-center gap-2 relative z-50" style="margin-top: px;">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" 
+       class="bg-lime-400 hover:bg-lime-300 text-[#2d1b8f] px-6 py-2 rounded-3xl font-['Geologica'] text-lg transition shadow-lg">
+      ← Previous
+    </a>
+  {% endif %}
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" 
+       class="bg-lime-400 hover:bg-lime-300 text-[#2d1b8f] px-6 py-2 rounded-3xl font-['Geologica'] text-lg transition shadow-lg">
+      Next →
+    </a>
+  {% endif %}
+</div>
+
+    </div>
+  </div>
+
+  <!-- Deskripsi kiri -->
+  <div class="absolute top-[342px] left-[100px] w-96 font-['Geologica'] text-xl leading-normal font-normal text-white">
+    Discover more than 100 competition around the globe!
+  </div>
+
+  <!-- Tombol Add Competition -->
+  {% if user.is_authenticated %}
+    {% if user.is_superuser or request.user.userprofile.role == 'admin' %}
+      <a href="{% url 'vidia_event:event_create' %}" class="absolute top-[417px] left-[100px] h-12 w-60 cursor-pointer z-50">
+        <div class="relative h-full w-full overflow-hidden rounded-[36px] bg-lime-400 transition hover:bg-lime-300 flex items-center justify-center">
+          <span class="font-['Geologica'] text-2xl leading-10 font-normal text-[#2d1b8f]">Add Competition</span>
+        </div>
+      </a>
+    {% endif %}
+  {% else %}
+    <a href="{% url 'authentication:login_view' %}" class="absolute top-[417px] left-[100px] h-12 w-60 cursor-pointer z-50">
+      <div class="relative h-full w-full overflow-hidden rounded-[36px] bg-lime-400 transition hover:bg-lime-300 flex items-center justify-center">
+        <span class="font-['Geologica'] text-2xl leading-10 font-normal text-[#2d1b8f]">Add Competition</span>
       </div>
-    {% empty %}
-      <p>Tidak ada event.</p>
-    {% endfor %}
+    </a>
+  {% endif %}
+
+  <!-- SVG background kiri -->
+  <div class="absolute left-[-10px] top-[380px] w-[250px] h-[400px]">
+    <svg viewBox="0 0 444 517" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+      <path d="M403.493 320.269C325.455 558.021 117.482 533.718 86.0948 436.53C56.6724 345.426 149.839 278.662 212.786 274.763C272.671 271.053 282.789 322.371 231.247 339.316C124.051 374.558 -75.0639 213.756 -7.92073 3.03597M403.493 320.269L325.1 360.136M403.493 320.269L433.788 397.871" 
+            stroke="#B0FE08" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
   </div>
-</body>
-</html>
+
+</div>
+
+{% endblock %}

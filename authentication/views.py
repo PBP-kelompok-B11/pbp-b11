@@ -3,13 +3,32 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from .models import UserProfile
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.http import HttpResponseForbidden
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
+# cuma admin (staff/superuser) yang boleh
+def check_is_admin(user):
+    if user.is_superuser:
+        return True
+    
+    if hasattr(user, 'userprofile') and user.userprofile.role == 'admin':
+        return True
+    
+    return False
+
+def admin_only(view_func):
+    decorated_view_funct = user_passes_test(check_is_admin, login_url='authentication:login_view')(view_func)
+    return decorated_view_funct
+
+@csrf_exempt
 def register_view(request):
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'success': True, 'redirect_url': '/home/'})
+            return JsonResponse({'success': True, 'redirect_url': ''})
         return redirect('authentication:home_view')
 
     if request.method == 'POST':
@@ -20,6 +39,7 @@ def register_view(request):
         alamat = request.POST.get('alamat')
         umur = request.POST.get('umur')
         nomor_handphone = request.POST.get('nomor_handphone')
+        role = request.POST.get('role')
 
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             if password != confirm_password:
@@ -37,7 +57,8 @@ def register_view(request):
                 user=user,
                 alamat=alamat,
                 umur=umur,
-                nomor_handphone=nomor_handphone
+                nomor_handphone=nomor_handphone,
+                role=role,
             )
 
             return JsonResponse({
@@ -63,7 +84,8 @@ def register_view(request):
             user=user,
             alamat=alamat,
             umur=umur,
-            nomor_handphone=nomor_handphone
+            nomor_handphone=nomor_handphone,
+            role=role,
         )
 
         messages.success(request, "Akun berhasil dibuat! Silakan login.")
@@ -71,11 +93,12 @@ def register_view(request):
 
     return render(request, 'register.html')
 
+@csrf_exempt
 def login_view(request):
     # Kalau udah login, langsung ke home
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'success': True, 'redirect_url': '/home/'})
+            return JsonResponse({'success': True, 'redirect_url': ''})
         return redirect('authentication:home_view')
 
     if request.method == 'POST':
@@ -92,7 +115,7 @@ def login_view(request):
                 return JsonResponse({
                     'success': True,
                     'message': f"Halo {username}, selamat datang kembali!",
-                    'redirect_url': '/home/'
+                    'redirect_url': ''
                 })
 
             # Kalau normal → redirect biasa
@@ -113,6 +136,7 @@ def login_view(request):
 
 
 @login_required
+@csrf_exempt
 def logout_view(request):
     logout(request)
     messages.success(request, "Kamu berhasil logout.")
@@ -120,3 +144,15 @@ def logout_view(request):
 
 def home_view(request):
     return render(request, 'home.html')
+
+@login_required
+def api_check_role(request):
+    user = request.user
+
+    role = "user"
+    if user.is_superuser:
+        role = "admin"
+    elif hasattr(user, 'userprofile'):
+        role = user.userprofile.role
+
+    return JsonResponse({"role": role})
