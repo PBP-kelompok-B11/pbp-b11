@@ -666,9 +666,9 @@
 <div id="toastContainer"></div>
 
 <script>
-    const isAuthenticated = user.isAuthenticated ? true : false;
-
+    const isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
     let mediaToDelete = null;
+
 
     function openModal() {
         if (!isAuthenticated) {
