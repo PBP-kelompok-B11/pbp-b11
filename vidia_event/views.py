@@ -32,6 +32,7 @@ def event_detail(request, pk):
         object_id=event.id
     ).order_by('-tanggal')
     form = CommentForm()
+    print("DEBUG EVENT DETAIL:", event.nama_event, event.lokasi)
     return render(request, 'event_detail.html', {
         'event': event,
         'comments': comments,
