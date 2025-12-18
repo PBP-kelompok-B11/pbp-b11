@@ -1,3 +1,6 @@
+import traceback
+import requests
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -5,10 +8,12 @@ from nina_media_gallery.forms import MediaForm
 from nina_media_gallery.models import Media
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-import traceback
 from authentication.views import admin_only
 from django.core import serializers
-import requests
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.html import strip_tags
+
+
 
 # Create your views here.
 
@@ -194,3 +199,23 @@ def proxy_image(request):
     except requests.RequestException as e:
         return HttpResponse(f'Error fetching image: {str(e)}', status=500)
 
+@csrf_exempt
+def add_media_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        deskripsi = strip_tags(data.get("deskripsi", ""))  # Strip HTML tags
+        category = data.get("category", "")
+        thumbnail = data.get("thumbnail", "")
+        user = request.user
+        
+        new_media = Media(
+            deskripsi=deskripsi,
+            category=category,
+            thumbnail=thumbnail,
+            user=user
+        )
+        new_media.save()
+        
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
