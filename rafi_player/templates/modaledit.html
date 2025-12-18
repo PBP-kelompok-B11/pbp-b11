@@ -149,8 +149,10 @@
           return;
       }
   
-      const endpoint = playerId ? `/player/${playerId}/edit/` : "{% url 'rafi_player:add_player_ajax' %}";
+      const endpoint = playerId ? `players/${playerId}/edit/` : "{% url 'rafi_player:edit_player_ajax' %}";
+      console.log("ini edit player");
       console.log("Mengirim permintaan ke:", endpoint);
+      console.log("ini edit player");
   
       try {
           const response = await fetch(endpoint, {

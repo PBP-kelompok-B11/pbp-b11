@@ -11,7 +11,7 @@ urlpatterns = [
     path('player/<uuid:player_id>/json/', views.show_json_player_by_id, name='show_json_player_by_id'),
     path('player/<uuid:player_id>/', views.player_detail, name='player_detail'),
     path('player/<uuid:player_id>/delete/', views.delete_player, name='delete_player'),
-    path('<uuid:pk>/edit/', views.edit_player_ajax, name='edit_player_ajax'),
+    path('player/<uuid:pk>/edit/', views.edit_player_ajax, name='edit_player_ajax'),
    
 
     path('admin/player/', admin_views.player_list, name='admin_player_list'),

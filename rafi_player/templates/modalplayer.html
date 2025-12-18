@@ -156,7 +156,7 @@
       console.log("FormData:", Object.fromEntries(formData));
 
       const ADD_PLAYER_URL = "{% url 'rafi_player:add_player_ajax' %}";
-      const endpoint = playerId ? `/player/${playerId}/edit/` : ADD_PLAYER_URL;
+      const endpoint = playerId ? `/players/player/${playerId}/edit/` : ADD_PLAYER_URL;
       console.log("Mengirim permintaan ke:", endpoint);
 
       formData.set('usia', Number(formData.get('usia')));

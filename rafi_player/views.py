@@ -123,6 +123,7 @@ def player_list(request):
 @login_required(login_url='/login/')
 @admin_only
 def edit_player_ajax(request, pk):
+    # console.log("edit dipanggil")
     if request.method == 'POST':
         player = get_object_or_404(Player, pk=pk)
         player.nama = request.POST.get('nama')
