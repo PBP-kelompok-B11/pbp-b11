@@ -11,6 +11,7 @@ from comments.forms import CommentForm
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
 import json
+from authentication.views import admin_only
 
 
 # =========================
@@ -42,7 +43,8 @@ def event_detail(request, pk):
     })
 
 
-@login_required(login_url='/authentication/login/')
+@login_required(login_url='/login/')
+@admin_only
 def event_create(request):
     if request.method == 'POST':
         location = request.POST.get('lokasi')
@@ -71,7 +73,8 @@ def event_create(request):
     return render(request, 'event_create.html')
 
 
-@login_required(login_url='/authentication/login/')
+@login_required(login_url='/login/')
+@admin_only
 def event_update(request, pk):
     event = get_object_or_404(Event, pk=pk)
 
@@ -104,7 +107,8 @@ def event_update(request, pk):
     return render(request, 'event_create.html', context)
 
 
-@login_required(login_url='/authentication/login/')
+@login_required(login_url='/login/')
+@admin_only
 def event_delete(request, pk):
     event = get_object_or_404(Event, pk=pk)
     if request.method == 'POST':
@@ -130,7 +134,8 @@ def show_event_json(request):
     # No need for safe=False if the top-level object is a list (which it is here).
     return JsonResponse(data_list, safe=False)
 
-@login_required(login_url='/authentication/login/')
+
+@login_required(login_url='/login/')
 def my_events_json(request):
     # Ambil semua event yang dibuat user yang login
     events = Event.objects.filter(created_by=request.user).order_by('-tanggal')
@@ -145,7 +150,7 @@ def my_events_json(request):
     return JsonResponse(data_list, safe=False)
 
 #tambahan
-@login_required(login_url='/authentication/login')
+@login_required(login_url='/login')
 def show_user_products(request):
     """
     Menampilkan daftar produk yang hanya dibuat oleh pengguna yang sedang login.
@@ -166,7 +171,8 @@ def show_user_products(request):
 
     # Anda bisa menggunakan template yang sama jika strukturnya cocok
     return render(request, "main.html", context)
-@login_required(login_url='/authentication/login')
+
+@login_required(login_url='/login')
 def show_json_user_products(request):
     """
     Mengembalikan data produk dalam format JSON, HANYA untuk user yang login.
@@ -191,6 +197,8 @@ def show_json_user_products(request):
     return JsonResponse(data, safe=False)
 
 @csrf_exempt
+@login_required(login_url='/login/')
+@admin_only
 def create_event_flutter(request):
     if request.method == 'POST':
         data = json.loads(request.body)
