@@ -12,8 +12,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
 import json
 
-# tes pws
-raise Exception("SERVER MEMBACA FILE INI")
 
 # =========================
 # EVENT CRUD VIEWS
