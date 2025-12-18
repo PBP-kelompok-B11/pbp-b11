@@ -5,13 +5,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import UserProfile
 from django.contrib.auth.decorators import user_passes_test, login_required
-from django.http import HttpResponseForbidden
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
-# cuma admin (staff/superuser) yang boleh
+# --- CUSTOM DECORATOR LOGIC ---
+
 def check_is_admin(user):
+    # Admin adalah superuser ATAU user yang memiliki UserProfile dengan role 'admin'
     if user.is_superuser:
         return True
     
@@ -21,16 +20,16 @@ def check_is_admin(user):
     return False
 
 def admin_only(view_func):
-    decorated_view_funct = user_passes_test(check_is_admin, login_url='authentication:login_view')(view_func)
+    """Decorator untuk membatasi view hanya bagi admin kustom kita."""
+    decorated_view_funct = user_passes_test(
+        check_is_admin, 
+        login_url='authentication:login_view'
+    )(view_func)
     return decorated_view_funct
 
+# --- VIEWS ---
 @csrf_exempt
 def register_view(request):
-    if request.user.is_authenticated:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'success': True, 'redirect_url': ''})
-        return redirect('authentication:home_view')
-
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -41,45 +40,19 @@ def register_view(request):
         nomor_handphone = request.POST.get('nomor_handphone')
         role = request.POST.get('role')
 
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            if password != confirm_password:
-                return JsonResponse({'success': False, 'message': "Password tidak cocok."})
-
-            if User.objects.filter(username=username).exists():
-                return JsonResponse({'success': False, 'message': "Username sudah digunakan."})
-
-            user = User.objects.create_user(username=username, email=email)
-            user.set_password(password)
-            user.save()
-
-            # ✅ Simpan ke UserProfile
-            UserProfile.objects.create(
-                user=user,
-                alamat=alamat,
-                umur=umur,
-                nomor_handphone=nomor_handphone,
-                role=role,
-            )
-
-            return JsonResponse({
-                'success': True,
-                'message': "Akun berhasil dibuat! Silakan login.",
-                'redirect_url': '/login/'
-            })
-
-        # fallback non-AJAX
+        # Validasi
         if password != confirm_password:
-            messages.error(request, "Password tidak cocok.")
-            return redirect('authentication:register_view')
+            return JsonResponse({'success': False, 'message': "Password tidak cocok."}, status=400)
 
         if User.objects.filter(username=username).exists():
-            messages.error(request, "Username sudah digunakan.")
-            return redirect('authentication:register_view')
+            return JsonResponse({'success': False, 'message': "Username sudah digunakan."}, status=400)
 
+        # Buat User
         user = User.objects.create_user(username=username, email=email)
         user.set_password(password)
         user.save()
 
+        # Buat Profile
         UserProfile.objects.create(
             user=user,
             alamat=alamat,
@@ -88,17 +61,28 @@ def register_view(request):
             role=role,
         )
 
-        messages.success(request, "Akun berhasil dibuat! Silakan login.")
-        return redirect('authentication:login_view')
+        # JANGAN REDIRECT! Kembalikan JSON Sukses
+        return JsonResponse({
+            'success': True,
+            'message': "Akun berhasil dibuat! Silakan login.",
+        }, status=201)
 
+    # Hanya untuk GET request dari browser
     return render(request, 'register.html')
 
 @csrf_exempt
 def login_view(request):
-    # Kalau udah login, langsung ke home
+    # 1. Cek apakah user sudah login
     if request.user.is_authenticated:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'success': True, 'redirect_url': ''})
+        # Jika request POST (dari Flutter/AJAX), langsung balas JSON, jangan REDIRECT
+        if request.method == 'POST':
+            return JsonResponse({
+                'success': True,
+                'message': f"Halo {request.user.username}, Anda sudah login!",
+                'is_admin': check_is_admin(request.user),
+                'username': request.user.username,
+            })
+        # Jika buka lewat browser biasa (GET), baru boleh redirect
         return redirect('authentication:home_view')
 
     if request.method == 'POST':
@@ -109,49 +93,47 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-
-            # Kalau AJAX → balikin JSON
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                return JsonResponse({
-                    'success': True,
-                    'message': f"Halo {username}, selamat datang kembali!",
-                    'redirect_url': '',
-                    "is_staff" : user.is_staff,
-                    "username": user.username,
-                })
-
-            # Kalau normal → redirect biasa
-            messages.success(request, f"Halo {username}, selamat datang kembali!")
-            return redirect('authentication:home_view')
-
+            
+            # SELALU balas JSON untuk POST request
+            return JsonResponse({
+                'success': True,
+                'message': f"Halo {username}, selamat datang kembali!",
+                'is_admin': check_is_admin(user),
+                "username": user.username,
+            })
         else:
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                return JsonResponse({
-                    'success': False,
-                    'message': "Username atau password salah."
-                }, status=400)
+            # Balas JSON jika gagal
+            return JsonResponse({
+                'success': False,
+                'message': "Username atau password salah."
+            }, status=401)
 
-            messages.error(request, "Username atau password salah.")
-            return redirect('authentication:login_view')
-
+    # Ini hanya untuk browser (GET request)
     return render(request, 'login.html')
 
-
-@login_required
 @csrf_exempt
+# JANGAN pakai @login_required agar tidak kena redirect otomatis ke /accounts/login/
 def logout_view(request):
-    logout(request)
-    messages.success(request, "Kamu berhasil logout.")
-    return redirect('authentication:login_view')
-
+    if request.user.is_authenticated:
+        logout(request)
+        return JsonResponse({
+            "success": True,
+            "message": "Kamu berhasil logout."
+        }, status=200)
+    
+    # Jika user memang sudah tidak login, tetap kembalikan JSON sukses
+    return JsonResponse({
+        "success": True,
+        "message": "Sudah tidak dalam sesi login."
+    }, status=200)
 def home_view(request):
     return render(request, 'home.html')
 
 @login_required
 def api_check_role(request):
     user = request.user
-
-    role = "user"
+    role = "user" # Default
+    
     if user.is_superuser:
         role = "admin"
     elif hasattr(user, 'userprofile'):

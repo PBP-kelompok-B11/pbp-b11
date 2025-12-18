@@ -196,38 +196,58 @@ def show_json_user_products(request):
 
     return JsonResponse(data, safe=False)
 
+
 @csrf_exempt
-@login_required(login_url='/login/')
-@admin_only
 def create_event_flutter(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
+    if request.method != "POST":
+        return JsonResponse({
+            "status": "error",
+            "message": "Invalid method"
+        }, status=405)
 
-        lokasi = strip_tags(data.get('lokasi', ''))
-        tanggal = data.get('tanggal', None)  # string date, boleh None
-        tim_home = strip_tags(data.get('tim_home', ''))
-        tim_away = strip_tags(data.get('tim_away', ''))
-        skor_home = data.get('skor_home', None)
-        skor_away = data.get('skor_away', None)
+    # ⚠️ CookieRequest BUTUH LOGIN
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            "status": "error",
+            "message": "User belum login"
+        }, status=403)
 
-        # Sama seperti function create biasa
-        if tim_home and tim_away:
-            nama_event = f"{tim_home} vs {tim_away}"
-        else:
-            nama_event = "Event Tanpa Nama"
+    try:
+        data = request.POST  # ✅ INI YANG BENAR UNTUK FLUTTER
 
-        # Buat objek event baru
+        lokasi = strip_tags(data.get("lokasi", ""))
+        tanggal = data.get("tanggal")
+        tim_home = strip_tags(data.get("tim_home", ""))
+        tim_away = strip_tags(data.get("tim_away", ""))
+        skor_home = data.get("skor_home", "0")
+        skor_away = data.get("skor_away", "0")
+
+        nama_event = (
+            f"{tim_home} vs {tim_away}"
+            if tim_home and tim_away
+            else "Event Tanpa Nama"
+        )
+
         event = Event.objects.create(
             nama_event=nama_event,
             lokasi=lokasi,
             tanggal=tanggal if tanggal else None,
             tim_home=tim_home,
             tim_away=tim_away,
-            skor_home=int(skor_home) if skor_home not in [None, ""] else None,
-            skor_away=int(skor_away) if skor_away not in [None, ""] else None,
+            skor_home=int(skor_home),
+            skor_away=int(skor_away),
             created_by=request.user
         )
 
-        return JsonResponse({"status": "success", "id": event.id}, status=200)
+        return JsonResponse({
+            "status": "success",
+            "message": "Event berhasil dibuat",
+            "id": event.id
+        })
 
-    return JsonResponse({"status": "error", "message": "Invalid method"}, status=405)
+    except Exception as e:
+        print("ERROR CREATE EVENT:", e)
+        return JsonResponse({
+            "status": "error",
+            "message": str(e)
+        }, status=500)
