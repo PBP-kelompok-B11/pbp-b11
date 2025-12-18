@@ -115,7 +115,9 @@ def login_view(request):
                 return JsonResponse({
                     'success': True,
                     'message': f"Halo {username}, selamat datang kembali!",
-                    'redirect_url': ''
+                    'redirect_url': '',
+                    "is_staff" : user.is_staff,
+                    "username": user.username,
                 })
 
             # Kalau normal → redirect biasa
