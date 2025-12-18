@@ -19,4 +19,6 @@ urlpatterns = [
     path('players/<uuid:player_id>/edit/', admin_views.player_edit, name='admin_player_edit'),
     path('players/<uuid:player_id>/delete/', admin_views.player_delete, name='admin_player_delete'),
 
+    path('player/<uuid:player_id>/detailjson/json/', views.player_detail_json, name='player_detail_json'),
 ]
+

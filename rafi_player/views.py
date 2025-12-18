@@ -144,3 +144,43 @@ def delete_player(request, player_id):
     player = get_object_or_404(Player, pk=player_id)
     player.delete()
     return redirect('rafi_player:player_list') 
+
+def player_detail_json(request, player_id):
+    player = Player.objects.get(id=player_id)
+
+    data = {
+        "id": str(player.id),
+        "nama": player.nama,
+        "negara": player.negara,
+        "usia": player.usia,
+        "tinggi": player.tinggi,
+        "berat": player.berat,
+        "posisi": player.posisi,
+        "thumbnail": player.thumbnail,
+        # Achievement
+        "achievement": [
+            {"deskripsi": a.deskripsi, "tahun": a.tahun} 
+            for a in player.prestasi.all()
+        ],
+        # Season Stats
+        "season_stats": [
+            {
+                "musim": s.musim,
+                "pertandingan": s.pertandingan,
+                "gol": s.gol,
+                "assist": s.assist,
+                "kartu": s.kartu
+            } 
+            for s in player.statistik_musim.all()
+        ],
+        # Career History
+        "career_history": [
+            {
+                "klub": c.klub,
+                "tahun_mulai": c.tahun_mulai,
+                "tahun_selesai": c.tahun_selesai
+            } 
+            for c in player.riwayat_karier.all()
+        ],
+    }
+    return JsonResponse(data)
