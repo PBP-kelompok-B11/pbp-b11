@@ -5,12 +5,12 @@ from .forms import EventForm
 from django.core import serializers
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
+from authentication.views import admin_only
 from comments.models import Comments
 from comments.forms import CommentForm
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
 import json
-from authentication.views import admin_only
 
 # =========================
 # EVENT CRUD VIEWS
