@@ -10,6 +10,7 @@ from comments.forms import CommentForm
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
 import json
+from authentication.views import admin_only
 
 # =========================
 # EVENT CRUD VIEWS
