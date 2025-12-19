@@ -15,4 +15,5 @@ urlpatterns = [
     path('xml/<str:product_id>/', views.show_xml_by_id, name='show_xml_by_id'),
     path('json/<str:product_id>/', views.show_json_by_id, name='show_json_by_id'),
     path('proxy-image/', views.proxy_image, name='proxy_image'),
+    path('add-flutter/', views.add_media_flutter, name='add_media_flutter'),
 ]
