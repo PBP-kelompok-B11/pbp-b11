@@ -14,4 +14,5 @@ urlpatterns = [
     path('json/', views.show_event_json, name='show_event_json'), # daftar event dalam json
     path('create-flutter/', views.create_event_flutter, name='create_event_flutter'),
     path('my-events-json/', views.my_events_json, name='my_events_json'),
+    path('<int:pk>/edit-flutter/', views.edit_event_flutter, name='edit_event_flutter'),
 ]

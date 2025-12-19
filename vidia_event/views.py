@@ -251,3 +251,30 @@ def create_event_flutter(request):
             "status": "error",
             "message": str(e)
         }, status=500)
+
+@csrf_exempt
+def edit_event_flutter(request, pk):
+    if request.method == 'POST':
+        event = get_object_or_404(Event, pk=pk)
+        
+        # Cek izin (opsional tapi disarankan)
+        if not (request.user == event.created_by or request.user.is_staff):
+            return JsonResponse({"status": "error", "message": "Forbidden"}, status=403)
+
+        data = request.POST
+        event.lokasi = strip_tags(data.get("lokasi", event.lokasi))
+        event.tanggal = data.get("tanggal", event.tanggal)
+        event.tim_home = strip_tags(data.get("tim_home", event.tim_home))
+        event.tim_away = strip_tags(data.get("tim_away", event.tim_away))
+        
+        skor_home = data.get("skor_home")
+        skor_away = data.get("skor_away")
+        if skor_home: event.skor_home = int(skor_home)
+        if skor_away: event.skor_away = int(skor_away)
+
+        event.nama_event = f"{event.tim_home} vs {event.tim_away}"
+        event.save()
+
+        return JsonResponse({"status": "success", "message": "Event berhasil diperbarui"})
+    
+    return JsonResponse({"status": "error", "message": "Method not allowed"}, status=405)

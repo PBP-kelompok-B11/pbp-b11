@@ -93,33 +93,25 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-<<<<<<< HEAD
             
-            # SELALU balas JSON untuk POST request
-            return JsonResponse({
-                'success': True,
-                'message': f"Halo {username}, selamat datang kembali!",
-                'is_admin': check_is_admin(user),
-                "username": user.username,
-            })
-=======
-
-            # Kalau AJAX → balikin JSON
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            # Mendeteksi apakah request datang dari AJAX/Flutter atau Browser biasa
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.POST.get('is_flutter') == 'true':
                 return JsonResponse({
                     'success': True,
                     'message': f"Halo {username}, selamat datang kembali!",
-                    'redirect_url': '',
-                    "is_staff" : user.is_staff,
-                    "username": user.username,
-                    "user_id": user.id,
+                    'is_admin': check_is_admin(user),
+                    'username': user.username,
+                    'user_id': user.id,
                 })
-
-            # Kalau normal → redirect biasa
+            
+            # Fallback untuk login via web biasa
             messages.success(request, f"Halo {username}, selamat datang kembali!")
-            return redirect('authentication:home_view')
-
->>>>>>> 4a185a405e7ab7eedc5566a52cbab02ddcab34da
+            return JsonResponse({ # Tetap kirim JSON agar Flutter tidak error
+                'success': True,
+                'message': f"Halo {username}, selamat datang kembali!",
+                'is_admin': check_is_admin(user),
+                'username': user.username,
+            })
         else:
             # Balas JSON jika gagal
             return JsonResponse({
@@ -133,18 +125,13 @@ def login_view(request):
 @csrf_exempt
 # JANGAN pakai @login_required agar tidak kena redirect otomatis ke /accounts/login/
 def logout_view(request):
-    if request.user.is_authenticated:
-        logout(request)
-        return JsonResponse({
-            "success": True,
-            "message": "Kamu berhasil logout."
-        }, status=200)
+    logout(request) # Fungsi bawaan Django untuk hapus session
     
-    # Jika user memang sudah tidak login, tetap kembalikan JSON sukses
     return JsonResponse({
-        "success": True,
-        "message": "Sudah tidak dalam sesi login."
+        "status": True, # Gunakan 'status' agar terbaca pbp_django_auth
+        "message": "Kamu berhasil logout."
     }, status=200)
+
 def home_view(request):
     return render(request, 'home.html')
 
