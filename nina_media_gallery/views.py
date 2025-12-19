@@ -12,10 +12,25 @@ from authentication.views import admin_only
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
-
-
+from django.views.decorators.http import require_POST
 
 # Create your views here.
+@csrf_exempt
+@require_POST
+def increment_viewers(request, media_id):   # buat di flutter
+    try:
+        media = Media.objects.get(pk=media_id)
+        media.increment_views() 
+        return JsonResponse({
+            "status": "success",
+            "viewers": media.viewers
+    }, status=200)
+
+    except Media.DoesNotExist:
+        return JsonResponse({
+            "status": "error",
+            "message": "Media not found"
+        }, status=404)
 
 def gallery_list(request):
     media_list = Media.objects.all()
