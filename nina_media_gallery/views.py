@@ -12,10 +12,25 @@ from authentication.views import admin_only
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
-
-
+from django.views.decorators.http import require_POST
 
 # Create your views here.
+@csrf_exempt
+@require_POST
+def increment_viewers(request, media_id):   # buat di flutter
+    try:
+        media = Media.objects.get(pk=media_id)
+        media.increment_views() 
+        return JsonResponse({
+            "status": "success",
+            "viewers": media.viewers
+    }, status=200)
+
+    except Media.DoesNotExist:
+        return JsonResponse({
+            "status": "error",
+            "message": "Media not found"
+        }, status=404)
 
 def gallery_list(request):
     media_list = Media.objects.all()
@@ -206,16 +221,59 @@ def add_media_flutter(request):
         deskripsi = strip_tags(data.get("deskripsi", ""))  # Strip HTML tags
         category = data.get("category", "")
         thumbnail = data.get("thumbnail", "")
-        user = request.user
         
         new_media = Media(
             deskripsi=deskripsi,
             category=category,
             thumbnail=thumbnail,
-            user=user
         )
         new_media.save()
         
         return JsonResponse({"status": "success"}, status=200)
     else:
         return JsonResponse({"status": "error"}, status=401)
+
+@csrf_exempt
+def delete_media_flutter(request, id):
+    if request.method == 'DELETE':
+        try:
+            media = Media.objects.get(pk=id)
+            media.delete()
+            return JsonResponse({
+                "status": "success",
+                "message": "Successfully deleted media"
+            }, status=200)
+        except Media.DoesNotExist:
+            return JsonResponse({
+                "status": "error",
+                "message": "Media isn't found"
+            }, status=400)
+
+@csrf_exempt
+def edit_media_flutter(request, id):
+    if request.method in ['PUT', 'PATCH']:
+        try:
+            media = Media.objects.get(pk=id)
+            data = json.loads(request.body)
+
+            media.deskripsi = data.get('deskripsi', media.deskripsi)
+            media.category = data.get('category', media.category)
+            media.thumbnail = data.get('thumbnail', media.thumbnail)
+            media.save()
+
+            return JsonResponse({
+                "status": "success",
+                "media": {
+                    "id": str(media.id),
+                    "deskripsi": media.deskripsi,
+                    "category": media.category,
+                    "thumbnail": media.thumbnail,
+                    "viewers": media.viewers,
+                    'created_at': media.created_at.isoformat(),
+                }
+            }, status=200)
+        except Media.DoesNotExist:
+            return JsonResponse({
+                "status": "Not found",
+            }, status=400)
+    return JsonResponse({"error": "Invalid method"}, status=405)

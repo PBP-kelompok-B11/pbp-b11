@@ -93,6 +93,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
+<<<<<<< HEAD
             
             # SELALU balas JSON untuk POST request
             return JsonResponse({
@@ -101,6 +102,24 @@ def login_view(request):
                 'is_admin': check_is_admin(user),
                 "username": user.username,
             })
+=======
+
+            # Kalau AJAX → balikin JSON
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': True,
+                    'message': f"Halo {username}, selamat datang kembali!",
+                    'redirect_url': '',
+                    "is_staff" : user.is_staff,
+                    "username": user.username,
+                    "user_id": user.id,
+                })
+
+            # Kalau normal → redirect biasa
+            messages.success(request, f"Halo {username}, selamat datang kembali!")
+            return redirect('authentication:home_view')
+
+>>>>>>> 4a185a405e7ab7eedc5566a52cbab02ddcab34da
         else:
             # Balas JSON jika gagal
             return JsonResponse({

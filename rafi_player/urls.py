@@ -20,5 +20,10 @@ urlpatterns = [
     path('players/<uuid:player_id>/delete/', admin_views.player_delete, name='admin_player_delete'),
 
     path('player/<uuid:player_id>/detailjson/json/', views.player_detail_json, name='player_detail_json'),
+    path('player/create/flutter/', views.create_player_entry, name='create_player_entry_flutter'),
+    path("player/<uuid:player_id>/edit/flutter/", views.edit_player_entry, name='edit_player_entry'),
+    path("player/<uuid:player_id>/delete/flutter/", views.delete_player_entry, name= 'delete_player_entry'),
+
+
 ]
 
