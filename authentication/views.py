@@ -118,6 +118,7 @@ def login_view(request):
                     'redirect_url': '',
                     "is_staff" : user.is_staff,
                     "username": user.username,
+                    "user_id": user.id,
                 })
 
             # Kalau normal → redirect biasa

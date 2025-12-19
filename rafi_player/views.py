@@ -184,3 +184,54 @@ def player_detail_json(request, player_id):
         ],
     }
     return JsonResponse(data)
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.utils.html import strip_tags
+import json
+from .models import Player, Achievement, SeasonStats, CareerHistory
+from django.contrib.auth.models import User
+
+@csrf_exempt
+def create_player_entry(request):
+    if request.method != 'POST':
+        return JsonResponse(
+            {"status": "error", "message": "Method not allowed"},
+            status=405
+        )
+
+    try:
+        data = json.loads(request.body)
+
+        player = Player.objects.create(
+            nama=strip_tags(data.get("nama", "")),
+            negara=strip_tags(data.get("negara", "")),
+            usia=int(data.get("usia", 0)),
+            tinggi=float(data.get("tinggi", 0)),
+            berat=float(data.get("berat", 0)),
+            posisi=strip_tags(data.get("posisi", "")),
+            thumbnail=data.get("thumbnail") or "",
+            user=request.user if request.user.is_authenticated else None,
+        )
+
+        # Achievement
+        for ach in data.get("achievement", []):
+            Achievement.objects.create(player=player, **ach)
+
+        # Season stats
+        for stat in data.get("season_stats", []):
+            SeasonStats.objects.create(player=player, **stat)
+
+        # Career history
+        for career in data.get("career_history", []):
+            CareerHistory.objects.create(player=player, **career)
+
+        return JsonResponse({"status": "success"}, status=200)
+
+    except Exception as e:
+        return JsonResponse(
+            {"status": "error", "message": str(e)},
+            status=400
+        )
+
+
