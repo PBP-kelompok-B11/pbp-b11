@@ -12,10 +12,19 @@ from django.utils.html import strip_tags
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse
 import json
+import os
+from django.http import FileResponse, Http404
 
-# =========================
-# EVENT CRUD VIEWS (WEB)
-# =========================
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+LOGO_DIR = os.path.join(BASE_DIR, 'vidia_event', 'data', 'logos')
+
+def club_logo(request, filename):
+    file_path = os.path.join(LOGO_DIR, filename)
+
+    if not os.path.exists(file_path):
+        raise Http404("Logo not found")
+
+    return FileResponse(open(file_path, 'rb'), content_type='image/png')
 
 def event_list(request):
     """Menampilkan daftar semua event sepak bola."""
