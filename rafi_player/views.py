@@ -19,6 +19,8 @@ from authentication.views import admin_only
 from comments.models import Comments
 from comments.forms import CommentForm
 
+from django.http import JsonResponse, HttpResponseNotAllowed
+
 @csrf_exempt
 @login_required(login_url='/login/')
 @admin_only
@@ -234,4 +236,45 @@ def create_player_entry(request):
             status=400
         )
 
+@csrf_exempt
+def edit_player_entry(request, player_id):
+    if request.method != "PUT":
+        return HttpResponseNotAllowed(["PUT"])
 
+    try:
+        player = Player.objects.get(id=player_id)
+    except Player.DoesNotExist:
+        return JsonResponse({"error": "Player not found"}, status=404)
+
+    data = json.loads(request.body)
+
+    player.nama = data.get("nama", player.nama)
+    player.posisi = data.get("posisi", player.posisi)
+    player.negara = data.get("negara", player.negara)
+    player.tinggi = data.get("tinggi", player.tinggi)
+    player.berat = data.get("berat", player.berat)
+    player.usia = data.get("usia", player.usia)
+    player.thumbnail = data.get("thumbnail", player.thumbnail)
+
+    player.save()
+
+    return JsonResponse({
+        "message": "Player updated successfully"
+    })
+
+
+@csrf_exempt
+def delete_player_entry(request, player_id):
+    if request.method != "DELETE":
+        return HttpResponseNotAllowed(["DELETE"])
+
+    try:
+        player = Player.objects.get(id=player_id)
+    except Player.DoesNotExist:
+        return JsonResponse({"error": "Player not found"}, status=404)
+
+    player.delete()
+
+    return JsonResponse({
+        "message": "Player deleted successfully"
+    })
