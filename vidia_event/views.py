@@ -1,7 +1,6 @@
-from django.http import HttpResponseForbidden, JsonResponse
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Event
-from .forms import EventForm
 from django.core import serializers
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
@@ -10,6 +9,8 @@ from comments.models import Comments
 from comments.forms import CommentForm
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
+from django.core import serializers
+from django.http import HttpResponse, JsonResponse
 import json
 
 # =========================
@@ -186,23 +187,30 @@ def show_event_json(request):
         })
     return JsonResponse(result, safe=False)
 
-@login_required(login_url='/login/')
+@csrf_exempt
 def my_events_json(request):
-    """Event milik user yang sedang login."""
+    if not request.user.is_authenticated:
+        return JsonResponse({"status": "error", "message": "Not authenticated"}, status=403)
+
+    # Ambil event milik user yang sedang login
     events = Event.objects.filter(created_by=request.user).order_by('-tanggal')
+    
     result = []
     for event in events:
         result.append({
+            "model": "vidia_event.event", # Sesuai default model Flutter kamu
             "pk": event.pk,
             "fields": {
                 "nama_event": event.nama_event,
                 "lokasi": event.lokasi,
-                "tanggal": event.tanggal,
+                "tanggal": event.tanggal.isoformat(),
                 "tim_home": event.tim_home,
                 "tim_away": event.tim_away,
-                "skor_home": event.skor_home,
-                "skor_away": event.skor_away,
-                "username": event.created_by.username if event.created_by else "Unknown",
+                "skor_home": event.skor_home, # Bisa null
+                "skor_away": event.skor_away, # Bisa null
+                "created_by": event.created_by.id if event.created_by else None,
+                "username": request.user.username, 
             }
         })
+
     return JsonResponse(result, safe=False)

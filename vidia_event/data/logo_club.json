@@ -1,0 +1,22 @@
+[
+  { "name": "Arsenal", "logo_url": "https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg" },
+  { "name": "AFC Bournemouth", "logo_url": "https://upload.wikimedia.org/wikipedia/en/e/e5/AFC_Bournemouth_%282013%29.svg" },
+  { "name": "Brighton & Hove Albion", "logo_url": "https://upload.wikimedia.org/wikipedia/en/f/fd/Brighton_%26_Hove_Albion_logo.svg" },
+  { "name": "Burnley", "logo_url": "https://upload.wikimedia.org/wikipedia/en/6/62/Burnley_F.C._Logo.svg" },
+  { "name": "Cardiff City", "logo_url": "https://upload.wikimedia.org/wikipedia/en/3/3c/Cardiff_City_crest.svg" },
+  { "name": "Chelsea", "logo_url": "https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg" },
+  { "name": "Crystal Palace", "logo_url": "https://upload.wikimedia.org/wikipedia/en/a/a2/Crystal_Palace_FC_logo_(2022).svg" },
+  { "name": "Everton", "logo_url": "https://upload.wikimedia.org/wikipedia/en/7/7c/Everton_FC_logo.svg" },
+  { "name": "Fulham", "logo_url": "https://upload.wikimedia.org/wikipedia/en/3/3f/Fulham_FC_%28shield%29.svg" },
+  { "name": "Huddersfield Town", "logo_url": "https://upload.wikimedia.org/wikipedia/en/7/7d/Huddersfield_Town_A.F.C._logo.svg" },
+  { "name": "Leicester City", "logo_url": "https://upload.wikimedia.org/wikipedia/en/2/2d/Leicester_City_crest.svg" },
+  { "name": "Liverpool", "logo_url": "https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg" },
+  { "name": "Manchester City", "logo_url": "https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg" },
+  { "name": "Manchester United", "logo_url": "https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg" },
+  { "name": "Newcastle United", "logo_url": "https://upload.wikimedia.org/wikipedia/en/5/56/Newcastle_United_Logo.svg" },
+  { "name": "Southampton", "logo_url": "https://upload.wikimedia.org/wikipedia/en/c/c9/Southampton_FC.svg" },
+  { "name": "Tottenham Hotspur", "logo_url": "https://upload.wikimedia.org/wikipedia/en/b/b4/Tottenham_Hotspur.svg" },
+  { "name": "Watford", "logo_url": "https://upload.wikimedia.org/wikipedia/en/e/e2/Watford.svg" },
+  { "name": "West Ham United", "logo_url": "https://upload.wikimedia.org/wikipedia/en/c/c2/West_Ham_United_FC_logo.svg" },
+  { "name": "Wolverhampton Wanderers", "logo_url": "https://upload.wikimedia.org/wikipedia/en/f/fc/Wolverhampton_Wanderers.svg" }
+]
