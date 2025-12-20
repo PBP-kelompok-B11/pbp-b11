@@ -199,13 +199,12 @@ def api_search(request):
     search_type = request.GET.get('type', 'players').lower()
 
     if not query:
-        return JsonResponse(
-            {"error": "q parameter required"},
-            status=400
-        )
+        return JsonResponse({'error': 'q parameter required'}, status=400)
 
-    results = []
-    jenis = ""
+    # Variabel penampung
+    data_key = ""
+    final_results = []
+    jenis_history = ""
 
     if search_type == 'players':
         qs = Player.objects.filter(
@@ -213,8 +212,9 @@ def api_search(request):
             Q(posisi__icontains=query) |
             Q(negara__icontains=query)
         )
-        results = PlayerSerializer(qs, many=True).data
-        jenis = 'pemain'
+        final_results = PlayerSerializer(qs, many=True).data
+        data_key = "players" # Flutter nyari key 'players'
+        jenis_history = 'pemain'
 
     elif search_type == 'clubs':
         qs = Club.objects.filter(
@@ -222,32 +222,48 @@ def api_search(request):
             Q(negara__icontains=query) |
             Q(stadion__icontains=query)
         )
-        results = ClubSerializer(qs, many=True).data
-        jenis = 'klub'
+        final_results = ClubSerializer(qs, many=True).data
+        data_key = "clubs" # Flutter nyari key 'clubs'
+        jenis_history = 'klub'
 
     elif search_type == 'events':
-        qs = Event.objects.filter(
-            Q(nama_event__icontains=query)
-        )
-        results = EventSerializer(qs, many=True).data
-        jenis = 'event'
+        qs = Event.objects.filter(nama_event__icontains=query)
+        data_key = "events" # Flutter nyari key 'events'
+        jenis_history = 'event'
+        
+        # Samakan persis dengan format yang "Pernah Berhasil"
+        final_results = [
+            {
+                "model": "vidia_event.event",
+                "pk": e.id,
+                "fields": {
+                    "nama_event": e.nama_event,
+                    "lokasi": e.lokasi,
+                    "tanggal": e.tanggal.isoformat() if e.tanggal else "",
+                    "tim_home": e.tim_home,
+                    "tim_away": e.tim_away,
+                    "skor_home": e.skor_home,
+                    "skor_away": e.skor_away,
+                    "logo_home": e.logo_home,
+                    "logo_away": e.logo_away,
+                }
+            } for e in qs
+        ]
 
     else:
-        return JsonResponse(
-            {"error": "Invalid type"},
-            status=400
-        )
+        return JsonResponse({'error': 'Invalid type'}, status=400)
 
-    save_history_if_login(request, query, jenis)
+    save_history_if_login(request, query, jenis_history)
 
+    # KUNCI PERBAIKAN: Kirim dua-duanya agar aman
+    # Kirim lewat 'results' DAN lewat key spesifik (players/clubs/events)
     return JsonResponse({
         "query": query,
         "type": search_type,
-        "count": len(results),
-        "results": results
+        "count": len(final_results),
+        "results": final_results, # Standar umum
+        data_key: final_results,  # Key spesifik (players/clubs/events)
     })
-
-
 
 # 📌 API Get History (ONLY LOGIN)
 @login_required
