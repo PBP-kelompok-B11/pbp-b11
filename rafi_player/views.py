@@ -312,29 +312,53 @@ def delete_player_entry(request, player_id):
         "message": "Player deleted successfully"
     })
 
-from django.http import HttpResponse 
-import requests 
+from django.http import HttpResponse
+import requests
 from urllib.parse import unquote
 
 def proxy_image(request):
     image_url = request.GET.get('url')
     if not image_url:
-        return HttpResponse('No URL provided', status=400)
+        return HttpResponse("No URL provided", status=400)
 
+    # decode URL dari Flutter
     image_url = unquote(image_url)
 
     try:
-        r = requests.get(image_url, stream=True, timeout=10)
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/120.0.0.0 Safari/537.36"
+            ),
+            "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Referer": image_url,
+        }
+
+        r = requests.get(
+            image_url,
+            headers=headers,
+            stream=True,
+            timeout=10
+        )
+
+        # 🔍 DEBUG LOG (lihat di terminal server)
+        print("IMAGE URL:", image_url)
+        print("STATUS CODE:", r.status_code)
+
         r.raise_for_status()
 
         response = HttpResponse(
             r.content,
-            content_type=r.headers.get('Content-Type', 'image/jpeg')
+            content_type=r.headers.get("Content-Type", "image/jpeg")
         )
 
+        # CORS untuk Flutter Web
         response["Access-Control-Allow-Origin"] = "*"
 
         return response
 
-    except requests.RequestException as e:
-        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+    except Exception as e:
+        print("ERROR:", e)
+        return HttpResponse(f"Error fetching image: {str(e)}", status=500)
