@@ -312,21 +312,29 @@ def delete_player_entry(request, player_id):
         "message": "Player deleted successfully"
     })
 
+from django.http import HttpResponse 
+import requests 
+from urllib.parse import unquote
 
 def proxy_image(request):
     image_url = request.GET.get('url')
     if not image_url:
         return HttpResponse('No URL provided', status=400)
-    
+
+    image_url = unquote(image_url)
+
     try:
-        # Fetch image from external source
-        response = requests.get(image_url, timeout=10)
-        response.raise_for_status()
-        
-        # Return the image with proper content type
-        return HttpResponse(
-            response.content,
-            content_type=response.headers.get('Content-Type', 'image/jpeg')
+        r = requests.get(image_url, stream=True, timeout=10)
+        r.raise_for_status()
+
+        response = HttpResponse(
+            r.content,
+            content_type=r.headers.get('Content-Type', 'image/jpeg')
         )
+
+        response["Access-Control-Allow-Origin"] = "*"
+
+        return response
+
     except requests.RequestException as e:
         return HttpResponse(f'Error fetching image: {str(e)}', status=500)
