@@ -321,7 +321,7 @@ def proxy_image(request):
     
     try:
         # Fetch image from external source
-        response = requests.get(image_url, timeout=10)
+        response = requests.get(image_url, timeout=30)
         response.raise_for_status()
         
         # Return the image with proper content type
