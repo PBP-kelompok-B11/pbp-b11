@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.urls import reverse
 from .models import UserProfile
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -103,6 +104,7 @@ def login_view(request):
                     'is_admin': check_is_admin(user),
                     'username': user.username,
                     'user_id': user.id,
+                    'redirect_url': reverse('authentication:home_view'),
                 })
             
             # 2. JIKA DARI WEB BIASA, REDIRECT KE HOME
@@ -137,17 +139,17 @@ def logout_view(request):
 def home_view(request):
     return render(request, 'home.html')
 
-@login_required
-def api_check_role(request):
-    user = request.user
-    role = "user" # Default
+# @login_required
+# def api_check_role(request):
+#     user = request.user
+#     role = "user" # Default
     
-    if user.is_superuser:
-        role = "admin"
-    elif hasattr(user, 'userprofile'):
-        role = user.userprofile.role
+#     if user.is_superuser:
+#         role = "admin"
+#     elif hasattr(user, 'userprofile'):
+#         role = user.userprofile.role
 
-    return JsonResponse({"role": role})
+#     return JsonResponse({"role": role})
 
 
 @csrf_exempt
@@ -169,14 +171,17 @@ def api_login(request):
     return JsonResponse({
         'success': True,
         'username': user.username,
-        'is_admin': check_is_admin(user),
+        'is_admin': check_is_admin(user),  # 🔥 SUMBER KEBENARAN
     })
+
 
 @csrf_exempt
 def api_logout(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+
     logout(request)
     return JsonResponse({
         'success': True,
         'message': 'Logout berhasil'
     })
-
