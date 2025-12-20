@@ -189,28 +189,21 @@ def api_search(request):
         return JsonResponse({'error': 'q parameter required'}, status=400)
 
     if search_type == 'players':
-        results = Player.objects.filter(
-            Q(nama__icontains=query) |
-            Q(posisi__icontains=query) |
-            Q(negara__icontains=query)
-        )
+        results = Player.objects.filter(nama_event__icontains=query)
         jenis = 'pemain'
         data_key = 'players'
         data = [
-            {"id": p.id, "nama": p.nama, "posisi": p.posisi, "negara": p.negara}
+            {"user": p.user,"id": p.id, "nama": p.nama, "negara": p.negara, "usia": p.usia, "tinggi": p.tinggi,
+             "berat": p.berat, "posisi": p.posisi, "thumbnail": p.thumbnail, "comment": p.comments}
             for p in results
         ]
 
     elif search_type == 'clubs':
-        results = Club.objects.filter(
-            Q(nama__icontains=query) |
-            Q(negara__icontains=query) |
-            Q(stadion__icontains=query)
-        )
+        results = Club.objects.filter(nama_event__icontains=query)
         jenis = 'klub'
         data_key = 'clubs'
         data = [
-            {"id": c.id, "nama": c.nama, "negara": c.negara}
+            {"nama": c.nama, "negara": c.negara, "stadion": c.stadion, "tahun_berdiri": c.tahun_berdiri, "url_gambar": c.url_gambar, "comment": c.comments}
             for c in results
         ]
 
