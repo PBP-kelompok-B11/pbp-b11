@@ -3,16 +3,20 @@ from django.contrib.contenttypes.fields import GenericRelation
 from comments.models import Comments
 from django.contrib.auth.models import User
 from datetime import date
-
 class Event(models.Model):
-    
-    nama_event = models.CharField(max_length=100)  # Name of the event (e.g., Premier League)
+    nama_event = models.CharField(max_length=100)
     lokasi = models.CharField(max_length=100)
     tanggal = models.DateField(default=date.today)
 
-    # New fields based on spreadsheet
+    # Teams (String)
     tim_home = models.CharField(max_length=100, null=True, blank=True)
     tim_away = models.CharField(max_length=100, null=True, blank=True)
+
+    # Logos (Sekarang simpan URL dari internet)
+    # Gunakan CharField agar fleksibel menyimpan URL panjang
+    logo_home = models.CharField(max_length=500, null=True, blank=True)
+    logo_away = models.CharField(max_length=500, null=True, blank=True)
+
     skor_home = models.PositiveIntegerField(null=True, blank=True)
     skor_away = models.PositiveIntegerField(null=True, blank=True)
 

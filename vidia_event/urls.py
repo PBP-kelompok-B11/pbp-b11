@@ -15,5 +15,5 @@ urlpatterns = [
     path('create-flutter/', views.create_event_flutter, name='create_event_flutter'),
     path('my-events-json/', views.my_events_json, name='my_events_json'),
     path('<int:pk>/edit-flutter/', views.edit_event_flutter, name='edit_event_flutter'),
-    path('logos/<str:filename>/', views.club_logo, name='club_logo'),
+    path('club-logo/<str:filename>/', views.club_logo, name='club_logo'),
 ]
