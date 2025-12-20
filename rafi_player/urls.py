@@ -25,5 +25,8 @@ urlpatterns = [
     path("player/<uuid:player_id>/delete/flutter/", views.delete_player_entry, name= 'delete_player_entry'),
 
 
+    path('proxy-image/', views.proxy_image, name='proxy_image')
+
+
 ]
 
