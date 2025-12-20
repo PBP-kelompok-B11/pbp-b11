@@ -8,6 +8,8 @@ from rafi_player.models import Player
 from vidia_event.models import Event
 from ibeth_clubs.models import Club
 from django.contrib.contenttypes.models import ContentType
+from django.http import JsonResponse
+from django.utils.timezone import localtime
 
 @login_required(login_url='/login/')
 def add_comment_to_event(request, event_id):
@@ -100,3 +102,33 @@ def delete_comment(request, comment_id):
     comment = get_object_or_404(Comments, id=comment_id, user=request.user)
     comment.delete()
     return redirect(request.META.get('HTTP_REFERER', '/'))
+
+def player_comments_json(request, player_id):
+    player = get_object_or_404(Player, pk=player_id)
+    content_type = ContentType.objects.get_for_model(Player)
+
+    comments = Comments.objects.filter(
+        content_type=content_type,
+        object_id=player.id
+    ).select_related('user').order_by('-tanggal')
+
+    return JsonResponse({
+        "target": {
+            "type": "player",
+            "id": player.id,
+            "name": player.nama,
+        },
+        "comments": [
+            {
+                "id": c.id,
+                "user": {
+                    "id": c.user.id,
+                    "username": c.user.username,
+                },
+                "isi_komentar": c.isi_komentar,
+                "tanggal": localtime(c.tanggal).isoformat(),
+                "can_edit": request.user.is_authenticated and request.user == c.user
+            }
+            for c in comments
+        ]
+    })

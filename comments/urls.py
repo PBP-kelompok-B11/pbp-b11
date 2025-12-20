@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import comment_list, add_comment_to_event, edit_comment, delete_comment, add_comment_to_club, add_comment_to_player
+from .views import comment_list, add_comment_to_event, edit_comment, delete_comment, add_comment_to_club, add_comment_to_player, player_comments_json
 
 app_name = 'comments'
 
@@ -10,4 +10,5 @@ urlpatterns = [
     path('event/<int:event_id>/add/', add_comment_to_event, name='add_comment_to_event'),
     path('club/<int:club_id>/add/', add_comment_to_club, name='add_comment_to_club'),
     path('player/<uuid:player_id>/add/', add_comment_to_player, name='add_comment_to_player'),
+    path('json/player/<uuid:player_id>/', player_comments_json),
 ]
