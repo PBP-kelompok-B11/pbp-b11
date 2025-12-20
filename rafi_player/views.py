@@ -21,6 +21,8 @@ from comments.forms import CommentForm
 
 from django.http import JsonResponse, HttpResponseNotAllowed
 
+import requests
+
 @csrf_exempt
 @login_required(login_url='/login/')
 @admin_only
