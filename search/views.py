@@ -10,6 +10,8 @@ from django.core import serializers
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_http_methods
 
+from ibeth_clubs.serializers import ClubSerializer
+
 from .models import SearchQuery
 from rafi_player.models import Player
 from ibeth_clubs.models import Club
@@ -181,70 +183,70 @@ def save_history_if_login(request, query, jenis):
         )
 
 # 🔍 API Search
+from django.http import JsonResponse
+from django.db.models import Q
+
+from rafi_player.models import Player
+from ibeth_clubs.models import Club
+from vidia_event.models import Event
+
+from rafi_player.serializers import PlayerSerializer
+from ibeth_clubs.serializers import ClubSerializer
+from vidia_event.serializers import EventSerializer  # asumsi ada
+
 def api_search(request):
     query = request.GET.get('q', '').strip()
     search_type = request.GET.get('type', 'players').lower()
 
     if not query:
-        return JsonResponse({'error': 'q parameter required'}, status=400)
+        return JsonResponse(
+            {"error": "q parameter required"},
+            status=400
+        )
+
+    results = []
+    jenis = ""
 
     if search_type == 'players':
-        results = Player.objects.filter(nama_event__icontains=query)
+        qs = Player.objects.filter(
+            Q(nama__icontains=query) |
+            Q(posisi__icontains=query) |
+            Q(negara__icontains=query)
+        )
+        results = PlayerSerializer(qs, many=True).data
         jenis = 'pemain'
-        data_key = 'players'
-        data = [
-            {"user": p.user,"id": p.id, "nama": p.nama, "negara": p.negara, "usia": p.usia, "tinggi": p.tinggi,
-             "berat": p.berat, "posisi": p.posisi, "thumbnail": p.thumbnail, "comment": p.comments}
-            for p in results
-        ]
 
     elif search_type == 'clubs':
-        results = Club.objects.filter(nama_event__icontains=query)
+        qs = Club.objects.filter(
+            Q(nama__icontains=query) |
+            Q(negara__icontains=query) |
+            Q(stadion__icontains=query)
+        )
+        results = ClubSerializer(qs, many=True).data
         jenis = 'klub'
-        data_key = 'clubs'
-        data = [
-            {"nama": c.nama, "negara": c.negara, "stadion": c.stadion, "tahun_berdiri": c.tahun_berdiri, "url_gambar": c.url_gambar, "comment": c.comments}
-            for c in results
-        ]
 
     elif search_type == 'events':
-        results = Event.objects.filter(nama_event__icontains=query)
-
+        qs = Event.objects.filter(
+            Q(nama_event__icontains=query)
+        )
+        results = EventSerializer(qs, many=True).data
         jenis = 'event'
-        data_key = 'events'
-
-        data = [
-            {
-                "model": "vidia_event.event",
-                "pk": e.id,
-                "fields": {
-                    "nama_event": e.nama_event,
-                    "lokasi": e.lokasi,
-                    "tanggal": e.tanggal.isoformat(),
-                    "tim_home": e.tim_home,
-                    "tim_away": e.tim_away,
-                    "skor_home": e.skor_home,
-                    "skor_away": e.skor_away,
-                    "created_by": e.created_by_id,
-                    "username": e.created_by.username if e.created_by else "",
-                    "logo_home": e.logo_home,
-                    "logo_away": e.logo_away,
-                }
-            }
-            for e in results
-        ]
 
     else:
-        return JsonResponse({'error': 'Invalid type'}, status=400)
+        return JsonResponse(
+            {"error": "Invalid type"},
+            status=400
+        )
 
     save_history_if_login(request, query, jenis)
 
     return JsonResponse({
         "query": query,
         "type": search_type,
-        "count": len(data),
-        data_key: data
+        "count": len(results),
+        "results": results
     })
+
 
 
 # 📌 API Get History (ONLY LOGIN)
