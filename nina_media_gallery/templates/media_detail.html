@@ -255,16 +255,19 @@
     <div class="detail-card">
         <!-- Thumbnail Image -->
         <div class="thumbnail-detail">
-            {% if media.thumbnail %}
-                <img src="{{ media.thumbnail }}" 
-                     alt="{{ media.deskripsi }}"
-                     onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'placeholder-detail\'><svg style=\'width:128px;height:128px;color:#9ca3af\' fill=\'currentColor\' viewBox=\'0 0 20 20\'><path fill-rule=\'evenodd\' d=\'M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z\' clip-rule=\'evenodd\'/></svg></div>';">
-            {% else %}
-                <div class="placeholder-detail">
-                    <svg style="width:128px;height:128px;color:#9ca3af" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
-                    </svg>
+            {% if media.category == 'video' %}
+                <div class="video-container">
+                    <iframe 
+                        width="100%" 
+                        height="400" 
+                        src="https://www.youtube.com/embed/{{ video_id }}?rel=0" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
                 </div>
+            {% else %}
+                <img src="{{ media.thumbnail }}" alt="Media Image">
             {% endif %}
         </div>
 
