@@ -215,13 +215,29 @@ def api_search(request):
         ]
 
     elif search_type == 'events':
-        results = Event.objects.filter(
-            nama_event__icontains=query
-        )
+        results = Event.objects.filter(nama_event__icontains=query)
+
         jenis = 'event'
         data_key = 'events'
+
         data = [
-            {"id": e.id, "nama_event": e.nama_event}
+            {
+                "model": "vidia_event.event",
+                "pk": e.id,
+                "fields": {
+                    "nama_event": e.nama_event,
+                    "lokasi": e.lokasi,
+                    "tanggal": e.tanggal.isoformat(),
+                    "tim_home": e.tim_home,
+                    "tim_away": e.tim_away,
+                    "skor_home": e.skor_home,
+                    "skor_away": e.skor_away,
+                    "created_by": e.created_by_id,
+                    "username": e.created_by.username if e.created_by else "",
+                    "logo_home": e.logo_home,
+                    "logo_away": e.logo_away,
+                }
+            }
             for e in results
         ]
 
