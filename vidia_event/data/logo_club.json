@@ -1,0 +1,22 @@
+[
+  {"name":"Arsenal","logo_file":"static/arsenal.png"},
+  {"name":"AFC Bournemouth","logo_file":"static/logos/afc_bournemouth.png"},
+  {"name":"Brighton & Hove Albion","logo_file":"static/logos/brighton_hove_albion.png"},
+  {"name":"Burnley","logo_file":"static/logos/burnley.png"},
+  {"name":"Cardiff City","logo_file":"static/logos/cardiff_city.png"},
+  {"name":"Chelsea","logo_file":"static/logos/chelsea.png"},
+  {"name":"Crystal Palace","logo_file":"static/logos/crystal_palace.png"},
+  {"name":"Everton","logo_file":"static/logos/everton.png"},
+  {"name":"Fulham","logo_file":"static/logos/fulham.png"},
+  {"name":"Huddersfield Town","logo_file":"static/logos/huddersfield_town.png"},
+  {"name":"Leicester City","logo_file":"static/logos/leicester_city.png"},
+  {"name":"Liverpool","logo_file":"static/logos/liverpool.png"},
+  {"name":"Manchester City","logo_file":"static/logos/manchester_city.png"},
+  {"name":"Manchester United","logo_file":"static/logos/manchester_united.png"},
+  {"name":"Newcastle United","logo_file":"static/logos/newcastle_united.png"},
+  {"name":"Southampton","logo_file":"static/logos/southampton.png"},
+  {"name":"Tottenham Hotspur","logo_file":"static/logos/tottenham_hotspur.png"},
+  {"name":"Watford","logo_file":"static/logos/watford.png"},
+  {"name":"West Ham United","logo_file":"static/logos/west_ham_united.png"},
+  {"name":"Wolverhampton Wanderers","logo_file":"static/logos/wolverhampton_wanderers.png"}
+]

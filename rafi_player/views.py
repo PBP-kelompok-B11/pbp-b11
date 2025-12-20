@@ -196,39 +196,70 @@ from django.contrib.auth.models import User
 
 @csrf_exempt
 def create_player_entry(request):
+    # print("Data diterima:", data)
+    print("USER:", request.user)                     
+    print("AUTH:", request.user.is_authenticated)
+    
     if request.method != 'POST':
         return JsonResponse(
             {"status": "error", "message": "Method not allowed"},
             status=405
         )
 
-    try:
-        data = json.loads(request.body)
-
-        player = Player.objects.create(
-            nama=strip_tags(data.get("nama", "")),
-            negara=strip_tags(data.get("negara", "")),
-            usia=int(data.get("usia", 0)),
-            tinggi=float(data.get("tinggi", 0)),
-            berat=float(data.get("berat", 0)),
-            posisi=strip_tags(data.get("posisi", "")),
-            thumbnail=data.get("thumbnail") or "",
-            user=request.user if request.user.is_authenticated else None,
+    if not request.user.is_authenticated:
+        return JsonResponse(
+            {"status": "error", "message": "Unauthorized"},
+            status=401
         )
 
-        # Achievement
-        for ach in data.get("achievement", []):
-            Achievement.objects.create(player=player, **ach)
+    try:
+        
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            
+            nama = strip_tags(data.get("nama", ""))
+            negara = strip_tags(data.get("negara", ""))
+            usia = data.get("usia", 0)
+            tinggi = data.get("tinggi", 0)
+            berat = data.get("berat", 0)
+            posisi = data.get("posisi", "")
+            thumbnail = data.get("thumbnail", "")
 
-        # Season stats
-        for stat in data.get("season_stats", []):
-            SeasonStats.objects.create(player=player, **stat)
+            # Jika kamu ingin created_at dari Flutter
+            # created_at = data.get("created_at", None)
 
-        # Career history
-        for career in data.get("career_history", []):
-            CareerHistory.objects.create(player=player, **career)
+            player = Player(
+                nama=nama,
+                negara=negara,
+                usia=usia,
+                tinggi=tinggi,
+                berat=berat,
+                posisi=posisi,
+                thumbnail=thumbnail,
+                user=request.user,
+            )
 
-        return JsonResponse({"status": "success"}, status=200)
+            # Achievement
+            for ach in data.get("achievement", []):
+                Achievement.objects.create(player=player, **ach)
+
+            # Season stats
+            for stat in data.get("season_stats", []):
+                SeasonStats.objects.create(player=player, **stat)
+
+            # Career history
+            for career in data.get("career_history", []):
+                CareerHistory.objects.create(player=player, **career)
+
+            player.save()
+
+            return JsonResponse({"status": "success"}, status=200)
+
+        # return JsonResponse({"status": "success"}, status=200)
+        
+        else:
+            return JsonResponse({"status": "error"}, status=401)
+
 
     except Exception as e:
         return JsonResponse(
@@ -238,9 +269,9 @@ def create_player_entry(request):
 
 @csrf_exempt
 def edit_player_entry(request, player_id):
-    if request.method != "PUT":
-        return HttpResponseNotAllowed(["PUT"])
-
+    if request.method not in ["POST", "PUT"]:
+        return HttpResponseNotAllowed(["POST", "PUT"])
+    
     try:
         player = Player.objects.get(id=player_id)
     except Player.DoesNotExist:

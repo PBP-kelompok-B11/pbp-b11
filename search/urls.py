@@ -18,4 +18,6 @@ urlpatterns = [
     path('api/search/history/', views.api_history, name='api_search_history'),
     path('api/search/history/clear/', views.api_history_clear, name='api_history_clear'),
     path('api/search/history/<int:history_id>/', views.api_history_delete_item, name='api_history_delete_item'),
+    path('api/search/suggest/', views.api_search_suggestion, name='api_search_suggestion'),
+
 ]

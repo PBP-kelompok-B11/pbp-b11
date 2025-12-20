@@ -273,3 +273,75 @@ def api_history_delete_item(request, history_id):
         return JsonResponse({"message": "history deleted", "id": history_id})
 
     return JsonResponse({"error": "not found"}, status=404)
+# ===============================
+# 🔮 API SEARCH SUGGESTION
+# ===============================
+def api_search_suggestion(request):
+    query = request.GET.get('q', '').strip()
+
+    if not query:
+        return JsonResponse({
+            "query": "",
+            "results": []
+        })
+
+    # Limit biar ringan
+    PLAYER_LIMIT = 5
+    CLUB_LIMIT = 3
+    EVENT_LIMIT = 3
+
+    suggestions = []
+
+    # 🔍 Players
+    players = Player.objects.filter(
+        Q(nama__icontains=query)
+    )[:PLAYER_LIMIT]
+
+    for p in players:
+        suggestions.append({
+            "id": p.id,
+            "title": p.nama,
+            "type": "player",
+            "label": "Player",
+            "subtitle": f"{p.negara} · {p.posisi}",
+            "navigate_to": "player_detail",
+            "navigate_id": p.id,
+        })
+
+    # 🔍 Clubs
+    clubs = Club.objects.filter(
+        Q(nama__icontains=query)
+    )[:CLUB_LIMIT]
+
+    for c in clubs:
+        suggestions.append({
+            "id": c.id,
+            "title": c.nama,
+            "type": "club",
+            "label": "Club",
+            "subtitle": c.negara,
+            "navigate_to": "club_detail",
+            "navigate_id": c.id,
+        })
+
+    # 🔍 Events
+    events = Event.objects.filter(
+        Q(nama_event__icontains=query)
+    )[:EVENT_LIMIT]
+
+    for e in events:
+        suggestions.append({
+            "id": e.id,
+            "title": e.nama_event,
+            "type": "event",
+            "label": "Event",
+            "subtitle": getattr(e, 'lokasi', ''),
+            "navigate_to": "event_detail",
+            "navigate_id": e.id,
+        })
+
+    return JsonResponse({
+        "query": query,
+        "count": len(suggestions),
+        "results": suggestions
+    })
