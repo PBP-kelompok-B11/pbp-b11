@@ -94,8 +94,9 @@ def login_view(request):
         if user is not None:
             login(request, user)
             
-            # Mendeteksi apakah request datang dari AJAX/Flutter atau Browser biasa
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.POST.get('is_flutter') == 'true':
+            # 1. CEK APAKAH INI DARI FLUTTER?
+            # Flutter biasanya mengirim 'is_flutter' atau header khusus
+            if request.POST.get('is_flutter') == 'true' or request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({
                     'success': True,
                     'message': f"Halo {username}, selamat datang kembali!",
@@ -104,33 +105,34 @@ def login_view(request):
                     'user_id': user.id,
                 })
             
-            # Fallback untuk login via web biasa
+            # 2. JIKA DARI WEB BIASA, REDIRECT KE HOME
             messages.success(request, f"Halo {username}, selamat datang kembali!")
-            return JsonResponse({ # Tetap kirim JSON agar Flutter tidak error
-                'success': True,
-                'message': f"Halo {username}, selamat datang kembali!",
-                'is_admin': check_is_admin(user),
-                'username': user.username,
-            })
+            return redirect('authentication:home_view') # Ini akan membuka home.html, bukan JSON
         else:
             # Balas JSON jika gagal
             return JsonResponse({
                 'success': False,
                 'message': "Username atau password salah."
             }, status=401)
-
     # Ini hanya untuk browser (GET request)
     return render(request, 'login.html')
 
 @csrf_exempt
-# JANGAN pakai @login_required agar tidak kena redirect otomatis ke /accounts/login/
 def logout_view(request):
-    logout(request) # Fungsi bawaan Django untuk hapus session
+    username = request.user.username # Simpan nama user sebelum logout untuk pesan
+    logout(request) 
     
-    return JsonResponse({
-        "status": True, # Gunakan 'status' agar terbaca pbp_django_auth
-        "message": "Kamu berhasil logout."
-    }, status=200)
+    # 1. Cek apakah request berasal dari Flutter atau AJAX
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('is_flutter') == 'true':
+        return JsonResponse({
+            "status": True,
+            "message": "Logout berhasil!"
+        }, status=200)
+
+    # 2. Jika diakses via Browser biasa, arahkan ke halaman login atau home
+    messages.success(request, "Kamu berhasil logout.")
+    return redirect('authentication:login_view') # Arahkan kembali ke halaman login web0)
+    
 
 def home_view(request):
     return render(request, 'home.html')
@@ -146,3 +148,35 @@ def api_check_role(request):
         role = user.userprofile.role
 
     return JsonResponse({"role": role})
+
+
+@csrf_exempt
+def api_login(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+    user = authenticate(
+        request,
+        username=request.POST.get('username'),
+        password=request.POST.get('password'),
+    )
+
+    if user is None:
+        return JsonResponse({'success': False}, status=401)
+
+    login(request, user)
+
+    return JsonResponse({
+        'success': True,
+        'username': user.username,
+        'is_admin': check_is_admin(user),
+    })
+
+@csrf_exempt
+def api_logout(request):
+    logout(request)
+    return JsonResponse({
+        'success': True,
+        'message': 'Logout berhasil'
+    })
+
