@@ -33,7 +33,7 @@ def increment_viewers(request, media_id):   # buat di flutter
         }, status=404)
 
 def gallery_list(request):
-    media_list = Media.objects.all().order_by('-id')
+    media_list = Media.objects.all().order_by('created_at')
     
     context = {
         'media_list': media_list
@@ -158,7 +158,7 @@ def show_xml(request):
     return HttpResponse(xml_data, content_type="application/xml")
 
 def show_json(request):
-    media_list = Media.objects.all().order_by(-'id')
+    media_list = Media.objects.all().order_by('created_at')
     data = [
         {
             'id': str(media.id),
