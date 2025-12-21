@@ -15,7 +15,7 @@ import os
 # =========================
 # FLUTTER / JSON VIEWS
 # =========================
-
+#haha
 @csrf_exempt
 def show_event_json(request):
     """Menampilkan semua event dalam format JSON."""
