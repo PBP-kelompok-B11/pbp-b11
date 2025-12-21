@@ -36,12 +36,13 @@ class RankingDetailAPI(APIView):
         return Response(serializer.data)
     
     def put(self, request, pk):
-            ranking = self.get_object(pk)
-            if ranking is None:
-                return Response({"error": "Ranking not found."}, status=status.HTTP_404_NOT_FOUND)
+        ranking = self.get_object(pk)
+        if ranking is None:
+            return Response({"error": "Ranking not found."}, status=404)
 
-            serializer = ClubRankingSerializer(ranking, data=request.data)  
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = ClubRankingSerializer(ranking, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+
+        return Response(serializer.errors, status=400)
