@@ -10,7 +10,6 @@
     height: 100%;
     overflow: hidden;
   }
-
   .scrollbar-custom::-webkit-scrollbar { width: 10px; }
   .scrollbar-custom::-webkit-scrollbar-track { background: #2d1b8f; border-radius: 8px; }
   .scrollbar-custom::-webkit-scrollbar-thumb { background-color: #B0FE08; border-radius: 8px; border: 2px solid #2d1b8f; }
@@ -19,91 +18,82 @@
 
 <div class="relative w-screen h-screen overflow-hidden" style="background-color: #2d1b8f;">
 
-  <!-- Judul -->
   <div class="absolute top-[175px] left-[100px] h-36 w-[574px] font-['League_Gothic'] text-8xl font-normal text-white">
     COMPETITION
   </div>
 
-  <!-- Area utama (kanan) -->
   <div class="absolute top-[84px] left-[500px] h-[606px] w-[900px]">
-    <!-- Background boxes -->
     <div class="absolute top-[50px] left-[-1px] h-[540px] w-[901px] rounded-[38px] bg-white"></div>
     <div class="absolute top-[64px] left-[17px] h-[500px] w-[868px] rounded-3xl" style="background-color: #2d1b8f;"></div>
 
-    <!-- Container utama (non-scrollable) -->
-    <div class="absolute top-[75px] left-[17px] w-[868px] h-[500px] rounded-3xl p-2 relative z-20" style="background-color: #2d1b8f;">
+    <div class="absolute top-[75px] left-[25px] w-[850px] h-[400px] overflow-y-auto scrollbar-custom z-20 p-4">
       {% for event in page_obj %}
-        <a href="{% url 'vidia_event:event_detail' event.pk %}" class="block relative h-24 w-full mb-2 group transition">
+        <a href="{% url 'vidia_event:event_detail' event.pk %}" class="block relative h-24 w-full mb-4 group transition">
           <div class="absolute top-0 left-0 h-[80px] w-full rounded-2xl bg-lime-400 group-hover:bg-lime-300 transition"></div>
           
-          <div class="absolute top-[10px] left-[20px] flex items-center gap-4 w-full h-[60px]">
-            {% if event.logo_home %}
-              <img src="{{ event.logo_home }}" alt="Logo Home" class="h-12 w-12 object-contain bg-white rounded-full p-1">
-            {% endif %}
+          <div class="absolute top-[10px] left-[20px] flex items-center gap-4 w-[95%] h-[60px]">
+            <div class="h-12 w-12 flex-shrink-0">
+                <img src="{{ event.logo_home }}" alt="" class="h-full w-full object-contain bg-white rounded-full p-1" onerror="this.src='https://ui-avatars.com/api/?name=H';">
+            </div>
 
-            <div class="font-['Geologica'] text-3xl font-bold text-[#2d1b8f]">
+            <div class="font-['Geologica'] text-2xl font-bold text-[#2d1b8f] truncate flex-grow">
               {{ event.nama_event }}
             </div>
 
-            {% if event.logo_away %}
-              <img src="{{ event.logo_away }}" alt="Logo Away" class="h-12 w-12 object-contain bg-white rounded-full p-1">
-            {% endif %}
+            <div class="h-12 w-12 flex-shrink-0">
+                <img src="{{ event.logo_away }}" alt="" class="h-full w-full object-contain bg-white rounded-full p-1" onerror="this.src='https://ui-avatars.com/api/?name=A';">
+            </div>
 
             {% if event.skor_home is not none %}
-              <div class="ml-auto mr-10 font-bold text-2xl text-[#2d1b8f]">
+              <div class="font-bold text-2xl text-[#2d1b8f] min-w-[80px] text-right">
                 {{ event.skor_home }} - {{ event.skor_away }}
               </div>
             {% endif %}
           </div>
         </a>
+      {% empty %}
+        <div class="flex flex-col items-center justify-center h-full">
+            <p class="text-white text-2xl font-['Geologica']">No competitions available yet.</p>
+        </div>
       {% endfor %}
-      {% else %}
-        <p class="text-center text-gray-400 mt-60">No competitions yet.</p>
-      {% endif %}
-
-<!-- Tombol navigasi halaman -->
-<div class="flex justify-center gap-2 relative z-50" style="margin-top: px;">
-  {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}" 
-       class="bg-lime-400 hover:bg-lime-300 text-[#2d1b8f] px-6 py-2 rounded-3xl font-['Geologica'] text-lg transition shadow-lg">
-      ← Previous
-    </a>
-  {% endif %}
-  {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}" 
-       class="bg-lime-400 hover:bg-lime-300 text-[#2d1b8f] px-6 py-2 rounded-3xl font-['Geologica'] text-lg transition shadow-lg">
-      Next →
-    </a>
-  {% endif %}
-</div>
-
     </div>
+
+    <div class="absolute bottom-[60px] left-0 w-full flex justify-center gap-4 z-50">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" 
+          class="bg-lime-400 hover:bg-lime-300 text-[#2d1b8f] px-6 py-2 rounded-3xl font-['Geologica'] text-lg transition shadow-lg">
+          ← Previous
+        </a>
+      {% endif %}
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" 
+          class="bg-lime-400 hover:bg-lime-300 text-[#2d1b8f] px-6 py-2 rounded-3xl font-['Geologica'] text-lg transition shadow-lg">
+          Next →
+        </a>
+      {% endif %}
+    </div>
+
   </div>
 
-  <!-- Deskripsi kiri -->
   <div class="absolute top-[342px] left-[100px] w-96 font-['Geologica'] text-xl leading-normal font-normal text-white">
     Discover more than 100 competition around the globe!
   </div>
 
-  <!-- Tombol Add Competition -->
-  {% if user.is_authenticated %}
-    {% if user.is_superuser or request.user.userprofile.role == 'admin' %}
-      <a href="{% url 'vidia_event:event_create' %}" class="absolute top-[417px] left-[100px] h-12 w-60 cursor-pointer z-50">
-        <div class="relative h-full w-full overflow-hidden rounded-[36px] bg-lime-400 transition hover:bg-lime-300 flex items-center justify-center">
-          <span class="font-['Geologica'] text-2xl leading-10 font-normal text-[#2d1b8f]">Add Competition</span>
-        </div>
-      </a>
+  <div class="absolute top-[417px] left-[100px] h-12 w-60 z-50">
+    {% if user.is_authenticated %}
+        {% if user.is_superuser or request.user.userprofile.role == 'admin' %}
+            <a href="{% url 'vidia_event:event_create' %}" class="relative h-full w-full overflow-hidden rounded-[36px] bg-lime-400 transition hover:bg-lime-300 flex items-center justify-center shadow-lg">
+                <span class="font-['Geologica'] text-xl font-bold text-[#2d1b8f]">Add Competition</span>
+            </a>
+        {% endif %}
+    {% else %}
+        <a href="{% url 'authentication:login_view' %}?next={% url 'vidia_event:event_list' %}" class="relative h-full w-full overflow-hidden rounded-[36px] bg-lime-400 transition hover:bg-lime-300 flex items-center justify-center shadow-lg">
+            <span class="font-['Geologica'] text-xl font-bold text-[#2d1b8f]">Login to Add</span>
+        </a>
     {% endif %}
-  {% else %}
-    <a href="{% url 'authentication:login_view' %}" class="absolute top-[417px] left-[100px] h-12 w-60 cursor-pointer z-50">
-      <div class="relative h-full w-full overflow-hidden rounded-[36px] bg-lime-400 transition hover:bg-lime-300 flex items-center justify-center">
-        <span class="font-['Geologica'] text-2xl leading-10 font-normal text-[#2d1b8f]">Add Competition</span>
-      </div>
-    </a>
-  {% endif %}
+  </div>
 
-  <!-- SVG background kiri -->
-  <div class="absolute left-[-10px] top-[380px] w-[250px] h-[400px]">
+  <div class="absolute left-[-10px] top-[380px] w-[250px] h-[400px] pointer-events-none">
     <svg viewBox="0 0 444 517" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
       <path d="M403.493 320.269C325.455 558.021 117.482 533.718 86.0948 436.53C56.6724 345.426 149.839 278.662 212.786 274.763C272.671 271.053 282.789 322.371 231.247 339.316C124.051 374.558 -75.0639 213.756 -7.92073 3.03597M403.493 320.269L325.1 360.136M403.493 320.269L433.788 397.871" 
             stroke="#B0FE08" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>

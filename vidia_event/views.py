@@ -19,7 +19,7 @@ import os
 @csrf_exempt
 def show_event_json(request):
     """Menampilkan semua event dalam format JSON."""
-    events = Event.objects.all().select_related('created_by').order_by('-tanggal')
+    events = Event.objects.all().order_by('-tanggal')
     result = []
     for event in events:
         result.append({
@@ -33,8 +33,9 @@ def show_event_json(request):
                 "tim_away": event.tim_away,
                 "skor_home": event.skor_home,
                 "skor_away": event.skor_away,
-                "logo_home": event.logo_home, 
-                "logo_away": event.logo_away,
+                # Pastikan ini mengambil string URL
+                "logo_home": str(event.logo_home) if event.logo_home else "", 
+                "logo_away": str(event.logo_away) if event.logo_away else "",
                 "username": event.created_by.username if event.created_by else "Unknown",
             }
         })
@@ -43,11 +44,13 @@ def show_event_json(request):
 @csrf_exempt
 def my_events_json(request):
     """Menampilkan event milik user yang sedang login."""
+    # Gunakan CookieRequest dari Flutter, biasanya user sudah terautentikasi
     if not request.user.is_authenticated:
         return JsonResponse({"status": "error", "message": "Not authenticated"}, status=403)
 
     events = Event.objects.filter(created_by=request.user).order_by('-tanggal')
     result = []
+    
     for event in events:
         result.append({
             "model": "vidia_event.event",
@@ -60,10 +63,11 @@ def my_events_json(request):
                 "tim_away": event.tim_away,
                 "skor_home": event.skor_home,
                 "skor_away": event.skor_away,
-                "logo_home": event.logo_home,
-                "logo_away": event.logo_away,
-                "created_by": event.created_by.id if event.created_by else None,
-                "username": request.user.username,
+                # Pastikan logo dikirim sebagai string URL
+                "logo_home": str(event.logo_home) if event.logo_home else "",
+                "logo_away": str(event.logo_away) if event.logo_away else "",
+                # Konsistensi dengan show_event_json
+                "username": request.user.username, 
             }
         })
     return JsonResponse(result, safe=False)
