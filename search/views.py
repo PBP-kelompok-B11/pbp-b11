@@ -206,33 +206,15 @@ def api_search(request):
     final_results = []
     jenis_history = ""
 
-    if search_type == "players":
+    if search_type == 'players':
         qs = Player.objects.filter(
             Q(nama__icontains=query) |
             Q(posisi__icontains=query) |
             Q(negara__icontains=query)
-        ).distinct()
-
-        data_key = "players"
-        jenis_history = "player"
-
-        final_results = [   # ✅ FIX: isi final_results
-            {
-                "model": "rafi_player.player",
-                "pk": p.id,
-                "fields": {
-                    "user": p.user.id if p.user else None,
-                    "id": p.id,
-                    "nama": p.nama,
-                    "negara": p.negara,
-                    "usia": getattr(p, "usia", None),
-                    "tinggi": getattr(p, "tinggi", None),
-                    "berat": getattr(p, "berat", None),
-                    "posisi": p.posisi,
-                    "thumbnail": getattr(p, "thumbnail", None),
-                }
-            } for p in qs
-        ]
+        )
+        final_results = PlayerSerializer(qs, many=True).data
+        data_key = "players" # Flutter nyari key 'players'
+        jenis_history = 'pemain'
 
     elif search_type == 'clubs':
         qs = Club.objects.filter(

@@ -20,6 +20,12 @@ class RankingListAPI(APIView):
 
 
 class RankingDetailAPI(APIView):
+    def get_object(self, pk):
+        try:
+            return ClubRanking.objects.get(pk=pk)
+        except ClubRanking.DoesNotExist:
+            return None
+        
     def get(self, request, pk):
         try:
             ranking = ClubRanking.objects.get(pk=pk)
