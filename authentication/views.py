@@ -171,7 +171,7 @@ def api_login(request):
     return JsonResponse({
         'success': True,
         'username': user.username,
-        'is_admin': check_is_admin(user),  # 🔥 SUMBER KEBENARAN
+        'is_admin': check_is_admin(user),  
     })
 
 
