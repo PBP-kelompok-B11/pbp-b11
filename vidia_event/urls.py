@@ -13,7 +13,7 @@ urlpatterns = [
     path('<int:pk>/delete/', views.event_delete, name='event_delete'), # hapus event
     path('json/', views.show_event_json, name='show_event_json'), # daftar event dalam json
     path('create-flutter/', views.create_event_flutter, name='create_event_flutter'),
-    path('my-events-json', views.my_events_json, name='my_events_json'),
+    path('my-events-json/', views.my_events_json, name='my_events_json'),
     path('<int:pk>/edit-flutter/', views.edit_event_flutter, name='edit_event_flutter'),
     path('club-logo/<str:filename>/', views.club_logo, name='club_logo'),
 ]
