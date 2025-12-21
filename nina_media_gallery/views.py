@@ -231,7 +231,16 @@ def add_media_flutter(request):
         
         return JsonResponse({"status": "success"}, status=200)
     else:
-        return JsonResponse({"status": "error"}, status=401)
+        return JsonResponse({
+            "status": "success",
+            "media": {
+                "id": str(new_media.id),
+                "deskripsi": new_media.deskripsi,
+                "category": new_media.category,
+                "thumbnail": new_media.thumbnail,
+            }
+        }, status=200)
+
 
 @csrf_exempt
 def delete_media_flutter(request, id):
