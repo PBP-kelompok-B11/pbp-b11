@@ -10,6 +10,7 @@ from ibeth_clubs.models import Club
 from django.contrib.contenttypes.models import ContentType
 from django.http import JsonResponse
 from django.utils.timezone import localtime
+from django.views.decorators.csrf import csrf_exempt
 
 @login_required(login_url='/login/')
 def add_comment_to_event(request, event_id):
@@ -132,3 +133,168 @@ def player_comments_json(request, player_id):
             for c in comments
         ]
     })
+
+def club_comments_json(request, club_id):
+    club = get_object_or_404(Club, pk=club_id)
+    content_type = ContentType.objects.get_for_model(Club)
+
+    comments = Comments.objects.filter(
+        content_type=content_type,
+        object_id=club.id
+    ).select_related('user').order_by('-tanggal')
+
+    return JsonResponse({
+        "target": {
+            "type": "club",
+            "id": club.id,
+            "name": club.nama_club,
+        },
+        "comments": [
+            {
+                "id": c.id,
+                "user": {
+                    "id": c.user.id,
+                    "username": c.user.username,
+                },
+                "isi_komentar": c.isi_komentar,
+                "tanggal": localtime(c.tanggal).isoformat(),
+                "can_edit": request.user.is_authenticated and request.user == c.user
+            }
+            for c in comments
+        ]
+    })
+
+def event_comments_json(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    content_type = ContentType.objects.get_for_model(Event)
+
+    comments = Comments.objects.filter(
+        content_type=content_type,
+        object_id=event.id
+    ).select_related('user').order_by('-tanggal')
+
+    return JsonResponse({
+        "target": {
+            "type": "event",
+            "id": event.id,
+            "name": event.nama_event,
+        },
+        "comments": [
+            {
+                "id": c.id,
+                "user": {
+                    "id": c.user.id,
+                    "username": c.user.username,
+                },
+                "isi_komentar": c.isi_komentar,
+                "tanggal": localtime(c.tanggal).isoformat(),
+                "can_edit": request.user.is_authenticated and request.user == c.user
+            }
+            for c in comments
+        ]
+    })
+
+MODEL_MAP = {
+    "player": Player,
+    "event": Event,
+    "club": Club,
+}
+
+@csrf_exempt
+def comment_list_flutter(request, type, target_id):
+    model = MODEL_MAP.get(type)
+    if not model:
+        return JsonResponse({"error": "Invalid target"}, status=400)
+
+    obj = get_object_or_404(model, pk=target_id)
+    ct = ContentType.objects.get_for_model(model)
+
+    comments = Comments.objects.filter(
+        content_type=ct,
+        object_id=obj.pk
+    ).order_by("-tanggal")
+
+    return JsonResponse({
+        "target": {
+            "type": type,
+            "id": str(obj.pk),
+            "name": str(obj),
+        },
+        "comments": [
+            {
+                "id": c.id,
+                "isi_komentar": c.isi_komentar,
+                "tanggal": c.tanggal.isoformat(),
+                "user": {
+                    "id": c.user.id,
+                    "username": c.user.username,
+                },
+                "can_edit": c.user == request.user,
+            }
+            for c in comments
+        ]
+    })
+
+@csrf_exempt
+def add_comment_flutter(request, type, target_id):
+    if not request.user.is_authenticated:
+        return JsonResponse(
+            {"status": "error", "message": "Unauthorized"},
+            status=401
+        )
+
+    if request.method != "POST":
+        return JsonResponse({"status": "error"}, status=405)
+
+    isi = request.POST.get("isi_komentar")
+    if not isi:
+        return JsonResponse({"status": "error"}, status=400)
+
+    MODEL_MAP = {
+        "event": Event,
+        "player": Player,
+        "club": Club,
+    }
+
+    model = MODEL_MAP.get(type)
+    if not model:
+        return JsonResponse({"status": "error"}, status=400)
+
+    target = model.objects.get(pk=target_id)
+
+    comment = Comments.objects.create(
+        user=request.user,              # ✅ SEKARANG USER VALID
+        isi_komentar=isi,
+        content_object=target,
+    )
+
+    return JsonResponse({
+        "status": "success",
+        "id": comment.id,
+    })
+
+@csrf_exempt
+def edit_comment_flutter(request, comment_id):
+    if request.method != "POST":
+        return JsonResponse({"status": "error"}, status=405)
+
+    comment = get_object_or_404(Comments, id=comment_id, user=request.user)
+    isi = request.POST.get("isi_komentar")
+
+    if not isi:
+        return JsonResponse({"status": "error"}, status=400)
+
+    comment.isi_komentar = isi
+    comment.save()
+
+    return JsonResponse({"status": "updated"})
+
+@csrf_exempt
+def delete_comment_flutter(request, comment_id):
+    if request.method != "POST":
+        return JsonResponse({"status": "error"}, status=405)
+
+    comment = get_object_or_404(Comments, id=comment_id, user=request.user)
+    comment.delete()
+
+    return JsonResponse({"status": "deleted"})
