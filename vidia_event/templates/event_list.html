@@ -32,15 +32,31 @@
 
     <!-- Container utama (non-scrollable) -->
     <div class="absolute top-[75px] left-[17px] w-[868px] h-[500px] rounded-3xl p-2 relative z-20" style="background-color: #2d1b8f;">
-      {% if page_obj %}
-        {% for event in page_obj %}
-          <a href="{% url 'vidia_event:event_detail' event.pk %}" class="block relative h-24 w-full mb-1 group transition">
-            <div class="absolute top-0 left-0 h-[80px] w-full rounded-2xl bg-lime-400 group-hover:bg-lime-300 transition"></div>
-            <div class="absolute top-[10px] left-[39px] font-['Geologica'] text-4xl leading-[62.5px] font-normal text-[#2d1b8f]">
+      {% for event in page_obj %}
+        <a href="{% url 'vidia_event:event_detail' event.pk %}" class="block relative h-24 w-full mb-2 group transition">
+          <div class="absolute top-0 left-0 h-[80px] w-full rounded-2xl bg-lime-400 group-hover:bg-lime-300 transition"></div>
+          
+          <div class="absolute top-[10px] left-[20px] flex items-center gap-4 w-full h-[60px]">
+            {% if event.logo_home %}
+              <img src="{{ event.logo_home }}" alt="Logo Home" class="h-12 w-12 object-contain bg-white rounded-full p-1">
+            {% endif %}
+
+            <div class="font-['Geologica'] text-3xl font-bold text-[#2d1b8f]">
               {{ event.nama_event }}
             </div>
-          </a>
-        {% endfor %}
+
+            {% if event.logo_away %}
+              <img src="{{ event.logo_away }}" alt="Logo Away" class="h-12 w-12 object-contain bg-white rounded-full p-1">
+            {% endif %}
+
+            {% if event.skor_home is not none %}
+              <div class="ml-auto mr-10 font-bold text-2xl text-[#2d1b8f]">
+                {{ event.skor_home }} - {{ event.skor_away }}
+              </div>
+            {% endif %}
+          </div>
+        </a>
+      {% endfor %}
       {% else %}
         <p class="text-center text-gray-400 mt-60">No competitions yet.</p>
       {% endif %}

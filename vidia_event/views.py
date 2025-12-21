@@ -80,15 +80,45 @@ def club_logo(request, filename):
 # WEB VIEWS
 # =========================
 
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.core.paginator import Paginator
+from .models import Event
+
+# 1. KHUSUS UNTUK WEB (Mirip club_list kamu)
 def event_list(request):
     events = Event.objects.all().order_by('-tanggal')
+    
+    # Menambahkan Paginator agar tampilan web tidak kepanjangan
     paginator = Paginator(events, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'event_list.html', {'page_obj': page_obj})
+    
+    context = {
+        'page_obj': page_obj,
+        'base_title': 'Daftar Event',
+    }
+    return render(request, 'event_list.html', context)
 
 def event_detail(request, pk):
     event = get_object_or_404(Event, pk=pk)
+    
+    # Logika untuk Flutter (JSON)
+    if request.headers.get('Accept') == 'application/json' or request.GET.get('format') == 'json':
+        return JsonResponse({
+            "pk": event.pk,
+            "nama_event": event.nama_event,
+            "lokasi": event.lokasi,
+            "tanggal": event.tanggal.isoformat() if event.tanggal else None,
+            "tim_home": event.tim_home,
+            "tim_away": event.tim_away,
+            "skor_home": event.skor_home,
+            "skor_away": event.skor_away,
+            "logo_home": event.logo_home,
+            "logo_away": event.logo_away,
+        })
+
+    # Logika untuk Web (HTML)
     comments = Comments.objects.filter(
         content_type__model='event',
         object_id=event.id
