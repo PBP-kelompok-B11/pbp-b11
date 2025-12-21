@@ -21,7 +21,7 @@ class RankingListAPI(APIView):
         if ranking is None:
             return Response({"error": "Ranking not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ClubRankingSerializer(ranking, data=request.data)  # full update
+        serializer = ClubRankingSerializer(ranking, data=request.data)  
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
