@@ -17,37 +17,36 @@
             
             <!-- tombol tetap di atas -->
             {% if user.is_authenticated %}
-                <button onclick="showPlayerModal()" class="add-btn">Add Player</button>
+                {% if request.user.is_superuser or request.user.userprofile.role == 'admin' %}
 
-                <div class="flex space-x-2 mb-6">
-                    <button id="filter-all" class="add-btn">Show All</button>
-                    <button id="filter-my" class="add-btn">Show My</button>
-                </div>
+                    <button onclick="showPlayerModal()" class="add-btn">Add Player</button>
 
-                
+                    <div class="flex space-x-2 mb-6">
+                        <button id="filter-all" class="add-btn">Show All</button>
+                        <button id="filter-my" class="add-btn">Show My</button>
+                    </div>  
+                {% endif %}
                 <div class="mt-15 mb-6 flex items-center space-x-2">
-                <select id="positionFilter" class="px-3 py-2 rounded-full bg-lime-400 text-black border-none outline-none shadow-sm">
-                    <option value="all">Semua Posisi</option>
-                    <option value="GK">GK (Penjaga Gawang)</option>
-                    <option value="DF">DF (Bek)</option>
-                    <option value="DFFW">DFFW (Bek / Penyerang)</option>
-                    <option value="DFMF">DFMF (Bek / Gelandang)</option>
-                    <option value="MF">MF (Gelandang)</option>
-                    <option value="MFDF">MFDF (Gelandang / Bek)</option>
-                    <option value="MFFW">MFFW (Gelandang / Penyerang)</option>
-                    <option value="FW">FW (Penyerang)</option>
-                    <option value="FWDF">FWDF (Penyerang / Bek)</option>
-                    <option value="FWMF">FWMF (Penyerang / Gelandang)</option>
-                </select>
-            </div>
-
+                    <select id="positionFilter" class="px-3 py-2 rounded-full bg-lime-400 text-black border-none outline-none shadow-sm">
+                        <option value="all">Semua Posisi</option>
+                        <option value="GK">GK (Penjaga Gawang)</option>
+                        <option value="DF">DF (Bek)</option>
+                        <option value="DFFW">DFFW (Bek / Penyerang)</option>
+                        <option value="DFMF">DFMF (Bek / Gelandang)</option>
+                        <option value="MF">MF (Gelandang)</option>
+                        <option value="MFDF">MFDF (Gelandang / Bek)</option>
+                        <option value="MFFW">MFFW (Gelandang / Penyerang)</option>
+                        <option value="FW">FW (Penyerang)</option>
+                        <option value="FWDF">FWDF (Penyerang / Bek)</option>
+                        <option value="FWMF">FWMF (Penyerang / Gelandang)</option>
+                    </select>
+                </div>
             {% else %}
-            <!-- Jika belum login -->
-            <a href="{% url 'authentication:login_view' %}" 
-            class="add-btn">
-                Add Player
-            </a>
-
+                <!-- Jika belum login -->
+                <a href="{% url 'authentication:login_view' %}" 
+                class="add-btn">
+                    Add Player
+                </a>
             {% endif %}
 
             <!-- judul dan deskripsi -->
@@ -90,12 +89,12 @@
 <script>
     console.log("JS Loaded");
     const PLAYER_API_ENDPOINT = "{% url 'rafi_player:show_json_player' %}";
-    const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+    // const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+    let CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}" || null;
 
     console.log("Current user ID:", CURRENT_USER_ID);
     console.log("Tipe data CURRENT_USER_ID:", typeof CURRENT_USER_ID);
-
-    
 
     // DOM Elements
     const loadingSpinner = document.getElementById('loading');
@@ -220,8 +219,6 @@
         return card;
     }
 
-
-        //////////////
     function renderAllPlayerCards(playerItems) {
         playerGridContainer.innerHTML = '';
         playerItems.forEach(playerItem => {

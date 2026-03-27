@@ -1,0 +1,154 @@
+<!-- comments/list.html -->
+<div id="commentsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-indigo-900 rounded-3xl shadow-2xl w-[700px] max-h-[80vh] overflow-y-auto relative p-6">
+    <button onclick="closeCommentsModal()" class="absolute top-4 right-6 text-lime-400 text-3xl font-bold">×</button>
+
+    <h2 class="text-lime-400 text-3xl font-semibold mb-6 font-['Geologica']">Comments</h2>
+
+    <!-- Daftar komentar (scrollable container) -->
+    <div class="bg-indigo-800 rounded-2xl p-4 max-h-[300px] overflow-y-auto space-y-4">
+      {% if comments %}
+        {% for comment in comments %}
+          <div class="bg-indigo-700 p-4 rounded-xl">
+            <p class="text-white mb-2">{{ comment.isi_komentar }}</p>
+            <div class="flex justify-between text-sm text-lime-300">
+              <span>by: {{ comment.user.username }}</span>
+              <span>{{ comment.tanggal|date:"M d, Y H:i" }}</span>
+            </div>
+
+            {% if user == comment.user %}
+              <div class="flex justify-end mt-2 space-x-2">
+                <button
+                  onclick="openDeleteCommentModal('{{ comment.id }}')"
+                  class="bg-red-500 hover:bg-red-400 text-white px-3 py-1 rounded-lg text-sm">
+                  Delete
+                </button>
+                <button
+                  onclick="openEditCommentModal( '{{ comment.id }}' ,'{{ comment.isi_komentar|escapejs }}')"
+                  class="bg-lime-400 hover:bg-lime-300 text-indigo-900 px-3 py-1 rounded-lg text-sm">
+                  Edit
+                </button>
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-gray-300 text-center">Belum ada komentar.</p>
+      {% endif %}
+    </div>
+
+    <!-- Form Tambah Komentar -->
+    <form action="{% url 'comments:add_comment_to_event' event.id %}" method="POST" class="mt-4">
+      {% csrf_token %}
+      {{ form.isi_komentar }}
+      <button type="submit" class="mt-3 px-6 py-2 bg-lime-400 text-indigo-900 rounded-2xl font-semibold hover:bg-lime-300 transition">
+        Kirim Komentar
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Edit Comment -->
+<div id="editCommentModal"
+     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[60]">
+
+  <div class="bg-indigo-900 rounded-3xl w-[600px] p-6 relative shadow-2xl">
+    <button onclick="closeEditCommentModal()"
+            class="absolute top-4 right-6 text-lime-400 text-3xl font-bold">
+      ×
+    </button>
+
+    <h2 class="text-lime-400 text-3xl font-semibold mb-4 font-['Geologica']">
+      Edit Komentar
+    </h2>
+
+    <form id="editCommentForm" method="POST">
+      {% csrf_token %}
+
+      <textarea
+        id="editCommentTextarea"
+        name="isi_komentar"
+        rows="4"
+        class="w-full p-3 rounded-xl text-indigo-900 focus:outline-none"
+        required></textarea>
+
+      <button type="submit"
+        class="mt-4 px-6 py-2 bg-lime-400 text-indigo-900 rounded-2xl font-semibold hover:bg-lime-300">
+        Simpan Perubahan
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Delete Comment -->
+<div id="deleteCommentModal"
+     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[70]">
+
+  <div class="bg-indigo-900 rounded-3xl w-[500px] p-6 relative shadow-2xl">
+    <button onclick="closeDeleteCommentModal()"
+            class="absolute top-4 right-6 text-lime-400 text-3xl font-bold">
+      ×
+    </button>
+
+    <h2 class="text-red-400 text-3xl font-semibold mb-4 font-['Geologica']">
+      Hapus Komentar
+    </h2>
+
+    <p class="text-white mb-6">
+      Apakah kamu yakin ingin menghapus komentar ini?  
+      <span class="text-red-300 font-semibold">Tindakan ini tidak bisa dibatalkan.</span>
+    </p>
+
+    <form id="deleteCommentForm" method="POST">
+      {% csrf_token %}
+
+      <div class="flex justify-end space-x-3">
+        <button type="button"
+          onclick="closeDeleteCommentModal()"
+          class="px-5 py-2 bg-gray-500 text-white rounded-xl hover:bg-gray-400">
+          Batal
+        </button>
+
+        <button type="submit"
+          class="px-5 py-2 bg-red-500 text-white rounded-xl hover:bg-red-400">
+          Ya, Hapus
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function openCommentsModal() {
+  document.getElementById('commentsModal').classList.remove('hidden');
+}
+function closeCommentsModal() {
+  document.getElementById('commentsModal').classList.add('hidden');
+}
+function openEditCommentModal(commentId, isiKomentar) {
+  const modal = document.getElementById('editCommentModal');
+  const textarea = document.getElementById('editCommentTextarea');
+  const form = document.getElementById('editCommentForm');
+
+  textarea.value = isiKomentar;
+  form.action = `/comments/edit/${commentId}/`; // URL edit_comment
+
+  modal.classList.remove('hidden');
+}
+
+function closeEditCommentModal() {
+  document.getElementById('editCommentModal').classList.add('hidden');
+}
+
+function openDeleteCommentModal(commentId) {
+  const modal = document.getElementById('deleteCommentModal');
+  const form = document.getElementById('deleteCommentForm');
+
+  form.action = `/comments/delete/${commentId}/`; // URL delete_comment
+  modal.classList.remove('hidden');
+}
+
+function closeDeleteCommentModal() {
+  document.getElementById('deleteCommentModal').classList.add('hidden');
+}
+</script>

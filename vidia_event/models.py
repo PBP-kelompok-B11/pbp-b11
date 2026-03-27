@@ -1,27 +1,27 @@
-# events/models.py
 from django.db import models
-from rafi_player.models import Player
-from ibeth_clubs.models import Club
 from django.contrib.contenttypes.fields import GenericRelation
 from comments.models import Comments
+from django.contrib.auth.models import User
 from datetime import date
-
 class Event(models.Model):
-    LIGA = 'liga'
-    TURNAMEN = 'turnamen'
-    PERTANDINGAN = 'pertandingan'
-    TIPE_CHOICES = [
-        (LIGA, 'Liga'),
-        (TURNAMEN, 'Turnamen'),
-        (PERTANDINGAN, 'Pertandingan'),
-    ]
-
     nama_event = models.CharField(max_length=100)
-    tipe = models.CharField(max_length=20, choices=TIPE_CHOICES)
     lokasi = models.CharField(max_length=100)
-    tanggal_mulai = models.DateField()
-    tanggal_selesai = models.DateField()
-    comments = GenericRelation(Comments)
-    def __str__(self):
-        return self.nama_event
+    tanggal = models.DateField(default=date.today)
 
+    # Teams (String)
+    tim_home = models.CharField(max_length=100, null=True, blank=True)
+    tim_away = models.CharField(max_length=100, null=True, blank=True)
+
+    # Logos (Sekarang simpan URL dari internet)
+    # Gunakan CharField agar fleksibel menyimpan URL panjang
+    logo_home = models.CharField(max_length=500, null=True, blank=True)
+    logo_away = models.CharField(max_length=500, null=True, blank=True)
+
+    skor_home = models.PositiveIntegerField(null=True, blank=True)
+    skor_away = models.PositiveIntegerField(null=True, blank=True)
+
+    comments = GenericRelation(Comments)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.tim_home} vs {self.tim_away} ({self.nama_event})"

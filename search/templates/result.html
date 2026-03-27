@@ -1,33 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+
 <h2>Hasil pencarian untuk "{{ q }}"</h2>
 
+<hr>
+
+{# ================= PLAYER ================= #}
 {% if players %}
-  <h3>Pemain ({{ players.count }})</h3>
+  <h3>Pemain ({{ players|length }})</h3>
   <ul>
     {% for p in players|slice:":10" %}
-      <li><a href="{% url 'players:player_details' p.id %}">{{ p.nama }}</a></li>
+      <li>
+        <a href="{% url 'rafi_player:player_detail' p.id %}">
+          {{ p.nama }}
+        </a>
+        <small>({{ p.negara }} · {{ p.posisi }})</small>
+      </li>
     {% endfor %}
   </ul>
-  <p><a href="{% url 'players:player_list' % %}?q={{ q }}">Lihat semua pemain yang cocok</a></p>
+
+  <p>
+    <a href="{% url 'search:search_players' %}?q={{ q }}">
+      Lihat semua pemain yang cocok
+    </a>
+  </p>
 {% endif %}
 
+<hr>
+
+{# ================= CLUB ================= #}
 {% if clubs %}
-  <h3>Klub ({{ clubs.count }})</h3>
+  <h3>Klub ({{ clubs|length }})</h3>
   <ul>
     {% for c in clubs|slice:":10" %}
-      <li><a href="{% url 'clubs:detail' c.id %}">{{ c.nama }}</a></li>
+      <li>
+        <a href="{% url 'clubs:detail' c.id %}">
+          {{ c.nama }}
+        </a>
+        <small>({{ c.negara }})</small>
+      </li>
     {% endfor %}
   </ul>
-  <p><a href="{% url 'clubs:list' %}?q={{ q }}">Lihat semua klub yang cocok</a></p>
+
+  <p>
+    <a href="{% url 'search:search_clubs' %}?q={{ q }}">
+      Lihat semua klub yang cocok
+    </a>
+  </p>
 {% endif %}
 
+<hr>
+
+{# ================= EVENT ================= #}
 {% if events %}
-  <h3>Event ({{ events.count }})</h3>
+  <h3>Event ({{ events|length }})</h3>
   <ul>
     {% for e in events|slice:":10" %}
-      <li><a href="{% url 'events:event_detail' e.id %}">{{ e.nama_event }}</a></li>
+      <li>
+        <a href="{% url 'events:event_detail' e.id %}">
+          {{ e.nama_event }}
+        </a>
+        {% if e.lokasi %}
+          <small>({{ e.lokasi }})</small>
+        {% endif %}
+      </li>
     {% endfor %}
   </ul>
-  <p><a href="{% url 'events:event_list' %}?q={{ q }}">Lihat semua event yang cocok</a></p>
+
+  <p>
+    <a href="{% url 'search:search_events' %}?q={{ q }}">
+      Lihat semua event yang cocok
+    </a>
+  </p>
 {% endif %}
+
+<hr>
+
+{# ================= EMPTY STATE ================= #}
 {% if not players and not clubs and not events %}
-  <p>Tidak ada hasil yang ditemukan untuk "{{ q }}".</p
+  <p>
+    Tidak ada hasil yang ditemukan untuk "<strong>{{ q }}</strong>".
+  </p>
+{% endif %}
+
+{% endblock %}

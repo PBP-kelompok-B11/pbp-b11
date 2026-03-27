@@ -14,7 +14,10 @@ class Media(models.Model):
     thumbnail = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     viewers = models.PositiveIntegerField(default=0)
-            
+
+    class Meta:
+        ordering = ['created_at']
+
     def increment_views(self):
         self.viewers += 1
         self.save()

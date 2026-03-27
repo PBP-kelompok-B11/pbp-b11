@@ -11,7 +11,7 @@ urlpatterns = [
     path('player/<uuid:player_id>/json/', views.show_json_player_by_id, name='show_json_player_by_id'),
     path('player/<uuid:player_id>/', views.player_detail, name='player_detail'),
     path('player/<uuid:player_id>/delete/', views.delete_player, name='delete_player'),
-    path('<uuid:pk>/edit/', views.edit_player_ajax, name='edit_player_ajax'),
+    path('player/<uuid:pk>/edit/', views.edit_player_ajax, name='edit_player_ajax'),
    
 
     path('admin/player/', admin_views.player_list, name='admin_player_list'),
@@ -19,4 +19,14 @@ urlpatterns = [
     path('players/<uuid:player_id>/edit/', admin_views.player_edit, name='admin_player_edit'),
     path('players/<uuid:player_id>/delete/', admin_views.player_delete, name='admin_player_delete'),
 
+    path('player/<uuid:player_id>/detailjson/json/', views.player_detail_json, name='player_detail_json'),
+    path('player/create/flutter/', views.create_player_entry, name='create_player_entry_flutter'),
+    path("player/<uuid:player_id>/edit/flutter/", views.edit_player_entry, name='edit_player_entry'),
+    path("player/<uuid:player_id>/delete/flutter/", views.delete_player_entry, name= 'delete_player_entry'),
+
+
+    path('proxy-image/', views.proxy_image, name='proxy_image')
+
+
 ]
+

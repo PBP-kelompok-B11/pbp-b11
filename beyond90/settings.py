@@ -29,11 +29,22 @@ SECRET_KEY = 'django-insecure-z%xc3%tvv@ylnf5rfw=!s426oop%&4euso*i0nfi%8@-*tb^-)
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 DEBUG = True
 
-ALLOWED_HOSTS = [ "a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "http://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "localhost", "127.0.0.1"]
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
+
+#nambah perubahan
+ALLOWED_HOSTS = [ "a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "http://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", "localhost", "127.0.0.1", "10.0.2.2"]
+
 #tes sesuatu
 CSRF_TRUSTED_ORIGINS = [
     "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", 
     "http://a-sheriqa-beyond-90.pbp.cs.ui.ac.id", 
+    'http://localhost:*',
+    'http://127.0.0.1:*',
 ]
 
 INSTALLED_APPS = [
@@ -50,17 +61,25 @@ INSTALLED_APPS = [
     'comments',
     'vidia_event',
     'search',
+    'rest_framework',
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'beyond90.urls'
 
@@ -145,8 +164,21 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # wajib untuk collectstatic
+
+# Folder tempat kamu taruh file static (CSS, JS, img)
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Folder hasil collectstatic → WAJIB TERPISAH!
+# STATIC_ROOT = BASE_DIR / 'staticfiles'  # BUKAN 'static'!
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# settings.py
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # Default primary key field type

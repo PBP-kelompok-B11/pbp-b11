@@ -150,20 +150,28 @@
 
       const formData = new FormData(e.target);
       const playerId = document.getElementById('editPlayerId').value;
+      if (!playerId) formData.delete('player_id'); 
 
       console.log("Form submit dipanggil, playerId:", playerId);
       console.log("FormData:", Object.fromEntries(formData));
 
-      const endpoint = playerId ? `/player/${playerId}/edit/` : "{% url 'rafi_player:add_player_ajax' %}";
+      const ADD_PLAYER_URL = "{% url 'rafi_player:add_player_ajax' %}";
+      const endpoint = playerId ? `/players/player/${playerId}/edit/` : ADD_PLAYER_URL;
       console.log("Mengirim permintaan ke:", endpoint);
 
+      formData.set('usia', Number(formData.get('usia')));
+      formData.set('tinggi', Number(formData.get('tinggi')));
+      formData.set('berat', Number(formData.get('berat')));
+
       try {
+          const csrfToken = formData.get('csrfmiddlewaretoken');
           const response = await fetch(endpoint, {
-              method: "POST",
-              credentials: "include", // <--- penting: kirim cookie login
-              headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-              body: formData
+            method: "POST",
+            credentials: "include",
+            headers: { 'X-CSRFToken': csrfToken },
+            body: formData
           });
+
 
           if (!response.ok) {
               const errorData = await response.json().catch(() => ({}));

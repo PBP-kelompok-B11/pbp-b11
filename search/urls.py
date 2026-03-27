@@ -1,4 +1,3 @@
-# search/urls.py
 from django.urls import path
 from . import views
 
@@ -11,9 +10,14 @@ urlpatterns = [
     path('players/', views.search_players, name='search_players'),
     path('clubs/', views.search_clubs, name='search_clubs'),
     path('events/', views.search_events, name='search_events'),
-    path('history/', views.search_history, name='search_history'),
-    path('clear-history/', views.clear_search_history, name='clear_search_history'),
-    path('events/filter/', views.filter_events, name='filter_events'),
-    path('players/filter/', views.filter_players, name='players_filter'),
-    path('clubs/filter/', views.filter_clubs, name='clubs_filter'),
+
+    # ======================
+    # API FLUTTER
+    # ======================
+    path('api/search/', views.api_search, name='api_search'),
+    path('api/search/history/', views.api_history, name='api_search_history'),
+    path('api/search/history/clear/', views.api_history_clear, name='api_history_clear'),
+    path('api/search/history/<int:history_id>/', views.api_history_delete_item, name='api_history_delete_item'),
+    path('api/search/suggest/', views.api_search_suggestion, name='api_search_suggestion'),
+
 ]

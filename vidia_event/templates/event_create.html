@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="min-h-screen bg-indigo-900 text-white pt-28 relative overflow-hidden">
-  
+  <!-- udah dong -->
 {% if messages %}
   <div class="fixed top-8 right-8 z-50">
     {% for message in messages %}
@@ -13,7 +13,7 @@
                   {% elif message.tags == 'error' %}
                     bg-red-500 text-white
                   {% else %}
-                    bg-gray-500 text-white
+                    bg-gray-500 text-white 
                   {% endif %}">
         {{ message }}
       </div>
@@ -52,19 +52,35 @@
         ADD COMPETITION
       </h1>
 
-        <!-- Event -->
-        <div class="mb-8">
-            <label for="event" class="block text-lime-400 text-2xl font-['Geologica'] mb-2">Event</label>
-            <input type="text" id="event" name="event"
-       value="{% if is_update %}{{ event.nama_event }}{% endif %}"
+        <!-- Tim Home -->
+        <div class="mb-8"> 
+            <label for="event" class="block text-lime-400 text-2xl font-['Geologica'] mb-2">Tim Home</label>
+            <input type="text" id="tim_home" name="tim_home"
+       value="{% if is_update %}{{ event.tim_home }}{% endif %}"
        class="w-full h-12 bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400" required>
         </div>
 
-        <!-- Tipe -->
+        <!-- Tim Away -->
         <div class="mb-8">
-            <label for="tipe" class="block text-lime-400 text-2xl font-['Geologica'] mb-2">Tipe</label>
-            <input type="text" id="tipe" name="tipe" 
-       value="{% if is_update %}{{ event.tipe }}{% endif %}" 
+            <label for="tipe" class="block text-lime-400 text-2xl font-['Geologica'] mb-2">Tim Away</label>
+            <input type="text" id="tim_away" name="tim_away" 
+       value="{% if is_update %}{{ event.tim_away }}{% endif %}" 
+       class="w-full h-12 bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400" required>
+        </div>
+
+        <!-- Skor Home -->
+        <div class="mb-8">
+            <label for="tipe" class="block text-lime-400 text-2xl font-['Geologica'] mb-2">Skor Home</label>
+            <input type="text" id="skor_home" name="skor_home" 
+       value="{% if is_update %}{{ event.skor_home }}{% endif %}" 
+       class="w-full h-12 bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400" required>
+        </div>
+
+        <!-- Skor Away -->
+        <div class="mb-8">
+            <label for="tipe" class="block text-lime-400 text-2xl font-['Geologica'] mb-2">Skor Away</label>
+            <input type="text" id="skor_away" name="skor_away" 
+       value="{% if is_update %}{{ event.skor_away }}{% endif %}" 
        class="w-full h-12 bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400" required>
         </div>
 
@@ -75,23 +91,18 @@
        value="{% if is_update %}{{ event.lokasi }}{% endif %}"
        class="w-full h-12 bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400" required>
         </div>
+        
 
         <!-- Tanggal Mulai -->
         <div class="mb-8">
-            <label for="start_date" class="block text-lime-400 text-2xl font-['Geologica'] mb-2">Tanggal Mulai</label>
-            <input type="date" id="start_date" name="start_date"
-              value="{% if is_update %}{{ start_date }}{% endif %}"
+            <label for="start_date" class="block text-lime-400 text-2xl font-['Geologica'] mb-2">Tanggal</label>
+            <input type="date" id="tanggal" name="tanggal"
+              value="{% if is_update %}{{ tanggal }}{% endif %}"
               class="w-full h-12 bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400" required>
         </div>
+        
 
-        <!-- Tanggal Selesai -->
-        <div class="mb-12">
-            <label for="end_date" class="block text-lime-400 text-2xl font-['Geologica'] mb-2">Tanggal Selesai</label>
-            <input type="date" id="end_date" name="end_date"
-              value="{% if is_update %}{{ end_date }}{% endif %}" 
-              class="w-full h-12 bg-indigo-900 text-white placeholder-gray-400 rounded-[29px] border border-lime-400 px-4 focus:outline-none focus:ring-2 focus:ring-lime-400" required>
-
-        </div>
+        
         <!-- Submit -->
         <div class="flex justify-center">
           <button type="submit"

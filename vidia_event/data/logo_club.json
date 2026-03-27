@@ -1,0 +1,22 @@
+[
+  {"name":"Arsenal","logo_file":"https://upload.wikimedia.org/wikipedia/en/thumb/5/53/Arsenal_FC.svg/250px-Arsenal_FC.svg.png"},
+  {"name":"AFC Bournemouth","logo_file":"https://tmssl.akamaized.net//images/wappen/head/989.png?lm=1457991811"},
+  {"name":"Brighton & Hove Albion","logo_file":"https://tmssl.akamaized.net//images/wappen/head/1237.png?lm=1492718902"},
+  {"name":"Burnley","logo_file":"https://upload.wikimedia.org/wikipedia/en/thumb/6/6d/Burnley_FC_Logo.svg/1044px-Burnley_FC_Logo.svg.png"},
+  {"name":"Cardiff City","logo_file":"https://upload.wikimedia.org/wikipedia/en/thumb/3/3c/Cardiff_City_crest.svg/1152px-Cardiff_City_crest.svg.png"},
+  {"name":"Chelsea","logo_file":"https://upload.wikimedia.org/wikipedia/id/thumb/c/cc/Chelsea_FC.svg/1200px-Chelsea_FC.svg.png"},
+  {"name":"Crystal Palace","logo_file":"https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/Crystal_Palace_FC_logo_%282022%29.svg/962px-Crystal_Palace_FC_logo_%282022%29.svg.png"},
+  {"name":"Everton","logo_file":"https://tmssl.akamaized.net//images/wappen/head/29.png?lm=1445949846"},
+  {"name":"Fulham","logo_file":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_xhl7XOgPmfPlu36nVDYhB5VIChSwQO9-jg&s"},
+  {"name":"Huddersfield Town","logo_file":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_6oMjJmaBHcpyERFYqj0JLjbcNP3KsGmA_g&s"},
+  {"name":"Leicester City","logo_file":"https://tmssl.akamaized.net//images/wappen/head/1003.png?lm=1472229265"},
+  {"name":"Liverpool","logo_file":"https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg"},
+  {"name":"Manchester City","logo_file":"https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/Manchester_City_FC_badge.svg/1200px-Manchester_City_FC_badge.svg.png"},
+  {"name":"Manchester United","logo_file":"https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg"},
+  {"name":"Newcastle United","logo_file":"https://upload.wikimedia.org/wikipedia/en/5/56/Newcastle_United_Logo.svg"},
+  {"name":"Southampton","logo_file":"https://upload.wikimedia.org/wikipedia/en/thumb/c/c9/FC_Southampton.svg/1051px-FC_Southampton.svg.png"},
+  {"name":"Tottenham Hotspur","logo_file":"https://upload.wikimedia.org/wikipedia/en/thumb/b/b4/Tottenham_Hotspur.svg/960px-Tottenham_Hotspur.svg.png"},
+  {"name":"Watford","logo_file":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWbzVhWb0gi8buKj_5DjDua6uTYaRy51yLOg&s"},
+  {"name":"West Ham United","logo_file":"https://media.licdn.com/dms/image/v2/D4D0BAQGC-oB19hN0pg/company-logo_200_200/B4DZrfLT3tHsAI-/0/1764680876132?e=2147483647&v=beta&t=8xEbRsLYXf7TRe6IQ68yKQRq4iH1Domx6G2C-jV6BnI"},
+  {"name":"Wolverhampton Wanderers","logo_file":"https://upload.wikimedia.org/wikipedia/en/thumb/c/c9/Wolverhampton_Wanderers_FC_crest.svg/1200px-Wolverhampton_Wanderers_FC_crest.svg.png"}
+]

@@ -1,17 +1,39 @@
+import traceback
+import requests
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponse
-from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.decorators import login_required
 from nina_media_gallery.forms import MediaForm
 from nina_media_gallery.models import Media
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
+from authentication.views import admin_only
+from django.core import serializers
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.html import strip_tags
+from django.views.decorators.http import require_POST
 
 # Create your views here.
-def is_admin(user):
-    return user.is_authenticated and user.is_staff
+@csrf_exempt
+@require_POST
+def increment_viewers(request, media_id):   # buat di flutter
+    try:
+        media = Media.objects.get(pk=media_id)
+        media.increment_views() 
+        return JsonResponse({
+            "status": "success",
+            "viewers": media.viewers
+    }, status=200)
+
+    except Media.DoesNotExist:
+        return JsonResponse({
+            "status": "error",
+            "message": "Media not found"
+        }, status=404)
 
 def gallery_list(request):
-    media_list = Media.objects.all()
+    media_list = Media.objects.all().order_by('created_at')
     
     context = {
         'media_list': media_list
@@ -44,8 +66,8 @@ def gallery_details(request, id):
         'next_media': next_media,
     }
     return render(request, 'media_detail.html', context)
+    
 def get_gallery_items(request):
-   def get_gallery_items(request):
     media = Media.objects.all().values('deskripsi', 'media_file')
     data = [
         {
@@ -55,8 +77,9 @@ def get_gallery_items(request):
         for item in media
     ]
     return JsonResponse(data, safe=False)
-
-# @user_passes_test(is_admin)
+    
+@login_required(login_url='/login/')
+@admin_only
 def gallery_upload(request):
     if request.method == "POST":
         # Handle AJAX upload
@@ -79,7 +102,6 @@ def gallery_upload(request):
                     }
                 }, status=201)
             except Exception as e:
-                import traceback
                 print(f"Save Error: {str(e)}")
                 print(traceback.format_exc())
                 return JsonResponse({
@@ -103,6 +125,8 @@ def gallery_upload(request):
         }
         return render(request, 'upload.html', context)
     
+@login_required(login_url='/login/') 
+@admin_only
 def gallery_update(request, id):
     if request.method == 'POST':
         media = Media.objects.get(pk=id)
@@ -121,7 +145,135 @@ def gallery_update(request, id):
         })
     return JsonResponse({"status": "error", "message": "Invalid request"})
 
+@login_required(login_url='/login/')
+@admin_only
 def gallery_delete(request, id):
     media = get_object_or_404(Media, pk=id)
     media.delete()
     return HttpResponseRedirect(reverse('nina_media_gallery:gallery_list'))
+
+def show_xml(request):
+    media_list = Media.objects.all()
+    xml_data = serializers.serialize("xml", media_list)
+    return HttpResponse(xml_data, content_type="application/xml")
+
+def show_json(request):
+    media_list = Media.objects.all().order_by('created_at')
+    data = [
+        {
+            'id': str(media.id),
+            'deskripsi': media.deskripsi,
+            'category': media.category,
+            'thumbnail': media.thumbnail,
+            'created_at': media.created_at,
+            'viewers': media.viewers
+        }
+        for media in media_list
+    ]
+
+    return JsonResponse(data, safe=False)
+
+def show_xml_by_id(request, media_id):
+    try:
+        media_item = Media.objects.filter(pk=media_id)
+        xml_data = serializers.serialize("xml", media_item)
+        return HttpResponse(xml_data, content_type="application/xml")
+    except Media.DoesNotExist:
+        return HttpResponse(status=404)
+    
+def show_json_by_id(request, media_id):
+    try:
+        media = Media.objects.select_related('user').get(pk=media_id)
+        data = {
+            'id': str(media.id),
+            'deskripsi': media.deskripsi,
+            'category': media.category,
+            'thumbnail': media.thumbnail,
+            'created_at': media.created_at,
+            'viewers': media.viewers
+        }
+        return JsonResponse(data)
+    except Media.DoesNotExist:
+        return JsonResponse({'detail': 'Not found'}, status=404)
+
+def proxy_image(request):
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
+    
+    try:
+        # Fetch image from external source
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        
+        # Return the image with proper content type
+        return HttpResponse(
+            response.content,
+            content_type=response.headers.get('Content-Type', 'image/jpeg')
+        )
+    except requests.RequestException as e:
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+
+@csrf_exempt
+def add_media_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        deskripsi = strip_tags(data.get("deskripsi", ""))  # Strip HTML tags
+        category = data.get("category", "")
+        thumbnail = data.get("thumbnail", "")
+        
+        new_media = Media(
+            deskripsi=deskripsi,
+            category=category,
+            thumbnail=thumbnail,
+        )
+        new_media.save()
+        
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+
+@csrf_exempt
+def delete_media_flutter(request, id):
+    if request.method == 'DELETE':
+        try:
+            media = Media.objects.get(pk=id)
+            media.delete()
+            return JsonResponse({
+                "status": "success",
+                "message": "Successfully deleted media"
+            }, status=200)
+        except Media.DoesNotExist:
+            return JsonResponse({
+                "status": "error",
+                "message": "Media isn't found"
+            }, status=400)
+
+@csrf_exempt
+def edit_media_flutter(request, id):
+    if request.method in ['PUT', 'PATCH']:
+        try:
+            media = Media.objects.get(pk=id)
+            data = json.loads(request.body)
+
+            media.deskripsi = data.get('deskripsi', media.deskripsi)
+            media.category = data.get('category', media.category)
+            media.thumbnail = data.get('thumbnail', media.thumbnail)
+            media.save()
+
+            return JsonResponse({
+                "status": "success",
+                "media": {
+                    "id": str(media.id),
+                    "deskripsi": media.deskripsi,
+                    "category": media.category,
+                    "thumbnail": media.thumbnail,
+                    "viewers": media.viewers,
+                    'created_at': media.created_at.isoformat(),
+                }
+            }, status=200)
+        except Media.DoesNotExist:
+            return JsonResponse({
+                "status": "Not found",
+            }, status=400)
+    return JsonResponse({"error": "Invalid method"}, status=405)

@@ -6,7 +6,13 @@ from .models import Comments
 from .forms import CommentForm
 from rafi_player.models import Player
 from vidia_event.models import Event
+from ibeth_clubs.models import Club
+from django.contrib.contenttypes.models import ContentType
+from django.http import JsonResponse
+from django.utils.timezone import localtime
+from django.views.decorators.csrf import csrf_exempt
 
+@login_required(login_url='/login/')
 def add_comment_to_event(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     if request.method == 'POST':
@@ -21,44 +27,274 @@ def add_comment_to_event(request, event_id):
         form = CommentForm()
     return render(request, 'comments/form.html', {'form': form, 'form_action': request.path})
 
-def comment_list(request, player_id):
-    player = get_object_or_404(Player, id=player_id)
-    comments = Comments.objects.filter(player=player).order_by('-tanggal')
-    return render(request, 'comments/list.html', {'player': player, 'comments': comments})
-
-
-@login_required
-def comment_add(request, model_name, object_id):
+@login_required(login_url='/login/')
+def add_comment_to_club(request, club_id):
+    club = get_object_or_404(Club, pk=club_id)
     if request.method == 'POST':
-        isi_komentar = request.POST.get('isi_komentar')
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.content_object = club
+            comment.user = request.user
+            comment.save()
+            return redirect('ibeth_clubs:club_detail', pk=club.id)
+    else:
+        form = CommentForm()
+    return render(request, 'comments/form.html', {'form': form, 'form_action': request.path})
 
-        # Cari content type berdasarkan nama model (Player, Club, dll)
-        content_type = ContentType.objects.get(model=model_name.lower())
+@login_required(login_url='/login/')
+def add_comment_to_player(request, player_id):
+    player = get_object_or_404(Player, pk=player_id)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.content_object = player
+            comment.user = request.user
+            comment.save()
+            return redirect('rafi_player:player_detail', player_id=player.id)
+    else:
+        form = CommentForm()
+    return render(request, 'comments/form.html', {'form': form, 'form_action': request.path})
 
-        Comments.objects.create(
-            user=request.user,
-            isi_komentar=isi_komentar,
-            content_type=content_type,
-            object_id=object_id
-        )
+def comment_list(request, app_label, model_name, object_id):
 
-        return redirect(request.META.get('HTTP_REFERER', '/'))
+    content_type = get_object_or_404(ContentType, app_label=app_label, model=model_name)
+    comments = Comments.objects.filter(content_type=content_type, object_id=object_id).order_by('-tanggal')
+
+    return render(request, 'comments/list.html', {
+        'comments': comments,
+        'model_name': model_name,
+        'object_id': object_id,
+    })
 
 
-@login_required
-def comment_update(request, comment_id):
+@login_required(login_url='/login/')
+def edit_comment(request, comment_id):
     comment = get_object_or_404(Comments, id=comment_id, user=request.user)
-
     if request.method == 'POST':
-        comment.isi_komentar = request.POST.get('isi_komentar')
-        comment.save()
-        return redirect(request.META.get('HTTP_REFERER', '/'))
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            # Dapatkan nama model dalam huruf kecil (e.g., 'event', 'player', 'club')
+            model_name = comment.content_type.model
+            
+            # Dapatkan PK dari objek yang dikomentari
+            object_pk = comment.object_id 
+            
+            # Tentukan nama URL berdasarkan nama model
+            if model_name == 'event':
+                redirect_url_name = 'vidia_event:event_detail'
+            elif model_name == 'player':
+                redirect_url_name = 'rafi_player:player_detail'
+                return redirect(redirect_url_name, player_id=object_pk)
+            elif model_name == 'club':
+                redirect_url_name = 'ibeth_clubs:club_detail'
+            else:
+                return redirect('/') 
 
-    return render(request, 'comments/form.html', {'comment': comment})
+            return redirect(redirect_url_name, pk=object_pk)
+    else:
+        form = CommentForm(instance=comment)
+    return render(request, 'comments/form.html', {'form': form})
 
-
-@login_required
-def comment_delete(request, comment_id):
+@login_required(login_url='/login/')
+def delete_comment(request, comment_id):
     comment = get_object_or_404(Comments, id=comment_id, user=request.user)
     comment.delete()
     return redirect(request.META.get('HTTP_REFERER', '/'))
+
+def player_comments_json(request, player_id):
+    player = get_object_or_404(Player, pk=player_id)
+    content_type = ContentType.objects.get_for_model(Player)
+
+    comments = Comments.objects.filter(
+        content_type=content_type,
+        object_id=player.id
+    ).select_related('user').order_by('-tanggal')
+
+    return JsonResponse({
+        "target": {
+            "type": "player",
+            "id": player.id,
+            "name": player.nama,
+        },
+        "comments": [
+            {
+                "id": c.id,
+                "user": {
+                    "id": c.user.id,
+                    "username": c.user.username,
+                },
+                "isi_komentar": c.isi_komentar,
+                "tanggal": localtime(c.tanggal).isoformat(),
+                "can_edit": request.user.is_authenticated and request.user == c.user
+            }
+            for c in comments
+        ]
+    })
+
+def club_comments_json(request, club_id):
+    club = get_object_or_404(Club, pk=club_id)
+    content_type = ContentType.objects.get_for_model(Club)
+
+    comments = Comments.objects.filter(
+        content_type=content_type,
+        object_id=club.id
+    ).select_related('user').order_by('-tanggal')
+
+    return JsonResponse({
+        "target": {
+            "type": "club",
+            "id": club.id,
+            "name": club.nama_club,
+        },
+        "comments": [
+            {
+                "id": c.id,
+                "user": {
+                    "id": c.user.id,
+                    "username": c.user.username,
+                },
+                "isi_komentar": c.isi_komentar,
+                "tanggal": localtime(c.tanggal).isoformat(),
+                "can_edit": request.user.is_authenticated and request.user == c.user
+            }
+            for c in comments
+        ]
+    })
+
+def event_comments_json(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    content_type = ContentType.objects.get_for_model(Event)
+
+    comments = Comments.objects.filter(
+        content_type=content_type,
+        object_id=event.id
+    ).select_related('user').order_by('-tanggal')
+
+    return JsonResponse({
+        "target": {
+            "type": "event",
+            "id": event.id,
+            "name": event.nama_event,
+        },
+        "comments": [
+            {
+                "id": c.id,
+                "user": {
+                    "id": c.user.id,
+                    "username": c.user.username,
+                },
+                "isi_komentar": c.isi_komentar,
+                "tanggal": localtime(c.tanggal).isoformat(),
+                "can_edit": request.user.is_authenticated and request.user == c.user
+            }
+            for c in comments
+        ]
+    })
+
+MODEL_MAP = {
+    "player": Player,
+    "event": Event,
+    "club": Club,
+}
+
+@csrf_exempt
+def comment_list_flutter(request, type, target_id):
+    model = MODEL_MAP.get(type)
+    if not model:
+        return JsonResponse({"error": "Invalid target"}, status=400)
+
+    obj = get_object_or_404(model, pk=target_id)
+    ct = ContentType.objects.get_for_model(model)
+
+    comments = Comments.objects.filter(
+        content_type=ct,
+        object_id=obj.pk
+    ).order_by("-tanggal")
+
+    return JsonResponse({
+        "target": {
+            "type": type,
+            "id": str(obj.pk),
+            "name": str(obj),
+        },
+        "comments": [
+            {
+                "id": c.id,
+                "isi_komentar": c.isi_komentar,
+                "tanggal": c.tanggal.isoformat(),
+                "user": {
+                    "id": c.user.id,
+                    "username": c.user.username,
+                },
+                "can_edit": c.user == request.user,
+            }
+            for c in comments
+        ]
+    })
+
+@csrf_exempt
+def add_comment_flutter(request, type, target_id):
+    if not request.user.is_authenticated:
+        return JsonResponse(
+            {"status": "error", "message": "Unauthorized"},
+            status=401
+        )
+
+    if request.method != "POST":
+        return JsonResponse({"status": "error"}, status=405)
+
+    isi = request.POST.get("isi_komentar")
+    if not isi:
+        return JsonResponse({"status": "error"}, status=400)
+
+    MODEL_MAP = {
+        "event": Event,
+        "player": Player,
+        "club": Club,
+    }
+
+    model = MODEL_MAP.get(type)
+    if not model:
+        return JsonResponse({"status": "error"}, status=400)
+
+    target = model.objects.get(pk=target_id)
+
+    comment = Comments.objects.create(
+        user=request.user,              # ✅ SEKARANG USER VALID
+        isi_komentar=isi,
+        content_object=target,
+    )
+
+    return JsonResponse({
+        "status": "success",
+        "id": comment.id,
+    })
+
+@csrf_exempt
+def edit_comment_flutter(request, comment_id):
+    if request.method != "POST":
+        return JsonResponse({"status": "error"}, status=405)
+
+    comment = get_object_or_404(Comments, id=comment_id, user=request.user)
+    isi = request.POST.get("isi_komentar")
+
+    if not isi:
+        return JsonResponse({"status": "error"}, status=400)
+
+    comment.isi_komentar = isi
+    comment.save()
+
+    return JsonResponse({"status": "updated"})
+
+@csrf_exempt
+def delete_comment_flutter(request, comment_id):
+    if request.method != "POST":
+        return JsonResponse({"status": "error"}, status=405)
+
+    comment = get_object_or_404(Comments, id=comment_id, user=request.user)
+    comment.delete()
+
+    return JsonResponse({"status": "deleted"})
